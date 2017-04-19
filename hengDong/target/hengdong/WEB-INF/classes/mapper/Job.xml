@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.JobModelDao">
+	<resultMap type="com.hd.pfirs.model.JobModel" id="JobModelMap">
+		<result column="flag" property="flag" />
+		<result column="tabId" property="tabId" />
+		<result column="photo" property="photo" />
+		<result column="code" property="code" />
+		<result column="deviceCode" property="deviceCode" />
+		<result column="collectTimeStamp" property="collectTimeStamp" />
+		<result column="isLast" property="isLast" />
+	</resultMap>
+
+	<select id="getJobModel" resultMap="JobModelMap">
+	select flag,tabId, photo,code,DeviceCode,collectTimeStamp,isLast from
+	(select '1' as flag,FaceId as tabId,CollectPic photo,FaceCode
+	code,DeviceCode DeviceCode,collecttimestamp collectTimeStamp,islast
+	islast from t_pp_faceinfo where relayflag='0'
+	union all
+	select '2' as flag,CardID as tabId,IDCardPic photo,CardCode code,DeviceCode
+	DeviceCode,collecttimestamp collectTimeStamp,'' islast from
+	t_pp_idcardinfo where relayflag='0'
+	order by collecttimestamp ) where rownum=1
+	</select>
+	
+	
+</mapper>

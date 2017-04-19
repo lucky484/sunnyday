@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.IPCInfoDao">
+	<resultMap id="IPCModelMap" type="com.hd.pfirs.model.IPCModel">
+			<id column="MonitID" property="monitID" />
+			<result column="FrontSaveTime" property="frontSaveTime" />
+			<result column="FrontSaveTimeStamp" property="frontSaveTimeStamp" />
+			<result column="FrontSaveTimeStamp" property="frontSaveTimeStamp" />
+			<result column="FrontRelayTime" property="frontRelayTime" />
+			<result column="FrontRelayTimeStamp" property="frontRelayTimeStamp" />
+			<result column="TogthSaveTime" property="togthSaveTime" />
+			<result column="TogthSaveTimeStamp" property="togthSaveTimeStamp" />
+			<result column="RelayTime" property="relayTime" />
+			<result column="RelayTimeStamp" property="relayTimeStamp" />
+			<result column="RelayFlag" property="relayFlag" />
+			<result column="DeviceCode" property="deviceCode" />
+			<result column="FaceConnState" property="faceConnState" />
+			<result column="IDCardConnState" property="IDCardConnState" />
+			<result column="MemoryUsage" property="memoryUsage" />
+			<result column="DiskSpace" property="diskSpace" />
+			<result column="DBSize" property="DBSize" />
+			<result column="FaceCollectNum" property="faceCollectNum" />
+			<result column="FaceRelayNum" property="faceRelayNum" />
+			<result column="IDCardCollectNum" property="IDCardCollectNum" />
+			<result column="IDCardRelayNum" property="IDCardRelayNum" />
+			<result column="RemarkDesc" property="remarkDesc" />
+			<result column="DeleteStatus" property="deleteStatus" />
+			<result column="CreateName" property="createName" />
+			<result column="CreateTime" property="createTime" />
+			<result column="UpdateName" property="updateName" />
+			<result column="UpdateTime" property="updateTime" />
+			<result column="DeviceType" property="deviceType" />
+			<result column="InstallSite" property="collectSite" />
+			<result column="EnableStatus" property="enableStatus" />
+	</resultMap>
+	<resultMap id="DeviceModelMap" type="com.hd.pfirs.model.DeviceModel">
+			<id column="DEVICEID" property="deviceId" />
+			<result column="DEVICECODE" property="deviceCode" />
+			<result column="DEVICENAME" property="deviceName" />
+			<result column="DEVICETYPE" property="deviceType" />
+			<result column="REGIONCODE" property="regionCode" />
+			<result column="INSTALLSITE" property="installSite" />
+			<result column="INSTALLDATE" property="installDate" />
+			<result column="ENABLESTATUS" property="enableStatus" />
+			<result column="RUNNINGSTATE" property="runningState" />
+			<result column="FACEDVNO" property="faceDvNo" />
+			<result column="FACEDVMODEL" property="faceDvModel" />
+			<result column="FACEDVLENSMODEL" property="faceDvLensModel" />
+			<result column="FACEDVCOLLINTERVAL" property="faceDvCollInterval" />
+			<result column="FACEDVIP" property="faceDvIp" />
+			<result column="FACEDVURL" property="faceDvUrl" />
+			<result column="IDCARDDVNO" property="idCardDvNo" />
+			<result column="VIDEOID" property="videoId" />
+			<result column="VIDEOIP" property="videoIp" />
+			<result column="REMARKDESC" property="remarkDesc" />
+			<result column="DELETESTATUS" property="deleteStatus" />
+			<result column="CREATENAME" property="createName" />
+			<result column="CREATETIME" property="createTime" />
+			<result column="UPDATENAME" property="updateName" />
+			<result column="UPDATETIME" property="updateTime" />
+	</resultMap>
+	<insert id="saveIPCInfo" parameterType="map">
+		insert into
+		T_PP_DEVICEMONITORINFO (
+			MONITID,
+			FRONTSAVETIME,
+			FRONTSAVETIMESTAMP,
+			FRONTRELAYTIME,
+			FRONTRELAYTIMESTAMP,
+			TOGTHSAVETIME,
+			TOGTHSAVETIMESTAMP,
+			RELAYTIME,
+			RELAYTIMESTAMP,
+			RELAYFLAG,
+			DEVICECODE,
+			FACECONNSTATE,
+			IDCARDCONNSTATE,
+			MEMORYUSAGE,
+			DISKSPACE,
+			DBSIZE,
+			FACECOLLECTNUM,
+			FACERELAYNUM,
+			IDCARDCOLLECTNUM,
+			IDCARDRELAYNUM,
+			REMARKDESC,
+			DELETESTATUS,
+			CREATENAME,
+			CREATETIME)
+		values(
+			#{MonitID, jdbcType=BIGINT},
+			sysdate,
+			#{FRONTSAVETIMESTAMP, jdbcType=VARCHAR},
+			#{FRONTRELAYTIME, jdbcType=DATE},
+			#{FRONTRELAYTIMESTAMP, jdbcType=VARCHAR},
+			#{TOGTHSAVETIME, jdbcType=DATE},
+			#{TOGTHSAVETIMESTAMP, jdbcType=VARCHAR},
+			#{RELAYTIME, jdbcType=DATE},
+			#{RelayTimeStamp, jdbcType=VARCHAR},
+			#{RELAYFLAG, jdbcType=VARCHAR},
+			#{DeviceCode, jdbcType=VARCHAR},
+			#{FaceConnState, jdbcType=VARCHAR},
+			#{IDCardConnState, jdbcType=VARCHAR},
+			#{MemoryUsage, jdbcType=VARCHAR},
+			#{DiskSpace, jdbcType=VARCHAR},
+			#{DBSize, jdbcType=INTEGER},
+			#{FaceCollectNum, jdbcType=INTEGER},
+			#{FaceRelayNum, jdbcType=INTEGER},
+			#{IDCardCollectNum, jdbcType=INTEGER},
+			#{IDCardRelayNum, jdbcType=INTEGER},
+			#{RemarkDesc, jdbcType=VARCHAR},
+			'0',
+			#{CreateName, jdbcType=VARCHAR},
+			sysdate
+		)
+	</insert>
+	
+	
+	<insert id="insertIPCBaseInfo">
+		insert into
+		T_PP_DEVICEMONITORINFO (
+			MONITID,
+			DEVICECODE,
+			DELETESTATUS,
+			CreateName,
+			CREATETIME)
+		values(
+			#{monitID, jdbcType=BIGINT},
+			#{deviceCode, jdbcType=VARCHAR},
+			'0',
+			'system',
+			sysdate
+		)
+	</insert>
+	
+	
+	<update id="updateIPCInfo" parameterType="map">
+		update 
+		T_PP_DEVICEMONITORINFO set
+			FRONTSAVETIME = sysdate,
+			RELAYTIMESTAMP = #{RelayTimeStamp, jdbcType = VARCHAR},
+			FACECONNSTATE = #{FaceConnState, jdbcType=VARCHAR},
+			IDCARDCONNSTATE = #{IDCardConnState, jdbcType=VARCHAR},
+			MEMORYUSAGE = #{MemoryUsage, jdbcType=VARCHAR},
+			DISKSPACE = #{DiskSpace, jdbcType=VARCHAR},
+			DBSIZE = #{DBSize, jdbcType=INTEGER},
+			FACECOLLECTNUM = #{FaceCollectNum, jdbcType=INTEGER},
+			FACERELAYNUM = #{FaceRelayNum, jdbcType=INTEGER},
+			IDCARDCOLLECTNUM = #{IDCardCollectNum, jdbcType=INTEGER},
+			IDCARDRELAYNUM = #{IDCardRelayNum, jdbcType=INTEGER},
+			REMARKDESC = #{RemarkDesc, jdbcType=VARCHAR},
+			DELETESTATUS = '0',
+			UPDATENAME = #{CreateName, jdbcType=VARCHAR},
+			UPDATETIME = sysdate
+			where DeviceCode = #{DeviceCode}
+	</update>
+	<select id="queryIPCInfoByDeviceCode" parameterType="string" resultType="int" >
+		select count(0) from T_PP_DEVICEMONITORINFO
+		where DeviceCode = #{deviceCode}
+	</select>
+	
+	<select id="queryDeviceCodes" resultType="string">
+		select       
+			DEVICECODE
+		from t_pp_deviceinfo
+	</select>
+	
+	<select id="queryDeviceCodeById" resultType="string">
+		select       
+			DEVICECODE
+		from t_pp_deviceinfo
+		where DEVICEID = #{deviceId}
+	</select>
+	
+	<select id="queryIPCInfo" resultMap="IPCModelMap" >
+		SELECT d1.MonitID,
+		  d1.FrontSaveTime,
+		  d1.FrontSaveTimeStamp,
+		  d1.FrontRelayTime,
+		  d1.FrontRelayTimeStamp,
+		  d1.TogthSaveTime,
+		  d1.TogthSaveTimeStamp,
+		  d1.RelayTime,
+		  d1.RelayTimeStamp,
+		  d1.RelayFlag,
+		  d1.DeviceCode,
+		  d1.FaceConnState,
+		  d1.IDCardConnState,
+		  d1.MemoryUsage,
+		  d1.DiskSpace,
+		  d1.DBSize,
+		  d1.FaceCollectNum,
+		  d1.FaceRelayNum,
+		  d1.IDCardCollectNum,
+		  d1.IDCardRelayNum,
+		  d1.RemarkDesc,
+		  d1.DeleteStatus,
+		  d1.CreateName,
+		  d1.CreateTime,
+		  d1.UpdateName,
+		  d1.UpdateTime,
+		  o.DeviceType,
+		  o.InstallSite,
+		  o.EnableStatus
+		FROM
+		  (SELECT *
+		  FROM T_PP_DEVICEMONITORINFO d
+		  WHERE NOT EXISTS
+		    (SELECT *
+		    FROM T_PP_DEVICEMONITORINFO
+		    WHERE devicecode = d.devicecode
+		    AND createtime   >d.createtime
+		    )
+		  ) d1
+		LEFT JOIN T_PP_DeviceInfo o
+		ON d1.DeviceCode = o.DeviceCode  
+		 <where>
+		 	o.DELETESTATUS = '0'
+		 	and o.ENABLESTATUS = '0'
+	        <if test="deviceCode != null and deviceCode != ''">
+	            AND d1.DeviceCode like '%'||#{deviceCode}||'%' 
+	        </if>
+	        <if test="collectSite != null and collectSite != ''">
+	            AND o.INSTALLSITE like '%'||#{collectSite}||'%' 
+	        </if>
+	    </where>
+	     order by createtime desc
+	</select>
+	
+	
+	
+	<select id="queryDeviceInfo" resultMap="DeviceModelMap">
+		select DEVICEID,          
+			DEVICECODE,                  
+			DEVICENAME,                  
+			DEVICETYPE,                 
+			REGIONCODE,                  
+			INSTALLSITE,               
+			INSTALLDATE,                 
+			ENABLESTATUS,                
+			RUNNINGSTATE,                
+			FACEDVNO,                    
+			FACEDVMODEL,                 
+			FACEDVLENSMODEL,             
+			FACEDVCOLLINTERVAL,          
+			FACEDVIP,                     
+			FACEDVURL,                    
+			IDCARDDVNO ,                 
+			VIDEOID,                      
+			VIDEOIP,                       
+			REMARKDESC,                           
+			DELETESTATUS,                   
+			CREATENAME,                    
+			CREATETIME,                            
+			UPDATENAME,                    
+			UPDATETIME                    
+		 from t_pp_deviceinfo
+		  <where>
+	            DELETESTATUS = 0
+	        <if test="deviceCode != null and deviceCode != ''">
+	            and DEVICECODE like '%'||#{deviceCode}||'%' 
+	        </if>
+	        <if test="collectSite != null and collectSite != ''">
+	            and INSTALLSITE like '%'||#{collectSite}||'%' 
+	        </if>
+	    </where>
+	     order by createtime desc
+	</select>
+	
+	
+	<insert id="insertEquip">
+		insert into t_pp_deviceinfo  
+		    (DEVICEID,
+			DEVICECODE,                  
+			DEVICENAME,                  
+			DEVICETYPE,                 
+			REGIONCODE,                  
+			INSTALLSITE,               
+			INSTALLDATE,                 
+			ENABLESTATUS,                
+			RUNNINGSTATE,                
+			FACEDVNO,                    
+			FACEDVMODEL,                 
+			FACEDVLENSMODEL,             
+			FACEDVCOLLINTERVAL,          
+			FACEDVIP,                     
+			FACEDVURL,                    
+			IDCARDDVNO ,                 
+			VIDEOID,                      
+			VIDEOIP,                       
+			REMARKDESC,                           
+			DELETESTATUS,                   
+			CREATENAME,                    
+			CREATETIME,                            
+			UPDATENAME,                    
+			UPDATETIME)
+		values(
+			#{deviceId, jdbcType=BIGINT},
+			#{deviceCode, jdbcType=VARCHAR},
+			#{deviceName, jdbcType=VARCHAR},
+			#{deviceType, jdbcType=VARCHAR},
+			#{regionCode, jdbcType=VARCHAR},
+			#{installSite, jdbcType=VARCHAR},
+			#{installDate, jdbcType=DATE},
+			#{enableStatus, jdbcType=VARCHAR},
+			#{runningState, jdbcType=VARCHAR},
+			#{faceDvNo, jdbcType=VARCHAR},
+			#{faceDvModel, jdbcType=VARCHAR},
+			#{faceDvLensModel, jdbcType=VARCHAR},
+			#{faceDvCollInterval, jdbcType=BIGINT},
+			#{faceDvIp, jdbcType=VARCHAR},
+			#{faceDvUrl, jdbcType=VARCHAR},
+			#{idCardDvNo, jdbcType=VARCHAR},
+			#{videoId, jdbcType=VARCHAR},
+			#{videoIp, jdbcType=VARCHAR},
+			#{remarkDesc, jdbcType=VARCHAR},
+			'0',
+			#{createName, jdbcType=VARCHAR},
+			sysdate,
+			#{updateName, jdbcType=VARCHAR},
+			sysdate
+		)   
+	</insert>
+	
+	<update id="updateEquip">
+		update t_pp_deviceinfo  
+		    set  DEVICENAME = #{deviceName, jdbcType=VARCHAR}, 
+			DEVICECODE = #{deviceCode, jdbcType=VARCHAR},                 
+			DEVICETYPE = #{deviceType, jdbcType=VARCHAR},                
+			REGIONCODE = #{regionCode, jdbcType=VARCHAR},                   
+			INSTALLSITE = #{installSite, jdbcType=VARCHAR},               
+			INSTALLDATE = #{installDate, jdbcType=DATE},                 
+			ENABLESTATUS= #{enableStatus, jdbcType=VARCHAR},                
+			RUNNINGSTATE= #{runningState, jdbcType=VARCHAR},                
+			FACEDVNO    = #{faceDvNo, jdbcType=VARCHAR},                    
+			FACEDVMODEL = #{faceDvModel, jdbcType=VARCHAR},                 
+			FACEDVLENSMODEL=    #{faceDvLensModel, jdbcType=VARCHAR},             
+			FACEDVCOLLINTERVAL= #{faceDvCollInterval, jdbcType=BIGINT},        
+			FACEDVIP       =#{faceDvIp, jdbcType=VARCHAR},                     
+			FACEDVURL      =#{faceDvUrl, jdbcType=VARCHAR},                    
+			IDCARDDVNO     =#{idCardDvNo, jdbcType=VARCHAR},          
+			VIDEOID        =#{videoId, jdbcType=VARCHAR},                      
+			VIDEOIP        =#{videoIp, jdbcType=VARCHAR},                       
+			REMARKDESC     =#{remarkDesc, jdbcType=VARCHAR},                           
+			UPDATENAME     =#{updateName, jdbcType=VARCHAR},                    
+			UPDATETIME     =sysdate
+			where DEVICEID = #{deviceId}
+	</update>
+	
+	<update id="deleteEquip">
+		update t_pp_deviceinfo  
+			set DELETESTATUS   =#{deleteStatus},                   
+				UPDATENAME     =#{updateName},                    
+				UPDATETIME     =sysdate
+		where DEVICEID = #{deviceId}
+	</update>
+	
+	
+	<select id="queryRegions" resultType="map">
+		select REGIONID, REGIONCODE, REGIONNAME from T_SS_Region
+	</select>
+	
+	<select id="queryDevicesByRegionCode" resultType="int">
+		select count(0)      
+		from T_PP_DEVICEINFO
+		where REGIONCODE = #{regionCode}
+	</select>
+</mapper>

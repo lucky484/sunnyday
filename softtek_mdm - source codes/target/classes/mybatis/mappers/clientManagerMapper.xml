@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.softtek.mdm.dao.ClientManagerDao">
+	    <resultMap id="clientManagerMap" type="ClientManager">
+	        <id column="id" property="id" />
+	        <result column="client_id_name" property="clientIdName"/>
+	        <result column="client_app_name" property="clientAppName" />
+	        <result column="belong_org" property="belongOrg" />
+	        <result column="client_version" property="clientVersion" />
+	        <result column="client_byte" property="clientByte" />
+	        <result column="is_upgrade" property="isUpgrade" />
+	        <result column="apply_platform" property="applyPlatform" />
+	        <result column="support_device" property="supportDevice" />
+	        <result column="remark" property="remark" />
+	        <result column="signature_certificate" property="signatureCertificate" />
+	        <result column="download_url" property="downloadUrl" />
+	        <result column="file_name" property="fileName" />
+	        <result column="image_url" property="imageUrl" />
+	        <result column="create_time" property="createTime" />
+	        <result column="create_by" property="createBy" />
+	        <result column="update_by" property="updateBy" />
+	    </resultMap>
+	    
+	    <select id="findLastOne" resultMap="clientManagerMap">
+	    SELECT
+			org_id,
+			client_id_name,
+			client_app_name,
+			belong_org,
+			client_version,
+			client_byte,
+			is_upgrade,
+			apply_platform,
+			support_device,
+			signature_certificate,
+			download_url,
+			file_name,
+			image_url,
+			create_by,
+			create_time,
+			update_by,
+			update_time
+		FROM
+			client_manager
+		WHERE
+			apply_platform = #{platForm}
+		AND FIND_IN_SET(#{orgId}, belong_org)
+		AND ISNULL(delete_time)
+		ORDER BY client_version DESC
+		LIMIT 1
+	    </select>
+	    <insert id="insertClientManager" parameterType="ClientManager" keyProperty="id" useGeneratedKeys="true">
+	        insert into client_manager (
+	           org_id,
+	           client_id_name,
+	           client_app_name,
+	           belong_org,
+	           client_version,
+	           client_byte,
+	           is_upgrade,
+	           apply_platform,
+	           support_device,
+	           signature_certificate,
+	           download_url,
+	           file_name,
+	           image_url,
+	           create_by,
+	           create_time,
+	           update_by,
+	           update_time
+	        )values(
+	           #{orgId},
+	           #{clientIdName},
+	           #{clientAppName},
+	           #{belongOrg},
+	           #{clientVersion},
+	           #{clientByte},
+	           #{isUpgrade},
+	           #{applyPlatform},
+	           #{supportDevice},
+	           #{signatureCertificate},
+	           #{downloadUrl},
+	           #{fileName},
+	           #{imageUrl},
+	           #{createBy},
+	           now(),
+	           #{updateBy},
+	           now()    
+	        )
+	    </insert>
+	    <select id="queryAllClientConfig" parameterType="map" resultMap="clientManagerMap">
+	         select id,
+			        client_id_name,
+			        client_app_name,
+			        belong_org,
+			        client_version,
+			        client_byte,
+			        is_upgrade,
+			        apply_platform,
+			        support_device,
+			        create_by
+	        from client_manager 
+	        where delete_time is null
+	        <if test="userType != 1"> 
+	        and (create_by = (select id from org_managers where user_type = '1' and delete_time is null) or create_by = #{managerId})
+	        </if>
+	        order by update_time desc limit #{start},#{pageSize}
+	    </select>
+	    <select id="queryAllClientConfigCount" parameterType="map" resultType="int">
+	        select count(1) from client_manager where delete_time is null
+            <if test="userType != '1'"> 
+	        and (create_by = (select id from org_managers where user_type = '1' and delete_time is null) or create_by = #{managerId})
+	        </if>
+	    </select>
+	    <select id="queryClientInfoById" resultMap="clientManagerMap">
+	        select id,client_id_name,client_app_name,belong_org,client_version,client_byte,is_upgrade,apply_platform,support_device,signature_certificate,remark,download_url,file_name,image_url,create_time from client_manager where id = #{id}
+	    </select>
+	    <select id="queryImgByOrgId" resultMap="clientManagerMap">
+	        select id,client_id_name,client_app_name,belong_org,client_version,client_byte,is_upgrade,apply_platform,support_device,signature_certificate,remark,download_url,file_name,image_url,create_time from client_manager where delete_time is null order by update_time desc
+	    </select>
+	    <update id="deleteClient" parameterType="ClientManager">
+	        update client_manager set delete_time = now() and update_time = now() and update_by = #{updateBy} where id = #{id}
+	    </update>
+	    <update id="deleteAllOrgClient" parameterType="Integer">
+	         update client_manager set delete_time = now() and update_time = now() and update_by = #{updateBy} where belong_org = ''
+	    </update>
+	    <select id="queryQrCode" resultMap="clientManagerMap">
+	        select id,client_id_name,client_app_name,belong_org,client_version,client_byte,is_upgrade,apply_platform,support_device,signature_certificate,remark,download_url,file_name,image_url,create_time from client_manager where delete_time is null and belong_org = ''
+	    </select>
+	</mapper>

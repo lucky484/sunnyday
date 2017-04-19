@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.NetBehaviorLogDao">
+    
+    <resultMap type="NetBehaviorLogInfoModel" id="NetBehaviorLogInfoModelMap">
+        <id property="id" column="id"/>
+        <result property="userName" column="surf_username"/>
+        <result property="loginAccount" column="user_name"/>
+        <result property="userType" column="surf_usertype"/>
+        <result property="departmentName" column="department_name"/>
+        <result property="departmentId" column="department_id"/>
+        <result property="surfTime" column="surfTime"/>
+        <result property="conetent" column="conetent"/>
+        <result property="organizationName" column="organization_name"/>
+        <result property="surfUrl" column="surf_url"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="sn" column="sn"/>
+    </resultMap>
+    
+    <select id="queryNetBehaviorLogList" resultMap="NetBehaviorLogInfoModelMap">
+          select 
+            T1.id, 
+            T1.surf_username, 
+            T2.user_name,
+            T1.surf_usertype, 
+            T1.department_name,     
+            T1.surfTime, 
+            T1.conetent, 
+            T1.organization_name,
+            T1.surf_url,
+            T3.device_name,
+            T3.sn 
+               from netbehavior_loginfo T1 
+            LEFT JOIN users T2 ON T1.surf_userid = T2.id 
+            LEFT JOIN device_basic_info T3 ON T1.device_id = T3.id 
+            where 1=1
+            <if test="organizationId != null"> 
+                and T1.organization_id = #{organizationId}
+            </if>
+            <if test="name != null">  
+                 and T1.surf_username like CONCAT('%',#{name},'%') 
+             </if>
+             <if test="content != null">  
+                 and T1.conetent like CONCAT('%',#{content},'%')  
+            </if>
+            <if test="deptIdList != null and deptIdList.size() != 0">
+                and T1.department_id in (
+                <foreach item="item" collection="deptIdList" separator="," open="(" close=")" index="">    
+                    #{item}  
+                   </foreach>)
+            </if>  
+            order by T1.surfTime desc 
+              limit #{start},#{offset}  
+    </select>
+    
+    <select id="queryAllCountByParams" resultType="java.lang.Integer">
+            select 
+              count(T1.id) 
+            from netbehavior_loginfo T1 
+            LEFT JOIN users T2 ON T1.surf_userid = T2.id 
+            LEFT JOIN device_basic_info T3 ON T1.device_id = T3.id 
+            where 1=1
+            <if test="organizationId != null"> 
+                and T1.organization_id = #{organizationId}
+            </if>
+            <if test="name != null">  
+                 and T1.surf_username like CONCAT('%',#{name},'%') 
+             </if>
+             <if test="content != null">  
+                 and T1.conetent like CONCAT('%',#{content},'%')  
+            </if>
+            <if test="deptIdList != null and deptIdList.size() != 0">
+                and T1.department_id in (
+                <foreach item="item" collection="deptIdList" separator="," open="(" close=")" index="">    
+                    #{item}  
+                   </foreach>)
+            </if>  
+    </select>
+    
+    <insert id="saveNetBehaviorLogInfo" parameterType="java.util.List">
+        insert into netbehavior_loginfo
+            (surf_username,
+             surf_userid,
+             device_id,
+             surf_usertype,
+             department_name,
+             department_id,
+             surfTime,
+             conetent,
+             keywords,
+             description,
+             organization_name,
+             organization_id,
+             website_type,
+             surf_url)
+        values
+        <foreach collection="list" item="item" index="index" separator=","> 
+             (#{item.userName},
+             #{item.userId},
+             #{item.deviceId},
+             #{item.userType},
+             #{item.departmentName},
+             #{item.departmentId},
+             #{item.surfTime},
+             #{item.conetent},
+             #{item.headKeywords},
+             #{item.headDescription},
+             #{item.organizationName},
+             #{item.organizationId},
+             #{item.websiteType},
+             #{item.surfUrl}) 
+        </foreach>
+    </insert>
+    
+    <!-- 获取上网统计列表 -->
+    <select id="getNetList" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.bean.NetBean">
+       SELECT 
+         T1.id,
+         T2.name as websiteName,
+         T1.website_type as websiteType, 
+         COUNT(T1.surf_url) AS count 
+       FROM 
+         netbehavior_loginfo T1 
+       LEFT JOIN website_classify T2 on T1.website_type = T2.id 
+       WHERE T1.website_type is not null 
+       AND T1.organization_id = #{params.orgId} 
+       <if test="params.type != null and params.type != ''">
+           AND T1.website_type =#{params.type} 
+       </if>
+       <if test="params.idlist != null">  
+        AND T1.department_id in
+        <foreach collection="params.idlist" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+       GROUP BY 
+         T1.website_type 
+       ORDER BY count desc 
+         limit #{begin},#{num} 
+    </select>
+    
+    <!-- 获取上网列表大小W -->
+    <select id="getNetSize" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">
+       SELECT 
+         count(T2.id) 
+       FROM (
+       SELECT 
+         T1.id  
+       FROM 
+         netbehavior_loginfo T1 
+       LEFT JOIN website_classify T2 on T1.website_type = T2.id 
+       WHERE T1.website_type is not null 
+       AND T1.organization_id = #{params.orgId} 
+       <if test="params.type != null and params.type != ''">
+           AND T1.website_type = #{params.type} 
+       </if>
+       <if test="params.idlist != null">  
+        AND T1.department_id in
+        <foreach collection="params.idlist" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+       GROUP BY 
+         T1.website_type) T2 
+    </select>
+    
+    <!-- 根据每个分类获取对应的访问量 -->
+    <select id="getWebsiteCountByOrgId" parameterType="java.util.Map" resultType="com.softtek.mdm.bean.NetBean">
+       SELECT 
+         T1.id,
+         T2.`name` as websiteName,
+         T1.website_type as websiteType, 
+         COUNT(T1.surf_url) AS count 
+       FROM 
+         netbehavior_loginfo T1 
+       LEFT JOIN website_classify T2 on T1.website_type = T2.id  
+       WHERE T1.website_type is not null  
+       AND T1.organization_id = #{params.orgId} 
+        <if test="params.idlist != null">  
+        AND T1.department_id in
+        <foreach collection="params.idlist" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+       GROUP BY T1.website_type 
+    </select>
+    
+    <!-- 根据参数获取url列表-->
+    <select id="getUrlList" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.bean.NetBean">
+       SELECT 
+         T1.id,
+         T1.surf_username as surfUsername,
+         T1.surf_usertype as surfUsertype,
+         T1.department_name as departmentName,
+         T1.conetent,
+         T2.name as websiteName,
+         T1.surf_url as surfUrl,
+         T1.surftime 
+       FROM 
+         netbehavior_loginfo T1 
+       LEFT JOIN website_classify T2 on T1.website_type = T2.id  
+       WHERE T1.website_type = #{params.type} 
+       AND T1.organization_id = #{params.orgId} 
+       AND T1.website_type is not null 
+       <if test="params.name != null and params.name != ''">
+           AND T1.surf_username like CONCAT('%',#{params.name} ,'%') 
+       </if>
+        <if test="params.idlist != null">  
+        AND T1.department_id in
+        <foreach collection="params.idlist" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+       ORDER BY T1.surftime desc
+       limit #{begin},#{num} 
+    </select>
+    
+    <!-- 根据参数获取url大小-->
+    <select id="getUrlSize" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">
+       SELECT 
+         count(T1.id) 
+       FROM 
+         netbehavior_loginfo T1 
+       LEFT JOIN website_classify T2 on T1.website_type = T2.id  
+       WHERE T1.website_type = #{params.type} 
+       AND T1.organization_id = #{params.orgId} 
+       AND T1.website_type is not null 
+       <if test="params.name != null and params.name != ''">
+           AND T1.surf_username like CONCAT('%',#{params.name} ,'%') 
+       </if>
+        <if test="params.idlist != null">  
+        AND T1.department_id in
+        <foreach collection="params.idlist" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+    </select>
+    
+    <!-- 获取上网行为列表 -->
+    <select id="getNetBehaviorLog" resultType="com.softtek.mdm.model.NetBehaviorLogInfoModel">
+       SELECT 
+         T1.id,
+         T1.surf_url as surfUrl,
+         T1.keywords,
+         T1.description,
+         T1.website_type as websiteType,
+         T1.organization_id as organizationId  
+       FROM 
+         netbehavior_loginfo T1 
+       WHERE T1.website_type is null
+    </select>
+    
+    <!-- 批量更新上网行为 -->
+    <update id="updateNetBehaviorLogInfo" parameterType="java.util.List">
+      <foreach collection="list" item="item" separator=";">  
+        UPDATE netbehavior_loginfo   
+         <set>  
+           keywords=#{item.headKeywords},
+           description=#{item.headDescription},
+           website_type=#{item.websiteType}
+         </set>  
+         <where>  
+           id=#{item.id} 
+         </where>  
+      </foreach>  
+    </update>
+</mapper>

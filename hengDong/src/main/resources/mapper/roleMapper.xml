@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.RoleDao">
+	<resultMap type="com.hd.pfirs.model.RoleModel" id="roleInfoMap">
+		<id column="roleID" property="roleID" />
+		<result column="roleName" property="roleName" />
+		<result column="description" property="description" />
+		<result column="remarkDesc" property="remarkDesc" />
+		<result column="deleteStatus" property="deleteStatus" />
+		<result column="createName" property="createName" />
+		<result column="createTime" property="createTime" />
+		<result column="updateName" property="updateName" />
+		<result column="updateTime" property="updateTime" />
+	</resultMap>
+	
+	<resultMap type="com.hd.pfirs.model.RoleAuthModel" id="roleAuthInfoMap">
+		<id column="rolePermissionID" property="rolePermissionID" />
+		<result column="roleID" property="roleID" />
+		<result column="menuID" property="menuID" />
+		<result column="functionID" property="functionID" />
+		<result column="remarkDesc" property="remarkDesc" />
+		<result column="deleteStatus" property="deleteStatus" />
+		<result column="createName" property="createName" />
+		<result column="createTime" property="createTime" />
+		<result column="updateName" property="updateName" />
+		<result column="updateTime" property="updateTime" />
+	</resultMap>
+	
+	<resultMap type="com.hd.pfirs.model.MenuDictModel" id="menuDictModelMap">
+		<id column="menuID" property="menuID" />
+		<result column="fatherMenuID" property="fatherMenuID" />
+		<result column="menuName" property="menuName" />
+		<result column="menuValue" property="menuValue" />
+		<result column="menuType" property="menuType" />
+		<result column="accessURL" property="accessURL" />
+		<result column="remarkDesc" property="remarkDesc" />
+		<result column="deleteStatus" property="deleteStatus" />
+	</resultMap>
+	
+	<select id="getRoles" resultMap="roleInfoMap">
+		select * from t_ss_role where deleteStatus = '0' order by roleID desc
+	</select>
+	
+	<select id="getRoleByRoleName" resultType="RoleModel">
+		select * from t_ss_role where deleteStatus = '0' and roleName=#{roleName}
+	</select>
+	
+	<select id="getRole" resultMap="roleInfoMap">
+		select * from (select a.*,rownum rn from (
+		select roleID,
+		roleName,
+		description,
+		remarkDesc,
+		deleteStatus,
+		createName,
+		createTime,
+		updateName,
+		updateTime
+		from
+		t_ss_role where deleteStatus = '0' 
+		<if test="roleName != '' and roleName != null">
+				and roleName like #{roleName}
+		</if>
+		order by roleID desc
+		) a)
+		where rn <![CDATA[<]]>
+		(10*#{page}+1) and rn <![CDATA[>]]>
+		10*(#{page}-1)
+	</select>
+
+	<select id="getRoleCount" resultType="Integer">
+		select count(1) from
+		(
+		select *
+		from t_ss_role where deleteStatus = '0' 
+		<if test="roleName != '' and roleName != null">
+				and roleName like #{roleName}
+		</if>
+		)
+	</select>
+	
+	<!-- 保存角色对象   序列需要改 -->
+	<insert id="saveRole" parameterType="RoleModel">
+		insert into T_SS_Role
+			values(
+			#{roleID},	
+ 			#{roleName, jdbcType=VARCHAR},
+			#{description, jdbcType=VARCHAR},
+			#{remarkDesc, jdbcType=VARCHAR},
+			#{deleteStatus, jdbcType=VARCHAR},
+			#{createName, jdbcType=VARCHAR},
+			#{createTime, jdbcType=DATE},
+			#{updateName, jdbcType=VARCHAR},
+			#{updateTime, jdbcType=DATE}
+		)
+	</insert>
+	
+	<select id="getRoleID" resultType="long">
+		select ROLE_ID_SEQUENCE.nextVal as roleID from dual
+	</select>
+	
+	<select id="getRoleAuthID" resultType="long">
+		select ROLE_PERMISSION_SEQUENCE.nextVal as roleID from dual
+	</select>
+	
+	<!-- 保存角色对象权限对象   序列需要改 -->
+	<insert id="saveRoleAuthModel" parameterType="RoleAuthModel">
+		insert into T_SS_RolePermission values
+			(
+				#{rolePermissionID},
+				#{roleID, jdbcType=BIGINT},
+				#{menuID, jdbcType=BIGINT},
+				#{functionID, jdbcType=BIGINT},
+				#{remarkDesc, jdbcType=VARCHAR},
+				#{deleteStatus, jdbcType=VARCHAR},
+				#{createName, jdbcType=VARCHAR},
+				#{createTime, jdbcType=DATE},
+				#{updateName, jdbcType=VARCHAR},
+				#{updateTime, jdbcType=DATE}
+			)
+	</insert>
+	
+	<update id="deleteRole" parameterType="list">
+		update
+		T_SS_Role set deleteStatus = '1'
+		where roleID = #{roleID}
+	</update>
+	
+	<update id="deleteAuthMenus" parameterType="map">
+		delete from 
+		T_SS_RolePermission 
+		where roleID  =#{roleID} and menuid in 
+		 <foreach item="menuIds" index="index" collection="delIds" open="(" separator="," close=")">  
+            #{menuIds}  
+        </foreach> 
+	</update>
+	
+	<select id="getRoleIdByRoleName" resultType="RoleModel" parameterType="RoleModel">
+		select *
+		from t_ss_role
+		<where>
+			<if test="roleName != '' and roleName != null">
+				and roleName =  #{roleName}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getRoleByRoleID" resultType="RoleModel" parameterType="Long">
+		select *
+		from t_ss_role
+			where roleID = #{roleID}
+	</select>
+	
+	
+	<select id="getRoleAuthModelByRoleId" resultMap="roleAuthInfoMap" parameterType="Long">
+		select *
+		from T_SS_ROLEPERMISSION
+		 where roleID =  #{roleID}
+	</select>
+	
+	<select id="getAllMenus" resultMap="menuDictModelMap">
+		select *
+		from T_SS_MenuDict
+	</select>
+	
+	<select id="getAuthMenusByRoleId" resultMap="menuDictModelMap" parameterType="Long">
+		select * from T_SS_MenuDict where MenuID in (select MenuID
+			from T_SS_ROLEPERMISSION
+			 where roleID =  #{roleID})
+	</select>
+	
+	<update id="updateRole" parameterType="RoleModel">
+		update T_SS_Role set 
+			roleName = #{roleName , jdbcType=VARCHAR},
+			description=#{description , jdbcType=VARCHAR},
+			remarkDesc=#{remarkDesc , jdbcType=VARCHAR},
+			updateName = #{updateName, jdbcType=VARCHAR},
+			updateTime = #{updateTime, jdbcType=DATE} 
+		where roleID = #{roleID, jdbcType=BIGINT}
+	</update>
+	
+	<delete id="deleteRoleAuthModel" parameterType="Long">
+		delete from T_SS_ROLEPERMISSION where roleID = #{roleID}
+	</delete>
+	
+	 
+ <insert id="batchAddRoleAuth" parameterType="list">	
+	insert all  
+		<foreach collection="list" item="item" index="index">
+			into T_SS_ROLEPERMISSION (
+				RoleID,
+				MenuID,
+				FunctionID,
+				RemarkDesc,
+				DeleteStatus,
+				CreateName,
+				CreateTime,
+				UpdateName,
+				UpdateTime
+			) values (
+				#{item.roleID, jdbcType=BIGINT},
+				#{item.menuID, jdbcType=BIGINT},
+				#{item.functionID, jdbcType=BIGINT},
+				#{item.remarkDesc, jdbcType=VARCHAR},
+				#{item.deleteStatus, jdbcType=VARCHAR},
+				#{item.createName, jdbcType=VARCHAR},
+				#{item.createTime, jdbcType=DATE},
+				#{item.updateName, jdbcType=VARCHAR},
+				#{item.updateTime, jdbcType=DATE}
+		    ) 
+	  </foreach>
+	  select 1 from dual 
+</insert>
+</mapper>

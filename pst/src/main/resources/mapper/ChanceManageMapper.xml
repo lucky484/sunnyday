@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ChanceManageDao">
+    <resultMap type="com.softtek.pst.model.ChanceManageModel"  id="chanceManageMap">
+        <id column="chance_manage_id" property="chanceManageId" />
+        <result column="project_manager_name" property="projectManagerName" />
+        <result column="project_name" property="projectName" />
+        <result column="start_time" property="startTime" />
+        <result column="lead_time" property="leadTime" />
+        <result column="forecast_quotation" property="forecastQuotation" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="creator_id" property="creatorId" />
+        <result column="update_by" property="updateBy" />
+    </resultMap>
+    <sql id="chanceManageColumn">
+   	        select chance_manage_id,project_name,project_manager_name,start_time,lead_time,forecast_quotation,create_time,update_time,creator_id,update_by from chance_manage
+    </sql>
+    
+    <select id="getChanceManageLists" resultMap="chanceManageMap">
+        <include refid="chanceManageColumn" />
+        where delete_time is null 
+	    and (project_name LIKE #{sch} or project_manager_name LIKE #{sch})
+	    order by ${col} ${dir}
+	    <if test="start != null">
+	    	limit #{start},#{length}
+	    </if>
+    </select>
+    <select id="getChanceManageCount" resultType="int" parameterType="String">
+        select count(1) from chance_manage where delete_time is null and (project_name LIKE #{sch} or project_manager_name LIKE #{sch})
+    </select>
+    <insert id="addChanceManage" parameterType="ChanceManageModel" keyProperty="chanceManageId" useGeneratedKeys="true">
+        insert into chance_manage(
+        project_name,
+        project_manager_name,
+        start_time,
+        lead_time,
+        forecast_quotation,
+        create_time,
+        update_time,
+        creator_id,
+        update_by
+        )values(
+        #{projectName},
+        #{projectManagerName},
+        #{startTime},
+        #{leadTime},
+        #{forecastQuotation},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        #{creatorId},
+        #{updateBy}
+        )
+    </insert>
+    <select id="queryDetailById" resultMap="chanceManageMap" parameterType="long">
+        <include refid="chanceManageColumn" /> where chance_manage_id = #{chanceManageId}
+    </select>
+    <update id="updateChanceManage" parameterType="ChanceManageModel">
+        update chance_manage set 
+        project_name = #{projectName},
+        project_manager_name = #{projectManagerName},
+        start_time = #{startTime},
+        lead_time = #{leadTime},
+        forecast_quotation = #{forecastQuotation},
+        update_time = CURRENT_TIMESTAMP,
+        update_by = #{updateBy}
+        where chance_manage_id = #{chanceManageId}
+    </update>
+    <update id="deleteChanceManage" parameterType="long">
+        update chance_manage set delete_time = CURRENT_TIMESTAMP,update_by = #{updateBy} where chance_manage_id = #{chanceManageId}
+    </update>
+</mapper>

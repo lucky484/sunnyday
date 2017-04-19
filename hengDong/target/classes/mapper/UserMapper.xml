@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.UserDao">
+	<resultMap type="com.hd.pfirs.model.User" id="UserModelMap">
+		<id column="diId" property="diId" />
+		<result column="userName" property="userName" />
+		<result column="idCardNm" property="idCardNm" />
+		<result column="policeNm" property="policeNm" />
+		<result column="password" property="password" />
+		<result column="name" property="name" />
+		<result column="sex" property="sex" />
+		<result column="institutionCode" property="institutionCode" />
+		<result column="institutionName" property="institutionName" />
+		<result column="roleId" property="roleId" />
+		<result column="roleName" property="roleName" />
+		<result column="status" property="status" />
+		<result column="lastloginDate" property="lastloginDate" />
+		<result column="logoutDate" property="logoutDate" />
+		<result column="remarkDesc" property="remarkDesc" />
+		<result column="deleteStatus" property="deleteStatus" />
+		<result column="createName" property="createName" />
+		<result column="createTime" property="createTime" />
+		<result column="updateName" property="updateName" />
+		<result column="updateTime" property="updateTime" />
+	</resultMap>
+	
+	
+	<select id="getuserByUserId" resultType="User" parameterType="string">
+		select * from t_ss_user where diId = #{userId}
+	</select>
+	
+	<select id="getCountByRoleId" resultType="int" parameterType="string">
+		select count(0) from t_ss_user where roleId = #{roleID}
+	</select>
+	
+	<select id="getUserByUserName" resultType="User" parameterType="string">
+		select * from t_ss_user where UserName = #{userName}
+	</select>
+	
+	<select id="getUser" resultMap="UserModelMap">
+	select * from(select a.*,rownum rn from(
+		select 
+		diId,
+		userName,
+		idCardNm,
+		policeNm,
+		name,
+		sex,
+		institutionCode,
+		institutionName,
+		roleId,
+		roleName,
+		status,
+		lastloginDate,
+		logoutDate
+		from t_ss_user
+		<where>
+			<if test="username != '' and username != null">
+				and username like #{username}
+			</if>
+			<if test="name != '' and name != null">
+				and name like #{name}
+			</if>
+			<if test="department != '' and department != null">
+				and institutionname like #{department}
+			</if>
+		</where>
+		order by diId desc
+		) a
+		) where rn <![CDATA[<]]> (10*#{page} +1) and  rn <![CDATA[>]]> 10*(#{page}-1)
+	</select>
+	
+	<select id="getCount" resultType="int">
+		select count(1) from
+		(select 
+		*
+		from t_ss_user
+		<where>
+			<if test="username != '' and username != null">
+				and username like #{username}
+			</if>
+			<if test="name != '' and name != null">
+				and name like #{name}
+			</if>
+			<if test="department != '' and department != null">
+				and institutionname like #{department}
+			</if>
+		</where>)
+	</select>
+	
+		<insert id="addUser" parameterType="User">
+			insert into t_ss_user
+			(
+			diId,
+			username,
+			idcardnm,
+			policeNm,
+			password,
+			name,
+			sex,
+			institutionCode,
+			institutionName,
+			roleId,
+			roleName,
+			remarkdesc,
+			status,
+			lastlogindate,
+			logoutdate,
+			deletestatus,
+			createname,
+			createTime,
+			updatename,
+			updateTime
+			)
+			values(
+			#{diId, jdbcType=BIGINT},
+			#{userName, jdbcType=VARCHAR},
+			#{idCardNm, jdbcType=VARCHAR},
+			#{policeNm, jdbcType=VARCHAR},
+			#{password, jdbcType=VARCHAR},
+			#{name, jdbcType=VARCHAR},
+			#{sex, jdbcType=VARCHAR},
+			#{institutionCode, jdbcType=VARCHAR},
+			#{institutionName, jdbcType=VARCHAR},
+			#{roleId, jdbcType=BIGINT},
+			#{roleName, jdbcType=VARCHAR},
+			#{remarkDesc, jdbcType=VARCHAR},
+			#{status, jdbcType=VARCHAR},
+			#{lastloginDate, jdbcType=DATE},
+			#{logoutDate, jdbcType=DATE},
+			#{deleteStatus, jdbcType=VARCHAR},
+			#{createName, jdbcType=VARCHAR},
+			#{createTime, jdbcType=DATE},
+			#{updateName, jdbcType=VARCHAR},
+			#{updateTime, jdbcType=DATE}
+			)
+		</insert>
+		
+		<delete id="deleteUser" parameterType="User">
+			delete from t_ss_user
+			where diId = #{diid}
+		</delete>
+		
+		<update id="changeStatus" parameterType="User">
+			update
+			t_ss_user
+			set status = #{status} where diId = #{diid}
+		</update>
+		
+		<!-- <select id="getuser" resultMap="UserModelMap">
+			select 
+			diId,
+			username,
+			name,
+			sex,
+			department,
+			roleId,
+			regioncode,
+			lastloginDate,
+			logoutDate,
+			status,
+			password,
+			remarkdesc,
+			deletestatus,
+			createName,
+			createTime,
+			updateName,
+			updateTime
+			from t_ss_user
+			where diId = #{diId}
+		</select> -->
+		
+		<update id="updateUser" parameterType="User">
+			update 
+			t_ss_user
+			set  
+			username = #{userName, jdbcType=VARCHAR},
+			idcardnm = #{idCardNm, jdbcType=VARCHAR},
+			policeNm = #{policeNm, jdbcType=VARCHAR},
+			password = #{password, jdbcType=VARCHAR},
+			name = #{name, jdbcType=VARCHAR},
+			sex = #{sex, jdbcType=VARCHAR},
+			institutionCode = #{institutionCode, jdbcType=VARCHAR},
+			institutionName = #{institutionName, jdbcType=VARCHAR},
+			roleId = #{roleId, jdbcType=BIGINT},
+			roleName = #{roleName, jdbcType=VARCHAR},
+			remarkdesc = #{remarkDesc, jdbcType=VARCHAR},
+			updateName = #{updateName, jdbcType=VARCHAR},
+			updateTime = #{updateTime, jdbcType=DATE}
+			where diId = #{diId, jdbcType=BIGINT}
+		</update>
+		
+</mapper>

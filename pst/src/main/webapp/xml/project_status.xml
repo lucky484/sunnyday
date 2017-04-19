@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project_status>
+	<status>
+		<name>未开始</name>
+		<value>1</value>	
+	</status>
+	<status>
+		<name>开发中</name>
+		<value>2</value>	
+	</status>
+	<status>
+		<name>内测中</name>
+		<value>3</value>	
+	</status>
+	<status>
+		<name>验收中</name>
+		<value>4</value>	
+	</status>
+	<status>
+		<name>待收款</name>
+		<value>5</value>	
+	</status>
+	<status>
+		<name>已完成</name>
+		<value>6</value>	
+	</status>
+</project_status>

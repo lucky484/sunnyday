@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.SystemWordsDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.SystemWordsModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="website_classify_id" property="websiteClassifyId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, website_classify_id, create_date, create_user, update_date, update_user
+  </sql>
+  
+  <!-- 根据主键查询系统词库表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from system_words
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除系统词库表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from system_words
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入系统词库表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.SystemWordsModel" >
+    insert into system_words (id, name, website_classify_id, 
+      create_date, create_user, update_date, 
+      update_user)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{websiteClassifyId,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=INTEGER})
+  </insert>
+  
+    <!-- 插入可选字段的系统词库表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.SystemWordsModel" >
+    insert into system_words
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="websiteClassifyId != null" >
+        website_classify_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="websiteClassifyId != null" >
+        #{websiteClassifyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选字段的系统词库表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.SystemWordsModel" >
+    update system_words
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="websiteClassifyId != null" >
+        website_classify_id = #{websiteClassifyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新系统词库表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.SystemWordsModel" >
+    update system_words
+    set name = #{name,jdbcType=VARCHAR},
+      website_classify_id = #{websiteClassifyId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 获取系统词库列表 start-->
+  <select id="getSystemWordsSize" resultType="java.lang.Integer" parameterType="com.softtek.mdm.util.DataGridModel">
+    select 
+      count(t1.id) 
+    from 
+      system_words t1 
+    where 
+      t1.delete_time is null  
+    and t1.org_id = #{params.orgId} 
+    <if test="params.name!=null and params.name!=''">
+     and t1.name like CONCAT('%',#{params.name} ,'%') 
+    </if>
+  </select>
+  
+  <!-- 获取系统词库列表  有分页 start -->
+  <select id="getSystemWordsList" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.SystemWordsModel">
+    select 
+      t1.id,
+      t1.name,
+      t2.name as websiteName 
+    from 
+      system_words t1 
+    left join website_classify t2 on t1.website_classify_id = t2.id 
+    where 
+      t1.delete_time is null 
+    and t1.org_id = #{params.orgId} 
+    <if test="params.name!=null and params.name!=''">
+     and t1.name like CONCAT('%',#{params.name} ,'%') 
+    </if>
+    order by t1.update_date desc 
+    limit #{begin},#{num} 
+  </select>
+  
+  <!-- 获取系统词库列表  无分页 start -->
+  <select id="getWordsList" parameterType="java.lang.Integer" resultType="com.softtek.mdm.bean.WordsBean">
+    select 
+      t1.id,
+      t1.name,
+      t2.id as type  
+    from 
+      system_words t1 
+    left join website_classify t2 on t1.website_classify_id = t2.id 
+    where 
+      t1.delete_time is null 
+    and t1.org_id = #{orgId}  
+    order by t1.update_date desc 
+  </select>
+  
+  <!-- 根据id删除系统词库 -->
+  <update id="deleteSystemWordsById" parameterType="com.softtek.mdm.model.SystemWordsModel" >
+    update system_words
+    set delete_time = now()  
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据系统词库名称获取策略  start -->
+  <select id="selectWordsyByName" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">
+    select 
+      count(t1.id) 
+    from system_words t1 
+    where 
+      t1.delete_time is null 
+    and t1.name = #{params.name} 
+    and t1.org_id =  #{params.orgId} 
+     <if test="params.id != null and params.id !=''">
+      and t1.id != #{params.id} 
+      </if>
+  </select>
+  <!-- 根据系统词库名称获取策略  end -->
+</mapper>

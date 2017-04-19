@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao2.T_QB_RY_ZTRYJBXXDao">
+	
+	<resultMap type="com.hd.pfirs.model.T_QB_RY_ZTRYJBXX" id="T_QB_RY_ZTRYJBXXModelMap">
+		<result column="XM" property="xm" />
+		<result column="XB" property="xb" />
+		<result column="YSFZH" property="ysfzh" />
+		<result column="AJLBDM" property="ajlbdm" />
+		<result column="context" property="context" />
+	</resultMap>
+	
+	<resultMap type="com.hd.pfirs.model.FaceComResult" id="FaceComResultMap">
+		<result column="faceCode" property="faceCode" />
+		<result column="ctrlBaseID" property="ctrlBaseID" />
+		<result column="similarity" property="similarity" />
+	</resultMap>
+	
+	<select id="getT_QB_RY_ZTRYJBXX" resultMap="T_QB_RY_ZTRYJBXXModelMap">
+			select
+		    a.ID,
+			a.XM,
+			a.XB,
+			a.YSFZH,
+			a.AJLBDM,
+    		b.similarity
+		from T_QB_RY_ZTRYJBXX a,T_PP_FACECOMPRESULT b
+    	where a.ID = b.CtrlBaseID
+<!--         and facecode = #{faceCode} -->
+        and rownum = 1
+        order by b.similarity desc
+	</select>
+	
+	<select id="getJiKong" parameterType="long" resultMap="T_QB_RY_ZTRYJBXXModelMap">
+	  select 
+		a.XM,
+		a.XB,
+		a.YSFZH,
+		a.AJLBDM
+		from T_QB_RY_ZTRYJBXX a,T_PP_FACECOMPRESULT b
+    	where a.ID = b.CtrlBaseID
+      	and b.cardcode=#{cardCode}
+    	and rownum=1 order by b.similarity desc
+	</select>
+	
+	<select id="getIdCardInfoWarn" parameterType="String" resultMap="T_QB_RY_ZTRYJBXXModelMap">
+     select 
+		a.XM,
+		a.XB,
+		a.YSFZH,
+		a.AJLBDM,
+		ajlx.context
+		from T_QB_RY_ZTRYJBXX a,ZaiTaoAJLX ajlx
+	 where a.ajbh = ajlx.code
+      	   and a.ysfzh=#{cardCode}
+	</select>
+</mapper>

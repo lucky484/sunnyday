@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.softtek.mdm.dao.ClientConfigDao">
+	    <resultMap id="clientConfigMap" type="ClientConfig">
+	       <id property="id" column="id" />
+	       <result property="terminalUnbundEnable" column="terminal_unbund_enable" />
+	       <result property="serviceSettingHide" column="service_setting_hide" />
+	       <result property="deviceInfoHide" column="device_info_hide" />
+	    </resultMap>
+	    <select id="queryClientConfig" resultMap="clientConfigMap" parameterType="int">
+	        select id,terminal_unbund_enable,service_setting_hide,device_info_hide from client_config where org_id = #{orgId} limit 1
+	    </select>
+	    <insert id="insertClientConfig" parameterType="ClientConfig" keyProperty="id" useGeneratedKeys="true">
+	        insert into client_config(
+	                    org_id,
+	                    terminal_unbund_enable,
+	                    service_setting_hide,
+	                    device_info_hide,
+	                    create_by,
+	                    create_time,
+	                    update_by,
+	                    update_time
+	                    )values(
+	                    #{orgId},
+	                    #{terminalUnbundEnable},
+	                    #{serviceSettingHide},
+	                    #{deviceInfoHide},
+	                    #{createBy},
+	                    now(),
+	                    #{updateBy},
+	                    now()
+	                    )
+	    </insert>
+	    <update id="updateClientConfig" parameterType="ClientConfig">
+	        update client_config set terminal_unbund_enable = #{terminalUnbundEnable},service_setting_hide = #{serviceSettingHide},device_info_hide = #{deviceInfoHide},update_time = now(),
+	        update_by = #{updateBy} where id = #{id}
+	    </update>
+	</mapper>

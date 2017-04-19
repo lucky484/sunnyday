@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ProjectManagerDao">
+    <resultMap type="com.softtek.pst.model.ProjectManagerModel" id="ProjectManagerMap">
+		<id column="project_manager_id" property="projectManagerId" />
+		<result column="name" property="name" />
+		<result column="email" property="email" />
+		<result column="phone" property="phone" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator_id" property="creatorId" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	<sql id="projectManagerColumn">
+	    select project_manager_id,name,phone,email,create_time,update_time,creator_id,update_by from project_manager
+	</sql>
+	<select id="getProjectManagerLists" resultMap="ProjectManagerMap">
+	    <include refid="projectManagerColumn" />
+	    where delete_time is null
+		and (name LIKE #{sch}
+		or email LIKE #{sch}
+		or phone LIKE #{sch})
+	    order by ${col} ${dir}
+	    limit #{start},#{length}
+	</select>
+	<select id="getProjectManagerCount" resultType="int" parameterType="String">
+	   select count(1) from project_manager where delete_time is null and (name LIKE #{sch} or email LIKE #{sch} or phone LIKE #{sch})
+	</select>
+	<insert id="addProjectManager" parameterType="ProjectManagerModel" keyProperty="projectManagerId" useGeneratedKeys="true">
+	    insert into project_manager
+	    (
+	     name,
+	     email,
+	     phone,
+	     create_time,
+	     update_time,
+	     creator_id,
+	     update_by
+	    )values(
+	     #{name},
+	     #{email},
+	     #{phone},
+	     CURRENT_TIMESTAMP,
+	     CURRENT_TIMESTAMP,
+	     #{creatorId},
+	     #{updateBy}
+	    )
+	</insert>
+	<select id="queryDetailById" resultMap="ProjectManagerMap" parameterType="long">
+	     <include refid="projectManagerColumn" />
+	      where project_manager_id = #{id}
+	</select>
+	<update id="updateProjectManager" parameterType="ProjectManagerModel">
+	    update project_manager set name = #{name},email = #{email},phone = #{phone},update_time = CURRENT_TIMESTAMP,update_by = #{updateBy} where project_manager_id = #{projectManagerId}
+	</update>
+	<update id="deleteProjectManager" parameterType="long">
+	    update project_manager set delete_time = CURRENT_TIMESTAMP,update_by = #{updateBy} where project_manager_id = #{id}
+	</update>
+	<select id="getProjectManagerListsExport" resultMap="ProjectManagerMap">
+	    <include refid="projectManagerColumn" />
+	    where delete_time is null
+		and (name LIKE #{search}
+		or email LIKE #{search}
+		or phone LIKE #{search})
+	</select>
+	<select id="queryAllProjectManager" resultMap="ProjectManagerMap">
+	    select project_manager_id,name from project_manager where delete_time is null
+	</select>
+</mapper>

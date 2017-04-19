@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceRuleDepartmentDao">
+	
+	<resultMap type="DeviceRuleDepartment" id="DeviceRuleDepartmentMap">
+		<id property="id" column="id"/>
+		<association property="deviceRule" javaType="DeviceRule">
+			<id property="id" column="device_rule_id"/>
+		</association>
+		<association property="structure" javaType="Structure">
+			<id property="id" column="structure_id"/>
+			<id property="name" column="name"/>
+			
+		</association>
+	</resultMap>
+	
+	<insert id="save" parameterType="DeviceRuleDepartment">
+		INSERT INTO device_rule_department(id,device_rule_id,structure_id)
+		VALUES(#{id},#{deviceRule.id},#{structure.id})
+	</insert>
+	
+	<select id="findAllByRuleId" parameterType="java.lang.Integer" resultMap="DeviceRuleDepartmentMap">
+		SELECT device_rule_department.id,device_rule_id,structure_id,org_structure.name
+		FROM device_rule_department
+		LEFT JOIN org_structure
+		ON device_rule_department.structure_id=org_structure.id
+		WHERE device_rule_id=#{rid}
+	</select>
+	
+	<delete id="truncateWithRuleId" parameterType="java.lang.Integer">
+		DELETE FROM device_rule_department
+		WHERE device_rule_id=#{rid}
+	</delete>
+	
+	<!-- 批量保存规则到部门 -->
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO device_rule_department(device_rule_id,structure_id)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.deviceRule.id},#{item.structure.id})
+		</foreach>
+	</insert>
+</mapper>

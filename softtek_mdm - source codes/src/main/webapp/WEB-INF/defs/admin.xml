@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<!-- 超级管理员的机构管理页面 -->
+	<definition name="admin/index/organization/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.institution.home.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/index/organization/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/index/organization/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/index/organization/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/index/organization/index_script.jsp" />
+	</definition>
+	<!-- 超级管理员的管理员管理页面 -->
+	<definition name="admin/index/manager/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.institution.home.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/index/manager/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/index/manager/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/index/manager/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/index/manager/index_script.jsp" />
+	</definition>
+	
+	<definition name="admin/personal/basic/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.institution.home.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/personal/basic/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/personal/basic/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/personal/basic/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/personal/basic/index_script.jsp" />
+	</definition>
+	
+	<definition name="admin/personal/password/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.institution.home.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/personal/password/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/personal/password/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/personal/password/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/personal/password/index_script.jsp" />
+	</definition>
+	
+	<!-- 超级管理员数据备份的设置页面 -->
+	<definition name="admin/backup/setting/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.institution.home.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/backup/setting/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/backup/setting/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/backup/setting/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/backup/setting/index_script.jsp" />
+	</definition>
+	<!-- 超级管理员的数据备份的管理页面 -->
+	<definition name="admin/backup/manage/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.institution.home.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/backup/manage/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/backup/manage/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/backup/manage/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/backup/manage/index_script.jsp" />
+	</definition>
+	
+	<!-- 超级管理员的lisence的管理页面 -->
+	<definition name="system/lisence/manager/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.admin.license.manager.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/sysmanager/lisence/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/sysmanager/lisence/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/sysmanager/lisence/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/sysmanager/lisence/index_script.jsp" />
+	</definition>
+	
+	<!-- 操作日志 -->
+	<definition name="admin/sysmanageLog/index" extends="admin_layout">
+		<put-attribute name="title" value="defes.application.systemLog.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/operateLog/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/operateLog/index_script.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/operateLog/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/operateLog/index_style.jsp" />
+	</definition>
+	
+	<!-- 设备日志 -->
+	<definition name="admin/deviceLog/index" extends="admin_layout">
+		<put-attribute name="title" value="defes.application.deviceLog.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/deviceLog/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/deviceLog/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/deviceLog/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/deviceLog/index_modal.jsp" />
+	</definition>
+	
+	<!-- 安全事件日志 -->
+	<definition name="admin/securityLog/index" extends="admin_layout">
+		<put-attribute name="title" value="defes.application.deviceLog.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/securityLog/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/securityLog/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/securityLog/index_style.jsp" />
+<!-- 		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/securityLog/index_modal.jsp" /> -->
+	</definition>
+	
+	<!-- 超级管理员的lisence的管理页面 -->
+	<definition name="system/param/manager/index" extends="admin_layout">
+		<put-attribute name="title" value="defs.admin.sysparam.manager.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/sysmanager/sysparamset/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/sysmanager/sysparamset/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/sysmanager/sysparamset/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/sysmanager/sysparamset/index_script.jsp" />
+	</definition>
+	<!-- 客户端管理 -->
+	<definition name="admin/clientManager/index" extends="admin_layout">
+		<put-attribute name="title" value="defes.client.config.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/admin/clientManager/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/admin/clientManager/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/admin/clientManager/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/admin/clientManager/index_modal.jsp" />
+	</definition>
+</tiles-definitions>

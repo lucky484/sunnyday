@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.RoleDao">
+	<resultMap type="role" id="roleMap">
+		<id column="role_id" property="roleId" />
+		<result column="role_name" property="roleName" />
+		<result column="role_description" property="roleDescription" />
+		<collection property="users" javaType="ArrayList" column="role_id"
+			ofType="userModel" select="com.softtek.pst.dao.UserDao.getUsersByRole" />
+		<collection property="roleAuthorities" javaType="ArrayList" column="role_id"
+			ofType="roleAuthority" select="com.softtek.pst.dao.RoleAuthorityDao.getAuthoritiesByRole" />
+	</resultMap>
+	<resultMap type="role" id="roleMap2">
+		<id column="role_id" property="roleId" />
+		<result column="role_name" property="roleName" />
+		<result column="role_description" property="roleDescription" />
+	</resultMap>
+
+	<sql id="roleSql">
+		select
+		role_id,role_name,role_description from role
+	</sql>
+	
+	<select id="getRole" resultMap="roleMap2">
+		<include refid="roleSql" />
+	</select>
+
+	<select id="getRoleById" parameterType="long" resultMap="roleMap">
+		<include refid="roleSql" />
+		where role_id=#{roleId}
+	</select>
+	<select id="getRoleById2" parameterType="long" resultMap="roleMap2">
+		<include refid="roleSql" />
+		where role_id=#{roleId}
+	</select>
+</mapper>

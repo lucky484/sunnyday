@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.UserRoleDepartmentDao">
+	
+	<resultMap type="UserRoleDepartment" id="UserRoleDepartmentMap">
+		<id property="id" column="id"/>
+		<result property="islock" column="islock"/>
+		<result property="mark" column="mark"/>
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id"/>
+		</association>
+		<association property="user" javaType="User">
+			<id property="id" column="user_id"/>
+		</association>
+		<association property="role" javaType="Role">
+			<id property="id" column="role_id"/>
+		</association>
+	</resultMap>
+	<insert id="save" parameterType="UserRoleDepartment" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO user_role_department(org_id,user_id,role_id,mark,islock,create_time,update_time,delete_time,create_by,update_by)
+		VALUES(#{organization.id},#{user.id},#{role.id},#{mark},0,NOW(),NOW(),null,null,null)
+	</insert>
+	
+	<delete id="truncateWithPk" parameterType="java.lang.Integer">
+		DELETE FROM user_role_department
+		WHERE id=#{id}
+	</delete>
+	
+	<select id="findByUserId" parameterType="java.lang.Integer" resultType="UserRoleDepartment">
+		SELECT id
+		FROM user_role_department
+		WHERE user_id=#{id}
+		LIMIT 1
+	</select>
+	
+	<select id="findOrdIdByUid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT id
+		FROM user_role_department
+		WHERE user_id=#{id}
+		LIMIT 1
+	</select>
+	
+	<select id="findOneByMaps" resultMap="UserRoleDepartmentMap">
+		SELECT id,org_id,user_id,role_id,mark,islock
+		FROM user_role_department
+		WHERE org_id=#{orgId}
+		AND user_id=#{userId}
+		LIMIT 1
+	</select>
+	<select id="findWithRoleId" parameterType="java.lang.Integer" resultType="UserRoleDepartment">
+		SELECT id
+		FROM user_role_department
+		WHERE role_id=#{roleId}
+	</select>
+</mapper>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.UserAppDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.UserApp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, app_id, state, create_date, create_user, update_date, update_user, delete_time
+  </sql>
+  
+  <!-- 根据主键查询用户绑定APP -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_app
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除用户绑定APP -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_app
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 新增用户绑定APP -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.UserApp" >
+    insert into user_app (id, user_id, app_id, 
+      state, create_date, create_user, 
+      update_date, update_user, delete_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{appId,jdbcType=INTEGER}, 
+      #{state,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 新增可选的用户绑定数据 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.UserApp" useGeneratedKeys="true" keyProperty="id">
+    insert into user_app
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的用户绑定数据 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.UserApp" >
+    update user_app
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新用户绑定数据 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.UserApp" >
+    update user_app
+    set user_id = #{userId,jdbcType=INTEGER},
+      app_id = #{appId,jdbcType=INTEGER},
+      state = #{state,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据用户ID删除相关数据  -->
+  <update id="removeUserAppBinding" parameterType="com.softtek.mdm.util.DataGridModel" >
+    update user_app
+    set delete_time = now() 
+    where delete_time is null 
+    and user_id = #{params.userId} 
+    and app_id = #{params.appId} 
+  </update>
+  
+  <!-- 根据用户id和应用id确定是否存在绑定关系 -->
+  <select id="selectUserAppSizeById" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">
+     select 
+       count(t1.id) 
+     from user_app t1 
+     where t1.delete_time is null 
+    and t1.user_id = #{params.userId} 
+    and t1.app_id = #{params.appId} 
+  </select>
+  
+  <!-- 根据应用id获取用户ids -->
+  <select id="selectUserIdsByAppId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select 
+      t1.user_id as userId 
+    from user_app t1 
+    where t1.app_id = #{appId} 
+    and t1.state = 1 
+    and t1.delete_time is null 
+  </select>
+</mapper>

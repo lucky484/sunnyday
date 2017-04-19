@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ProjectFinancialDao">
+    <resultMap id="ProjectFinancialMap" type="com.softtek.pst.model.ProjectFinancialModel">
+        <id column="project_financial_id" property="projectFinancialId" />
+        <result column="project_id" property="projectId" />
+        <result column="receive" property="receive" />
+        <result column="payment" property="payment" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    <sql id="projectFinancialColumns">
+        select project_financial_id,project_id,receive,payment,remark,create_time,update_time from project_financial 
+    </sql>
+    <insert id="addProjectFinancial" parameterType="ProjectFinancialModel" useGeneratedKeys="true" keyProperty="projectFinancialId">
+        insert into project_financial(
+           project_id,
+           receive,
+           payment,
+           remark,
+           create_time,
+           update_time      
+        )values(
+           #{projectId},
+           #{receive},
+           #{payment},
+           #{remark},
+           CURRENT_TIMESTAMP,
+           CURRENT_TIMESTAMP
+        )
+    </insert>
+    <select id="queryFinancialReceive" resultMap="ProjectFinancialMap" parameterType="int">
+         <include refid="projectFinancialColumns" />
+         where delete_time is null and project_id = #{peojectId} and payment = 0
+    </select>
+     <select id="queryFinancialPayment" resultMap="ProjectFinancialMap" parameterType="int">
+         <include refid="projectFinancialColumns" />
+         where delete_time is null and project_id = #{peojectId} and receive = 0
+    </select>
+</mapper>

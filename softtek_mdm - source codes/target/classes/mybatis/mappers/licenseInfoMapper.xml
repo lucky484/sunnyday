@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.LicenseDao">
+	<select id="queryLicenseInfo" resultType="LicenseInfoModel">
+		SELECT id,adviceDays,activeCode,machineFilePath,privateKey,licenceFileBytes FROM license_info LIMIT 1
+	</select>
+	
+	<update id="updateLicenseInfo" parameterType="LicenseInfoModel">
+		update license_info set 
+			<if test="activeCode!='' and activeCode!=null">
+				activeCode=#{activeCode},
+			</if>
+			<if test="machineFilePath!='' and machineFilePath!=null">
+				machineFilePath=#{machineFilePath},
+			</if>
+			<if test="privateKey!='' and privateKey!=null">
+				privateKey=#{privateKey},
+			</if>
+			licenceFileBytes=#{licenceFileBytes},
+			adviceDays = #{adviceDays}
+			where id = 1
+	</update>
+	
+	<insert id="addLicenseInfoModel" parameterType="LicenseInfoModel">
+		insert into license_info values(1,#{adviceDays},#{activeCode},#{machineFilePath},#{privateKey},#{licenceFileBytes})
+	</insert>
+	
+	<select id="queryOrgsLimit" resultType="int">
+		select MAX(totalLimit-total) from 
+			(select SUM(license_count) as totalLimit 
+				from organization 
+					where id in
+						<foreach item="item" index="index" collection="list" open="("
+							separator="," close=")">
+							#{item}
+						</foreach>) a,
+			(select count(0) as total 
+				from users 
+					where org_id in
+						<foreach item="item" index="index" collection="list" open="("
+							separator="," close=")">
+							#{item}
+						</foreach>and delete_time is null and is_active=1) b
+	</select>
+</mapper>

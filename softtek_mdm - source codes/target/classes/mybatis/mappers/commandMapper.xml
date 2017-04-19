@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.CommandDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.Command" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+    <result column="command" property="command" jdbcType="VARCHAR" />
+    <result column="command_id" property="commandId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="doIt" property="doit" jdbcType="CHAR" />
+    <result column="result" property="result" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, device_id, command, command_id, type, doIt, result, class_name, create_date, create_user, update_date, update_user, delete_time
+  </sql>
+  
+  <!-- 根据主键查询操作命令表数据 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from command
+    where id = #{id,jdbcType=VARCHAR} 
+    and delete_time is null 
+  </select>
+  
+  <!-- 根据主键删除操作命令表数据 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from command
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <!-- 插入操作命令表数据 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.Command" >
+    insert into command (id, device_id, command, doIt, command_id,
+     type, result, class_name, create_date, create_user, update_date, update_user, delete_time)
+    values (#{id,jdbcType=VARCHAR}, #{deviceId,jdbcType=VARCHAR}, #{command,jdbcType=VARCHAR},#{commandId,jdbcType=INTEGER}, 
+     #{type,jdbcType=VARCHAR}, #{doit,jdbcType=CHAR}, #{result,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+     #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER},
+     #{deleteTime,jdbcType=TIMESTAMP}) 
+  </insert>
+  
+  <!-- 插入可选的操作命令表数据 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.Command">
+    insert into command
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="deviceId != null" >
+        device_id,
+      </if>
+      <if test="command != null" >
+        command,
+      </if>
+      <if test="commandId != null" >
+        command_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="doit != null" >
+        doIt,
+      </if>
+      <if test="result != null" >
+        result,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null" >
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="command != null" >
+        #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="commandId != null" >
+        #{commandId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="doit != null" >
+        #{doit,jdbcType=CHAR},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的操作命令表数据 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.Command" >
+    update command
+    <set >
+      <if test="deviceId != null" >
+        device_id = #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="command != null" >
+        command = #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="commandId != null" >
+        command_id = #{commandId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="doit != null" >
+        doIt = #{doit,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null" >
+        result = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 根据主键更新操作命令表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.Command" >
+    update command
+    set device_id = #{deviceId,jdbcType=VARCHAR},
+      command = #{command,jdbcType=VARCHAR},
+      command_id = #{commandId,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      doIt = #{doit,jdbcType=VARCHAR},
+      result = #{result,jdbcType=CHAR},
+      class_name = #{className,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+    
+  <!-- 根据设备id获取设备 -->
+  <select id="selectCommandByUdid" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    from command  
+    where device_id = #{udid}  
+    and doIt = 0   
+    and delete_time is null 
+    order by update_date ASC   
+  </select>
+  
+  <!-- 获取指令列表 -->
+  <select id="selectCommandList" resultType="java.lang.String">
+  	SELECT 
+      device_id 
+    FROM command  
+    WHERE doIt= 0 
+    AND ISNULL(delete_time) 
+    ORDER BY create_date ASC 
+  </select>	
+  
+  <!-- 新增或者修改命令表 -->
+  <insert id="mergeIntoCommand" useGeneratedKeys="true">  
+    REPLACE INTO command   
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="deviceId != null" >
+        device_id,
+      </if>
+      <if test="command != null" >
+        command,
+      </if>
+      <if test="doit != null" >
+        doIt,
+      </if>
+      <if test="result != null" >
+        result,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceId != null" >
+        #{deviceId,jdbcType=VARCHAR},
+      </if>
+      <if test="command != null" >
+        #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="doit != null" >
+        #{doit,jdbcType=CHAR},
+      </if>
+      <if test="result != null" >
+        #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+</insert>
+
+  <!-- 批量插入命令表数据 -->
+  <insert id="insertBatchCommand" parameterType="java.util.List">
+    insert into command     
+    (id,device_id,command,command_id,doIt,result,class_name,type,create_date,create_user,update_date,update_user) 
+    values 
+    <foreach collection="list" item="item" index="index" separator=","> 
+     (#{item.id},#{item.deviceId},#{item.command},#{item.commandId},#{item.doit},#{item.result},#{item.className},#{item.type},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser})  
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,146 @@
+body {
+}
+
+.mod_navbar {
+    background: #f9f9f7;
+    border-bottom: 1px solid #e1e1e1;
+    -webkit-box-shadow: 1px 0 3px #eee, inset 0 0 3px #fff;
+    box-shadow: 1px 0 3px #eee, inset 0 0 3px #fff;
+    padding: 8px 28px 0 14px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+}
+
+.mod_navbar:before, .mod_navbar:after {
+    content: " ";
+    display: table;
+}
+
+.mod_navbar:after {
+    clear: both;
+}
+
+.mod_navbar .title {
+    float: left;
+    color: #d84c31;
+    white-space: nowrap;
+    padding: 6px 0 10px;
+    font-size: 20px;
+}
+
+.mod_navbar .title h3 {
+    display: inline;
+    min-width: 100px;
+    margin: 0 0 0 10px;
+    font-size: 20px;
+}
+
+.mod_navbar + div, .dataTables_wrapper {
+    position: relative;
+    top: 47px;
+}
+
+.dataTables_wrapper .kkk {
+}
+
+.dataTables_wrapper .kkk .frame_container {
+    height: 500px;
+}
+
+.frame_container {
+    margin: 10px;
+    padding: 2px;
+    border: solid 1px #e1e1e1;
+    background: #fefefe;
+    -webkit-box-shadow: 0 0 3px #eee, inset 0 0 3px #fff;
+    box-shadow: 0 0 3px #eee, inset 0 0 3px #fff;
+}
+
+table.table-my {
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.mod_foot {
+    background: #fefefe;
+    -webkit-box-shadow: 1px 0 3px #eee, inset 0 0 3px #fff;
+    box-shadow: 1px 0 3px #eee, inset 0 0 3px #fff;
+    padding: 0 14px;
+    margin-top: 10px;
+    line-height: 44px;
+    /*position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;*/
+}
+
+.mod_foot:before, .mod_foot:after {
+    content: " ";
+    display: table;
+}
+
+.mod_foot:after {
+    clear: both;
+}
+
+.mod_foot .pagination {
+    margin: 4px 0;
+}
+
+/* modal-dialog */
+
+.modal-vt {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: none;
+}
+
+.modal-vt .modal-content {
+    height: 100%;
+    border: none;
+    border-radius: 0;
+}
+
+.modal-vt .modal-body {
+    position: absolute;
+    padding: 0;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 70px;
+    overflow-y: scroll;
+}
+
+.modal-vt .modal-footer {
+    margin: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* /.modal-dialog */
+
+.dataTables_length {
+    width: 200px;
+}
+
+.dataTables_length label{
+    margin-bottom: 0;
+}
+
+.dataTables_processing {
+    background: #090909;
+    position: fixed;
+    width: 20%;
+    left: 40%;
+    top: 40%;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    color: #FFF;
+}

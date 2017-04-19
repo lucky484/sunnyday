@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.FaceInfoDao">
+	<resultMap type="com.hd.pfirs.model.FaceInfo" id="faceInfoModelMap">
+		<id column="FaceId" property="faceId" />
+		<result column="FaceCode" property="faceCode" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="CollectTimeStamp" property="collectTimeStamp" />
+		<result column="FrontSaveTime" property="frontSaveTime" />
+		<result column="FrontSaveTimeStamp" property="frontSaveTimeStamp" />
+		<result column="FrontRelayTime" property="frontRelayTime" />
+		<result column="FrontRelayTimeStamp" property="frontRelayTimeStamp" />
+		<result column="TogthSaveTime" property="togthSaveTime" />
+		<result column="TogthSaveTimeStamp" property="togthSaveTimeStamp" />
+		<result column="RelayTime" property="relayTime" />
+		<result column="RelayTimeStamp" property="relayTimeStamp" />
+		<result column="RelayFlag" property="relayFlag" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="RegionCode" property="regionCode" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="GroupCode" property="groupCode" />
+		<result column="CollectPic" property="collectPic" />
+		<result column="PicType" property="picType" />
+		<result column="PicNo" property="picNo" />
+		<result column="isLast" property="isLast" />
+		<result column="Direction" property="direction" />
+		<result column="Speed" property="speed" />
+		<result column="Size" property="size" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />		
+		<result column="UpdateTime" property="updateTime" />
+	</resultMap>	
+
+	<insert id="saveFaceInfo">
+	insert into T_PP_FaceInfo (
+		FaceId,
+		FaceCode,
+		CollectTimeStamp,
+		CollectTime,
+		RelayFlag,
+		GroupCode,
+		CollectPic,
+		PicType,
+		PicNo,
+		isLast,
+		Direction,
+		Speed,
+		DeleteStatus,
+		CollectSite,
+		CreateName,
+		CreateTime,
+		DeviceCode)
+ 		values(
+ 			#{faceId, jdbcType=BIGINT},
+	 		#{faceCode, jdbcType=VARCHAR},
+			#{collectTimeStamp, jdbcType=VARCHAR},
+			#{collectTime, jdbcType=DATE},
+			'0',
+			#{groupCode, jdbcType=VARCHAR},
+			#{collectPic, jdbcType=BLOB},
+			#{picType, jdbcType=VARCHAR},
+			#{picNo, jdbcType=VARCHAR},
+			#{isLast, jdbcType=VARCHAR},
+			#{direction, jdbcType=VARCHAR},
+			#{speed, jdbcType=VARCHAR},
+			#{deleteStatus, jdbcType=VARCHAR},
+			#{collectSite, jdbcType=VARCHAR},
+			'system',
+	 		sysdate,
+	 		#{deviceCode, jdbcType=VARCHAR}
+ 		)
+	</insert>
+	
+	<update id="updateFaceInfo">
+		update t_pp_faceInfo 
+		set RelayFlag = #{relayFlag}
+		<if test="relayDate!=null">
+		 	,RelayTime = sysdate
+		</if>
+		<if test="updateTime!=null">
+		 	,UpdateTime = sysdate
+		</if>
+		where FaceID = #{faceId}
+	</update>
+	
+	
+		<!-- 计算多少张采集到的照片 -->
+		<!-- select count(0) as faceInfoNum 
+		from T_PP_FaceInfo 
+		where to_char(CreateTime, 'yyyy-mm-dd')=#{time} -->
+	<select id = "getFaceInfoCountByTime" parameterType="string" resultType="int">
+		select count(0) as faceInfoNum from (
+	      select groupcode from t_pp_faceinfo where to_char(CreateTime, 'yyyy-mm-dd')=#{time} and deviceCode=#{deviceCode} group by groupcode
+	    )
+	</select>
+	
+	
+	
+</mapper>

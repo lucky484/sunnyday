@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.TokenUpdateInfoDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.TokenUpdateInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="push_magic" property="pushMagic" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="topic" property="topic" jdbcType="VARCHAR" />
+    <result column="udid" property="udid" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="is_profile" property="isProfile" jdbcType="INTEGER" />
+    <result column="payload_identifier" property="payloadIdentifier" jdbcType="VARCHAR" />
+    <result column="unlock_token" property="unlockToken" jdbcType="VARCHAR" />
+    <result column="ios_uuid" property="iosUuid" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+    <result column="uuid" property="uuid" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.softtek.mdm.model.TokenUpdateInfo" extends="BaseResultMap" >
+    <result column="unlock_token" property="unlockToken" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, push_magic, token, topic, udid, user_id, is_profile,payload_identifier,unlock_token, ios_uuid,create_date, create_user, update_date, update_user, 
+    delete_time, uuid 
+  </sql>
+  <sql id="Blob_Column_List" >
+    unlock_token
+  </sql>
+  
+  <!-- 根据主键查询Token表 -->
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from token_update_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除Token表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from token_update_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入更新表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.TokenUpdateInfo" >
+    insert into token_update_info (id, push_magic, token, 
+      topic, udid, user_id, create_date, 
+      create_user, update_date, update_user, 
+      delete_time, unlock_token, uuid)
+    values (#{id,jdbcType=INTEGER}, #{pushMagic,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, 
+      #{topic,jdbcType=VARCHAR}, #{udid,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+      #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP},
+      #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP}, #{unlockToken,jdbcType=LONGVARCHAR}, #{uuid,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 插入可选的Token表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.TokenUpdateInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into token_update_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pushMagic != null" >
+        push_magic,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="topic != null" >
+        topic,
+      </if>
+      <if test="udid != null" >
+        udid,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="payloadIdentifier != null" >
+        payload_identifier,
+      </if>
+      <if test="isProfile != null" >
+        is_profile,
+      </if>
+      <if test="iosUuid != null" >
+        ios_uuid,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+      <if test="unlockToken != null" >
+        unlock_token,
+      </if>
+      <if test="uuid != null" >
+        uuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pushMagic != null" >
+        #{pushMagic,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="topic != null" >
+        #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="udid != null" >
+        #{udid,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="payloadIdentifier != null" >
+        #{payloadIdentifier,jdbcType=VARCHAR},
+      </if>
+      <if test="isProfile != null" >
+        #{isProfile,jdbcType=INTEGER},
+      </if>
+      <if test="iosUuid != null" >
+        #{iosUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="unlockToken != null" >
+        #{unlockToken,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的Token表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.TokenUpdateInfo" >
+    update token_update_info
+    <set >
+      <if test="pushMagic != null" >
+        push_magic = #{pushMagic,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="topic != null" >
+        topic = #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="udid != null" >
+        udid = #{udid,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        is_profile = #{isProfile,jdbcType=INTEGER},
+      </if>
+      <if test="payloadIdentifier != null" >
+        payload_identifier = #{payloadIdentifier,jdbcType=VARCHAR},
+      </if>
+      <if test="iosUuid != null" >
+        ios_uuid = #{iosUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="unlockToken != null" >
+        unlock_token = #{unlockToken,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="uuid != null" >
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新可选的Token表 -->
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.softtek.mdm.model.TokenUpdateInfo" >
+    update token_update_info
+    set push_magic = #{pushMagic,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      topic = #{topic,jdbcType=VARCHAR},
+      udid = #{udid,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      payload_identifier = #{payloadIdentifier,jdbcType=VARCHAR},
+      ios_uuid = #{iosUuid,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      unlock_token = #{unlockToken,jdbcType=LONGVARCHAR}
+      uuid = #{uuid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.TokenUpdateInfo" >
+    update token_update_info
+    set push_magic = #{pushMagic,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      topic = #{topic,jdbcType=VARCHAR},
+      udid = #{udid,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      payload_identifier = #{payloadIdentifier,jdbcType=VARCHAR},
+      ios_uuid = #{iosUuid,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      uuid = #{uuid,jdbcType=TIMESTAMP},
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据设备id获取设备 -->
+  <select id="selectTokenInfoByUdid" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    from token_update_info 
+    where udid = #{udid}  
+    and delete_time is null 
+  </select>
+  
+    <!-- 根据设备id获取设备 -->
+  <select id="selectTokenUpdateInfos" resultMap="BaseResultMap" parameterType="java.util.List">
+    select 
+    <include refid="Base_Column_List" />
+    from token_update_info 
+    where delete_time is null  
+    and udid in 
+    <foreach close=")" collection="list" index="index" item="item" open="(" separator=",">
+        #{item}
+  	</foreach>   
+  </select>
+  
+  <!-- 根据用户列表获取TokenInfo -->
+  <select id="selectTokenInfoByUserList" resultMap="BaseResultMap" parameterType="java.util.List">
+    select 
+    <include refid="Base_Column_List" />
+    from token_update_info 
+    where delete_time is null 
+    and user_id in 
+  	 <foreach close=")" collection="list" index="index" item="item" open="(" separator=",">
+        #{item}
+  	</foreach> 
+  </select>
+  <select id="queryTokenInfoByUser" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List" /> from token_update_info where delete_time is null and udid = #{udid} and user_id = #{userId}
+  </select>
+  <select id="queryTokenInfoByUdidList" resultMap="BaseResultMap" parameterType="java.util.List">
+      select 
+    <include refid="Base_Column_List" />
+    from token_update_info 
+    where udid in 
+    <foreach close=")" collection="list" item="item" open="(" separator=",">
+        #{item}
+  	</foreach>   
+    and delete_time is null 
+  </select>
+  <select id="queryIsProfileByIosUuid" resultMap="BaseResultMap" parameterType="String">
+      select
+        <include refid="Base_Column_List" />
+       from token_update_info
+       where delete_time is null
+       and ios_uuid = #{iosUuid}
+  </select>
+  <update id="deleteTokenUpdateInfoByUdid" parameterType="String">
+      update token_update_info set update_date = now(),delete_time = now() where udid = #{udid}
+  </update>
+  
+  <update id="deleteTokenUpdateInfoByUuid" parameterType="String">
+      update token_update_info set update_date = now(),delete_time = now() where ios_uuid = #{iosUuid}
+  </update>
+</mapper>

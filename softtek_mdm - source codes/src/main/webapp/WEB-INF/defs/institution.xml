@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<!-- 这个是主页，最后修改页面，现在是静态的用户管理home页面 -->
+	<definition name="institution/home/index" extends="institution_layout">
+		<put-attribute name="title" value="defs.institution.home.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/index/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/index/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/index/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/index/index_script.jsp" />
+	</definition>
+	
+	<definition name="institution/org/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.institution.org.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/org/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/org/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/org/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/org/index_script.jsp" />
+	</definition>
+	
+	<definition name="institution/vtl/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.institution.vtl.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/vtl/group/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/vtl/group/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/vtl/group/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/vtl/group/index_script.jsp" />
+	</definition>
+	
+	
+	<definition name="institution/vtl/member" extends="institution_layout">
+		<put-attribute name="title" value="defes.institution.vtl.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/vtl/member/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/vtl/member/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/vtl/member/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/vtl/member/index_script.jsp" />
+	</definition>
+	<definition name="institution/dptmanager/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.institution.dptmanager.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/departmentManager/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/departmentManager/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/departmentManager/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/departmentManager/index_script.jsp" />
+	</definition>
+	
+	<definition name="institution/user/index" extends="institution_layout">
+		<put-attribute name="title" value="defs.institution.user.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/user/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/user/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/user/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/user/index_script.jsp" />
+	</definition>
+	
+	<definition name="institution/policy/index" extends="institution_layout">
+		<put-attribute name="title" value="tiles.institution.policy.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/policy/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/policy/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/policy/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/policy/index_script.jsp" />
+	</definition>
+	<!-- 设备管理-设备策略 -->
+	<definition name="institution/device/policy/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.device.policy.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/device/policy/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/device/policy/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/device/policy/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/device/policy/index_script.jsp" />
+	</definition>
+	<definition name="institution/departmentPolicy/index" extends="institution_layout">
+		<put-attribute name="title" value="tiles.institution.deparment.policy"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/departmentPolicy/index.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/departmentPolicy/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/departmentPolicy/index_script.jsp" />
+	</definition>
+	
+	<definition name="institution/urole/index" extends="institution_layout">
+		<put-attribute name="title" value="defs.institution.urole.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/urole/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/urole/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/urole/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/urole/index_script.jsp" />
+	</definition>
+	
+	<definition name="institution/deviceManager/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.institution.deviceManager.deviceManager"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/deviceManager/index.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/deviceManager/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/deviceManager/index_script.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/deviceManager/index_modal.jsp" />
+	</definition>
+	
+	<!-- 应用管理-黑白名单 -->
+	<definition name="institution/nameList/index" extends="institution_layout">
+	    <put-attribute name="title" value="defes.application.namelist.title"></put-attribute>
+	    <put-attribute name="modal" value="/WEB-INF/tiles/views/institution/nameList/index_modal.jsp" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/nameList/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/nameList/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/nameList/index_style.jsp" />
+	</definition>
+	
+	<definition name="institution/personal/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.institution.person.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/personal/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/personal/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/personal/index_style.jsp" />
+	</definition>
+	<definition name="institution/device/rule" extends="institution_layout">
+		<put-attribute name="title" value="defs.institution.device.rule.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/device/rule/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/device/rule/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/device/rule/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/device/rule/index_script.jsp" />
+	</definition>
+	
+	<definition name="institution/device/rule/log" extends="institution_layout">
+		<put-attribute name="title" value="defs.institution.device.rule.log.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/device/rule/log/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/device/rule/log/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/device/rule/log/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/device/rule/log/index_script.jsp" />
+	</definition>
+	
+	<definition name="/institution/netbehavior/bwlist" extends="institution_layout">
+		<put-attribute name="title" value="institution.netbehavior.bwlist.index.label"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/netBehaviorManager/blackWhiteList/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/netBehaviorManager/blackWhiteList/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/netBehaviorManager/blackWhiteList/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/netBehaviorManager/blackWhiteList/index_script.jsp" />
+	</definition>
+	
+	<definition name="/institution/netbehavior/bwlog" extends="institution_layout">
+		<put-attribute name="title" value="institution.netbehavior.log.index.label"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/netBehaviorManager/logManager/index.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/netBehaviorManager/logManager/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/netBehaviorManager/logManager/index_script.jsp" />
+	</definition>
+	<!-- 操作日志 -->
+	<definition name="institution/sysmanageLog/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.application.systemLog.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/operateLog/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/operateLog/index_script.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/operateLog/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/operateLog/index_style.jsp" />
+	</definition>
+		<!-- 设备日志 -->
+	<definition name="institution/deviceLog/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.application.deviceLog.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/deviceLog/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/deviceLog/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/deviceLog/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/deviceLog/index_modal.jsp" />
+	</definition>
+	<!-- 图文消息 -->
+	<definition name="institution/message/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.application.message.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/message/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/message/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/message/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/message/index_modal.jsp" />
+	</definition>
+	<!-- 系统运维-流量统计 -->
+	<definition name="institution/systemStatistics/flux/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.application.flux.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxStatistics/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxStatistics/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxStatistics/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxStatistics/index_modal.jsp" />
+	</definition>
+	<!-- 系统运维-设备统计 -->
+	<definition name="institution/systemStatistics/device/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.application.device.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/operationalStatistics/deviceStatistics/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/operationalStatistics/deviceStatistics/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/operationalStatistics/deviceStatistics/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/operationalStatistics/deviceStatistics/index_modal.jsp" />
+	</definition>
+	
+	<!-- 系统运维-流量异常 -->
+	<definition name="institution/systemStatistics/flux/abnormal" extends="institution_layout">
+		<put-attribute name="title" value="tiles.aside.menu.device.flux.abnormal"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxAbnormalStatistics/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxAbnormalStatistics/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxAbnormalStatistics/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/operationalStatistics/fluxAbnormalStatistics/index_modal.jsp" />
+	</definition>
+	<!-- 系统运维-用户统计 -->
+	<definition name="institution/systemStatistics/user/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.application.user.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/operationalStatistics/userStatistics/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/operationalStatistics/userStatistics/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/operationalStatistics/userStatistics/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/operationalStatistics/userStatistics/index_modal.jsp" />
+	</definition>
+	<!-- 客户端配置 -->
+	<definition name="institution/clientConfig/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.client.config.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/clientConfig/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/clientConfig/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/clientConfig/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/clientConfig/index_modal.jsp" />
+	</definition>
+	<!-- 客户端管理 -->
+	<definition name="institution/clientManager/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.client.config.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/clientManager/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/clientManager/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/clientManager/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/clientManager/index_modal.jsp" />
+	</definition>
+	<!-- 应用管理-->
+	<definition name="institution/application/index" extends="institution_layout">
+		<put-attribute name="title" value="defes.application.application.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/application/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/application/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/application/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/application/index_modal.jsp" />
+	</definition>
+	
+	<!-- 使用时间段统计 -->
+	<definition name="institution/userTime/index" extends="institution_layout">
+		<put-attribute name="title" value="tiles.aside.menu.userTime"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/institution/operationalStatistics/userTimeStatistics/index.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/institution/operationalStatistics/userTimeStatistics/index_script.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/institution/operationalStatistics/userTimeStatistics/index_style.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/institution/operationalStatistics/userTimeStatistics/index_modal.jsp" />
+	</definition>
+    <!-- 词库管理-->
+    <definition name="institution/words/index" extends="institution_layout">
+        <put-attribute name="title" value="defes.system.words.title"/>
+        <put-attribute name="content" value="/WEB-INF/tiles/views/institution/words/index.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/institution/words/index_script.jsp" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/institution/words/index_style.jsp" />
+        <put-attribute name="modal" value="/WEB-INF/tiles/views/institution/words/index_modal.jsp" />
+    </definition>
+    
+    <!-- 上网统计-->
+    <definition name="institution/net/index" extends="institution_layout">
+        <put-attribute name="title" value="defes.net.statistics.title"/>
+        <put-attribute name="content" value="/WEB-INF/tiles/views/institution/net/index.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/institution/net/index_script.jsp" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/institution/net/index_style.jsp" />
+        <put-attribute name="modal" value="/WEB-INF/tiles/views/institution/net/index_modal.jsp" />
+    </definition>
+</tiles-definitions>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.CRDao">
+	<resultMap type="CRModel" id="crmodelResultMap">
+		<id column="cr_id" property="crId" />
+		<result column="project_id" property="projectId" />
+		<result column="cr_describe" property="crDescribe" />
+		<result column="estimated_workload" property="estimatedWorkload" />
+		<result column="presenter" property="presenter" />
+		<result column="confirmor" property="confirmor" />
+		<result column="estimate_quotation" property="estimateQuotation" />
+		<result column="confirm_quotation" property="confirmQuotation" />
+		<result column="remark" property="remark" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator_id" property="creatorId" />
+	</resultMap>
+
+	<sql id="CRModelColumns">
+		select
+		cr_id,project_id,cr_describe,estimated_workload,presenter,
+		confirmor,confirm_quotation,remark,create_time,update_time,creator_id
+		from
+		cr
+	</sql>
+
+	<insert id="addCR" parameterType="CRModel" keyProperty="crId"
+		useGeneratedKeys="true">
+		insert into cr
+		(project_id,cr_describe,estimated_workload,presenter,
+		confirmor,confirm_quotation,remark,create_time,update_time,creator_id)
+		values(#{projectId},#{crDescribe},#{estimatedWorkload},
+		#{presenter},#{confirmor},#{confirmQuotation},#{remark},
+		CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,#{creatorId})
+	</insert>
+
+	<update id="deleteCR" parameterType="long">
+		update cr set delete_time = CURRENT_TIMESTAMP
+		where
+		cr_id=#{crId}
+	</update>
+
+	<update id="updateCR" parameterType="CRModel">
+		update cr
+		set
+		cr_describe=(#{crDescribe}),
+		estimated_workload=(#{estimatedWorkload}),
+		presenter=(#{presenter}),
+		confirmor=(#{confirmor}),
+		confirm_quotation=(#{confirmQuotation}),
+		remark=(#{remark}),
+		update_time=CURRENT_TIMESTAMP
+		where cr_id=#{crId}
+	</update>
+
+	<select id="getCR" parameterType="long" resultMap="crmodelResultMap">
+		<include refid="CRModelColumns" />
+		where cr_id=#{crId}
+	</select>
+
+	<select id="getCRNumber" resultType="int">
+		select count(1) from cr
+		where project_id=#{projectId}
+		and delete_time is null
+		<if test="search != null and search != ''">
+			AND
+			(cr_describe LIKE #{search} or
+			presenter LIKE
+			#{search}
+			or confirmor LIKE
+			#{search})
+		</if>
+	</select>
+
+	<select id="getCRs" resultMap="crmodelResultMap">
+		<include refid="CRModelColumns" />
+		where project_id=#{projectId}
+		and delete_time is null
+		<if test="search != null and search != ''">
+			and
+			(cr_describe LIKE #{search}
+			or presenter LIKE
+			#{search}
+			or confirmor LIKE
+			#{search})
+		</if>
+		order by
+		${col} ${dir}
+	</select>
+
+	<select id="getCRByProjectId" resultMap="crmodelResultMap">
+		<include refid="CRModelColumns" />
+		where project_id=#{projectId}
+		order by create_Time desc
+	</select>
+
+</mapper>

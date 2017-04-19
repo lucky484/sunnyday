@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.ManagerDao">
+	<sql id="filterRecordSql">
+		(
+		<if test="user==null">
+		SELECT id FROM org_managers
+		WHERE org_managers.delete_time IS NULL
+		AND user_id IS NOT NULL
+		AND org_managers.create_by IN (
+			SELECT r.manager_id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		)
+		
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		<if test="user!=null">
+			SELECT id FROM org_managers
+			WHERE delete_time IS NULL
+			AND user_id=#{user.id}
+			AND org_id=#{orgId}
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		)
+	</sql>
+
+  <resultMap type="Manager" id="ManagerMap">
+  	<id property="id" column="id"/>
+  	<result property="user_type" column="user_type"/>
+  	<result property="password" column="password"/>
+  	<result property="expiry" column="expiry"/>
+  	<result property="name" column="name"/>
+  	<result property="username" column="username"/>
+  	<result property="phone" column="phone"/>         
+  	<result property="email" column="email"/>
+  	<result property="mark" column="mark"/>
+  	<result property="login_count" column="login_count"/>
+  	<result property="updateTime" column="update_time"/>
+  	<result property="createTime" column="create_time"/>
+  	<result property="createBy" column="create_by"/>
+  	<result property="status" column="status"/>
+  	<result property="auth" column="auth"/>
+  	<result property="total" column="total"/>
+  	<result property="last_login_time" column="last_login_time"/>
+  	<association property="user" javaType="User">
+  		<id property="id" column="u_id"/>
+  		<result property="userName" column="user_name"/>
+  		<!-- <result property="password" column="password"/> -->
+  		<result property="realname" column="u_real_name"/>
+  		<result property="type" column="u_type"/>
+  		<result property="phone" column="u_phone"/>
+  		<result property="email" column="u_email"/>
+  		<result property="gender" column="u_gender"/>
+  		<result property="sign" column="u_sign"/>
+  		<result property="address" column="u_address"/>
+  		<result property="office_phone" column="u_office_phone"/>
+  		<result property="position" column="u_position"/>
+  		<result property="authorition_properties" column="u_authorition_properties"/>
+  		<result property="ip_range" column="u_ip_range"/>
+  		<result property="login_time_range" column="u_login_time_range"/>
+  		<result property="last_time" column="u_last_time"/>
+  		<result property="last_ip" column="u_last_ip"/>
+  		<result property="is_active" column="u_is_active"/>
+  		<result property="is_lock" column="u_is_lock"/>
+  		<result property="mark" column="u_mark"/>
+  	</association>
+  	<association property="organization" javaType="Organization">
+			<id property="id" column="org_id" />
+	</association>
+  </resultMap>
+  
+  <select id="findUser" parameterType="java.lang.Integer" resultMap="ManagerMap">
+		SELECT org_managers.id AS id,user_type,name,users.id AS u_id,user_name,org_managers.org_id,auth
+		FROM org_managers
+		LEFT JOIN users
+		ON org_managers.user_id==users.id
+		WHERE org_managers.id=#{id}
+	</select>
+	
+	<select id="findIdsByOrgIdAndCreatedBys" resultType="java.lang.Integer">
+		SELECT id 
+		FROM org_managers
+		WHERE delete_time is NULL
+		AND org_id = #{orgId}
+		AND create_by in
+		<foreach item="item" index="index" collection="idList" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<select id="findOneByName" parameterType="java.lang.String" resultMap="ManagerMap">
+		SELECT id,password,org_id,user_type,expiry,name,username,phone,email,status,mark,login_count,user_id as u_id,org_managers.update_time,auth
+		FROM org_managers
+		WHERE delete_time is null
+		AND username=#{username} limit 1
+	</select>
+	
+	<select id="findOneInstitution" parameterType="java.lang.String" resultMap="ManagerMap">
+		SELECT id,password,org_id,user_type,expiry,name,username,phone,email,mark,status,login_count,user_id as u_id,org_managers.update_time,auth
+		FROM org_managers
+		WHERE delete_time is null
+		AND user_id is null
+		AND username=#{username} limit 1
+	</select>
+	
+	<select id="findOneByOrgAndName" resultMap="ManagerMap">
+		SELECT id,password,auth,org_id,user_type,expiry,name,username,status,phone,email,mark,login_count,user_id as u_id,org_managers.update_time
+		FROM org_managers
+		WHERE delete_time is null
+		AND org_id=#{0}
+		AND username=#{1} 
+		limit 1
+	</select>
+	
+	<update id="update" parameterType="Manager">
+		UPDATE org_managers
+		SET
+		<if test="user_type!='' and user_type!=null">
+			user_type=#{user_type},
+		</if>
+		<if test="password!='' and password!=null">
+			password=#{password},
+		</if>
+		<if test="expiry!='' and expiry!=null">
+			expiry=#{expiry},
+		</if>
+		<if test="name!='' and name!=null">
+			name=#{name},
+		</if>
+		<if test="username!='' and username!=null">
+			username=#{username},
+		</if>
+		<if test="phone!=null">
+			phone=#{phone},
+		</if>
+		<if test="email!='' and email!=null">
+			email=#{email},
+		</if>
+		<if test="mark!=null">
+			mark=#{mark},
+		</if>
+		<if test="login_count!=null">
+			login_count=#{login_count},
+		</if>
+		<if test="auth!=null">
+			auth=#{auth},
+		</if>
+		<if test="last_login_time!=null">
+			last_login_time=#{last_login_time},
+		</if>
+		update_time=NOW()
+		WHERE id=#{id}
+	</update>
+	
+	<update id="updatePerson" parameterType="Manager">
+		UPDATE org_managers
+		SET
+		<if test="user_type!='' and user_type!=null">
+			user_type=#{user_type},
+		</if>
+		<if test="password!='' and password!=null">
+			password=#{password},
+		</if>
+		<if test="expiry!='' and expiry!=null">
+			expiry=#{expiry},
+		</if>
+		<if test="name!='' and name!=null">
+			name=#{name},
+		</if>
+		<if test="username!='' and username!=null">
+			username=#{username},
+		</if>
+		<if test="phone!=null">
+			phone=#{phone},
+		</if>
+		<if test="email!='' and email!=null">
+			email=#{email},
+		</if>
+		<if test="mark!=null">
+			mark=#{mark},
+		</if>
+		<if test="login_count!=null">
+			login_count=#{login_count},
+		</if>
+		<if test="auth!=null">
+			auth=#{auth},
+		</if>
+		<if test="last_login_time!=null">
+			last_login_time=#{last_login_time},
+		</if>
+		update_time=NOW()
+		WHERE id=#{id}
+	</update>
+	
+	<delete id="truncateWithPk" parameterType="java.lang.Integer">
+		DELETE FROM org_managers
+		WHERE id=#{id}
+	</delete>
+	
+	<insert id="save" parameterType="Manager">
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		INSERT INTO org_managers(user_id,org_id,user_type,password,expiry,name,phone,email,mark,update_time,create_time,create_by,update_by,delete_time,username,login_count,status,auth)
+		VALUES(#{user.id},#{organization.id},#{user_type},#{password},#{expiry},#{name},#{phone},#{email},#{mark},#{updateTime},#{createTime},#{createBy},#{updateBy},#{deleteTime},#{username},#{login_count},#{status},#{auth})
+	</insert>
+	
+	<select id="findOne" parameterType="java.lang.Integer" resultMap="ManagerMap">
+		SELECT id,user_id,org_id,user_type,password,expiry,name,phone,email,mark,update_time,create_time,create_by,update_by,username,login_count,status,auth
+		FROM org_managers
+		WHERE id = #{id}
+	</select>
+	
+	<delete id="truncateWithUserId" parameterType="java.lang.Integer">
+		DELETE FROM org_managers
+		WHERE user_id=#{userId}
+		AND delete_time is null
+	</delete>
+	
+	<delete id="truncateWithUserIds">
+		DELETE FROM org_managers
+		WHERE user_id in 
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND delete_time is null
+	</delete>
+	
+	<select id="getManagerByMap" resultMap="ManagerMap">
+		SELECT id,user_id,org_id,user_type,password,expiry,name,phone,email,mark,update_time,create_time,create_by,update_by,username,login_count,auth
+		FROM org_managers
+		WHERE username = #{username}
+		<if test="id!=null and id!=''">
+			and id != #{id}
+		</if>
+		and delete_time is null
+		limit 1
+	</select>
+	
+	<select id="findManagerListsByMap" resultMap="ManagerMap"> 
+  		select distinct o.id,o.username as username,o.name as name,a.total as total,o.phone as phone,o.user_type as user_type,o.status as status,o.update_time as update_time,o.last_login_time as last_login_time from org_managers o left join organization_manager_relation om 
+		on o.id = om.manager_id  left join (select o.id as id,o.username as username,o.name as name,o.phone as phone,
+		o.user_type as user_type,o.status as status,o.update_time as update_time,count(o2.id) as total,o.last_login_time as last_login_time
+		from org_managers o left join organization_manager_relation om 
+  		on o.id = om.manager_id left join organization o2 on om.org_id = o2.id where o.create_by = #{create_by}
+		and o.delete_time is null and o2.delete_time is null and o2.status = 1 group by o.id  order by o.create_time desc) a on o.id = a.id 
+		where o.delete_time is null and o.create_by =  #{create_by}
+		<if test=" username!=null and username !=''">
+			and o.username like CONCAT('%',#{username},'%')
+		</if>
+		<if test="name!=null and name!=''">
+			and o.name like CONCAT('%',#{name},'%')
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			and om.org_id = #{orgId}
+		</if>
+		and o.delete_time is null order by o.create_time desc limit #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findManagerCountsByMap" resultType="Integer">
+		select count(0) from (select distinct o.id,o.username as username,o.name as name,a.total as total,o.phone as phone,o.user_type as user_type,o.status as status,o.update_time as update_time,o.last_login_time as last_login_time from org_managers o left join organization_manager_relation om 
+		on o.id = om.manager_id  left join (select o.id as id,o.username as username,o.name as name,o.phone as phone,
+		o.user_type as user_type,o.status as status,o.update_time as update_time,count(o2.id) as total,o.last_login_time as last_login_time
+		from org_managers o left join organization_manager_relation om 
+  		on o.id = om.manager_id left join organization o2 on om.org_id = o2.id where o.create_by = #{create_by}
+		and o.delete_time is null and o2.delete_time is null and o2.status = 1 group by o.id  order by o.create_time desc) a on o.id = a.id 
+		where o.delete_time is null and o.create_by =  #{create_by}
+		<if test=" username!=null and username !=''">
+			and o.username like CONCAT('%',#{username},'%')
+		</if>
+		<if test="name!=null and name!=''">
+			and o.name like CONCAT('%',#{name},'%')
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			and om.org_id = #{orgId}
+		</if>
+		and o.delete_time is null order by o.create_time desc ) a
+	</select>
+	
+	<update id="updateManagerWithLock" parameterType="Manager">
+		update org_managers 
+		<set>
+			<if test="updateBy!=null  and updateBy!=''">
+				update_by = #{updateBy},
+			</if>
+			<if test="updateTime!=null and updateTime!=''">
+				update_time = #{updateTime},
+			</if>
+			<if test="status!=null and status!=''">
+				status = #{status},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="deleteManager" parameterType="Manager">
+		update org_managers
+		<set>
+			<if test="updateBy!=null and updateBy!=''">
+				update_by = #{updateBy},
+			</if>
+			<if test="updateTime!=null and updateTime!=''">
+				update_time = #{updateTime},
+			</if>
+			<if test="deleteTime!=null and deleteTime!=''">
+				delete_time = #{deleteTime},
+			</if>
+		</set>	
+		where id = #{id}
+	</update>
+	
+	<select id="getManagerListsByMap" resultMap="ManagerMap">
+		SELECT id,name
+		FROM org_managers
+		WHERE delete_time is null and status = 1 and create_by = #{create_by}
+	</select>
+	
+	<select id="getManagerListsById" parameterType="java.lang.Integer" resultMap="ManagerMap">
+		SELECT id,username,name from 
+			org_managers where id in 
+				(select manager_id from organization_manager_relation where org_id = #{id})
+			and delete_time is null and status = 1
+	</select>
+	<update id="updateAuth" >
+		UPDATE org_managers
+		SET
+		auth=#{auth},
+		update_time=NOW()
+		WHERE user_id=#{uid}
+	</update>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.OrgManagerRelationDao">
+	
+	<resultMap type="OrgManagerRelation" id="OrgManagerRelationMap">
+		<id property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="createBy" column="create_by"/>
+		<result property="updateBy" column="update_by"/>
+		<association property="manager" javaType="Manager">
+			<id property="id" column="manager_id"/>
+		</association>
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id"/>
+		</association>
+	</resultMap>
+	
+	<select id="findRecordsByOrgId" parameterType="java.lang.Integer" resultMap="OrgManagerRelationMap">
+		SELECT id,org_id,manager_id,create_time,update_time,create_by,update_by
+		FROM organization_manager_relation
+		WHERE delete_time is NULL
+		AND org_id=#{orgId}
+	</select>
+	
+	<select id="findRecordsByManagerId" parameterType="java.lang.Integer" resultMap="OrgManagerRelationMap">
+		SELECT id,org_id,manager_id,create_time,update_time,create_by,update_by
+		FROM organization_manager_relation
+		WHERE delete_time is NULL
+		AND manager_id=#{mid}
+	</select>
+	
+	<insert id="saveOrgManagerMap" parameterType="java.util.Map">
+		insert into organization_manager_relation (org_id,manager_id,create_time,create_by)
+		values
+		<foreach collection="orgManagerList" item="item" separator=",">
+			(#{item.organization.id},#{item.manager.id},#{item.createTime},#{item.createBy})
+		</foreach>
+	</insert>
+	
+	<select id="findIdListsByManagerId" parameterType="java.lang.Integer" resultType="Integer">
+		SELECT org_id FROM organization_manager_relation
+		WHERE delete_time is NULL
+		AND manager_id=#{mid}
+	</select>
+	
+	<delete id="deleteOrgManagerMap" parameterType="java.util.Map">
+		delete from  organization_manager_relation where 
+			manager_id = #{manager_id} and create_by = #{create_by} 
+	</delete>
+	
+	<delete id="deleteManagerOrgMap" parameterType="java.util.Map">
+		delete from  organization_manager_relation where 
+			org_id = #{org_id} and create_by = #{create_by} 
+	</delete>
+	
+	
+	
+</mapper>

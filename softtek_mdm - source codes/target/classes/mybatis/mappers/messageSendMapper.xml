@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.MessageSendDao">
+    <resultMap type="MessageSend" id="messageSendMap">
+		<id property="id" column="id"/>
+		<result property="message_title" column="message_title"/>
+		<result property="message" column="message"/>
+		<result property="udid" column="udid"/>
+		<result property="createTime" column="create_time"/>
+		<result property="name" column="name"/>
+	</resultMap>
+    <insert id="saveMessage" parameterType="MessageSend">
+        insert into send_message(
+        message_title,
+        message,
+        udid,
+        device_id,
+        user_id,
+        create_time,
+        create_by,
+        update_time,
+        update_by
+        )values(
+        #{message_title},
+        #{message},
+        #{udid},
+        #{deviceId},
+        #{userId},
+        #{createTime},
+        #{createBy},
+        #{updateTime}, 
+        #{updateBy}
+        )
+    </insert>
+    <select id="queryAll" resultMap="messageSendMap">
+        select m.id,m.message_title,m.message,m.create_time,org.name from send_message m left join org_managers org on m.create_by = org.id where m.device_id = #{deviceId} and m.user_id = #{userId} and m.delete_time is null order by m.create_time desc 
+    </select>
+    <update id="deleteMessage">
+        update send_message set delete_time = now() where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+    </update> 
+    
+    <select id="find" resultMap="messageSendMap">
+    SELECT
+		m.id,
+		m.message_title,
+		m.message,
+		m.create_time
+	FROM
+	send_message m
+	LEFT JOIN org_managers org ON m.create_by = org.id
+	WHERE
+		m.device_id = #{deviceId}
+		AND m.user_id = #{userId}
+	<if test="lastDate != null">
+		AND m.create_time > DATE_FORMAT(#{lastDate},'%Y/%m/%d %H:%i:%s')
+	</if>
+		AND ISNULL(m.delete_time)
+	ORDER BY
+		m.create_time ASC
+	LIMIT 10
+    </select>
+</mapper>

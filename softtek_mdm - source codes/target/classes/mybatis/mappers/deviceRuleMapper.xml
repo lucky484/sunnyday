@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceRuleDao">
+	<sql id="filterRecordSql">
+		(
+		<if test="user==null">
+		SELECT id FROM org_managers
+		WHERE org_managers.delete_time IS NULL
+		AND user_id IS NOT NULL
+		AND org_managers.create_by IN (
+			SELECT r.manager_id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		)
+		
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		<if test="user!=null">
+			SELECT id FROM org_managers
+			WHERE delete_time IS NULL
+			AND user_id=#{user.id}
+			AND org_id=#{orgId}
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		)
+	</sql>
+	
+	
+	<resultMap type="DeviceRule" id="DeviceRuleMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="isactive" column="isactive"/>
+		<result property="describe" column="describe"/>
+		<result property="platform" column="platform"/>
+		<result property="next_check_time" column="next_check_time"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="createBy" column="create_by" />
+		<result property="updateBy" column="update_by" />
+		<association property="deviceRuleMatch" javaType="DeviceRuleMatch">
+			<id property="id" column="device_rule_match_id"/>
+		</association>
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id"/>
+		</association>
+	</resultMap>
+	
+	<!-- 主键自动递增 -->
+	<insert id="save" parameterType="DeviceRule" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO device_rule(org_id,name,isactive,`describe`,platform,next_check_time,create_time,update_time,create_by,update_by,device_rule_match_id)
+		VALUES(#{organization.id},#{name},#{isactive},#{describe},#{platform},#{next_check_time},NOW(),NOW(),#{createBy},#{updateBy},#{deviceRuleMatch.id})
+	</insert>
+	
+	<select id="findByMap" resultMap="DeviceRuleMap">
+		SELECT id,org_id,name,isactive,`describe`,platform,next_check_time,create_time,update_time,create_by,update_by,device_rule_match_id
+		FROM device_rule
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+		AND name like CONCAT('%',#{deviceRuleName},'%')
+		<if test="type != null">
+			AND isactive = #{type}
+		</if>
+		<if test="platform != null">
+			AND platform = #{platform}
+		</if>
+	<!-- 	AND create_by in
+		<include refid="filterRecordSql" /> -->
+		ORDER BY update_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findCountByOrgId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_rule
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+	</select>
+	
+	<select id="findCountByParams" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_rule
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+		AND name like CONCAT('%',#{deviceRuleName},'%')
+		<if test="type != null">
+			AND isactive = #{type}
+		</if>
+		<!-- AND create_by in
+		<include refid="filterRecordSql" /> -->
+	</select>
+	
+	<select id="findDeviceRoleCount" resultType="int">
+        SELECT
+			COUNT(1)
+		FROM 
+			device_rule
+		WHERE
+ 			org_id=#{orgId}
+		AND
+			delete_time is NULL
+    </select>
+    
+    <select id="findOne" parameterType="java.lang.Integer" resultMap="DeviceRuleMap">
+    	SELECT id,org_id,name,isactive,`describe`,platform,next_check_time,create_time,update_time,create_by,update_by,device_rule_match_id
+    	FROM 
+			device_rule
+		WHERE
+ 			id=#{id}
+ 			AND delete_time is null
+		LIMIT 1
+    </select>
+    
+    <select id="findRecordsByOrgId" parameterType="java.lang.Integer" resultMap="DeviceRuleMap">
+    	SELECT id,org_id,name,isactive,`describe`,platform,next_check_time,create_time,update_time,create_by,update_by,device_rule_match_id
+    	FROM 
+			device_rule
+		WHERE
+ 			org_id=#{orgId}
+ 			AND delete_time is null
+    </select>
+    
+    <select id="findAllActive" resultMap="DeviceRuleMap">
+    	SELECT id,org_id,name,isactive,`describe`,platform,next_check_time,create_time,update_time,create_by,update_by,device_rule_match_id
+    	FROM 
+			device_rule
+		WHERE delete_time is null
+		AND isactive=1
+    </select>
+    
+    <update id="update" parameterType="DeviceRule">
+    	UPDATE device_rule
+    	SET
+    	<if test="name!=null and name!=''">
+    		name=#{name},
+    	</if>
+    	<if test="isactive!=null">
+    		isactive=#{isactive},
+    	</if>
+    	<if test="describe!=null and describe!=''">
+    		`describe`=#{describe},
+    	</if>
+    	<if test="platform!=null">
+    		platform=#{platform},
+    	</if>
+    	<if test="updateBy!=null">
+    		update_by=#{updateBy},
+    	</if>
+    	<if test="deviceRuleMatch!=null">
+    		device_rule_match_id=#{deviceRuleMatch.id},
+    	</if>
+    	<if test="next_check_time!=null">
+    		next_check_time=#{next_check_time},
+    	</if>
+    	<if test="updateTime!=null">
+    		update_time=#{updateTime},
+    	</if>
+    	delete_time=null
+    	WHERE id=#{id}
+    </update>
+    
+    <delete id="truncateWithPk" parameterType="java.lang.Integer">
+    	DELETE FROM device_rule
+    	WHERE id=#{id}
+    </delete>
+    
+    <select id="findUserIdsByPk" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    	SELECT DISTINCT id
+		FROM
+		(
+		SELECT users.id
+		FROM device_rule_department
+		LEFT JOIN users
+		ON device_rule_department.structure_id=users.group_id
+		WHERE device_rule_id=#{id}
+		UNION
+		SELECT users.id
+		FROM device_rule_virtual_group
+		LEFT JOIN users_virtual_group
+		ON device_rule_virtual_group.virtual_group_id=users_virtual_group.virtual_id
+		LEFT JOIN users
+		ON users_virtual_group.user_id=users.id
+		where device_rule_id=#{id}
+		UNION
+		SELECT users.id
+		FROM device_rule_user
+		LEFT JOIN users
+		ON device_rule_user.user_id=users.id
+		where device_rule_id=#{id}
+		) as t
+    </select>
+    
+    <select id="findRuleIdsByDeviceId" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+    	SELECT device_rule_department.device_rule_id
+		FROM device_rule_department
+		LEFT JOIN users
+		ON device_rule_department.structure_id=users.group_id
+		LEFT JOIN device_basic_info
+		ON users.id=device_basic_info.user_id
+		WHERE device_basic_info.id=#{did}
+		UNION
+		SELECT device_rule_virtual_group.device_rule_id
+		FROM device_rule_virtual_group
+		LEFT JOIN users_virtual_group
+		ON device_rule_virtual_group.virtual_group_id=users_virtual_group.virtual_id
+		LEFT JOIN users
+		ON users_virtual_group.user_id=users.id
+		LEFT JOIN device_basic_info
+		ON users.id=device_basic_info.user_id
+		WHERE device_basic_info.id=#{did}
+		UNION
+		SELECT device_rule_user.device_rule_id
+		FROM device_rule_user
+		LEFT JOIN users
+		ON device_rule_user.user_id=users.id
+		LEFT JOIN device_basic_info
+		ON users.id=device_basic_info.user_id
+		WHERE device_basic_info.id=#{did}
+    </select>
+    
+    
+</mapper>

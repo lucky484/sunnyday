@@ -1,0 +1,14 @@
+eclipse.preferences.version=1
+encoding//src/main/java=UTF-8
+encoding//src/main/java/com/hp/cess/controller/GlobalRuleController.java=UTF-8
+encoding//src/main/java/com/hp/cess/controller/RawRuleController.java=UTF-8
+encoding//src/main/java/com/hp/cess/dao/GlobalRuleDao.java=UTF-8
+encoding//src/main/java/com/hp/cess/service/GlobalRuleService.java=UTF-8
+encoding//src/main/java/com/hp/cess/service/impl/GlobalRuleServiceImpl.java=UTF-8
+encoding//src/main/resources=UTF-8
+encoding//src/main/webapp/WEB-INF/jsp/addRule.jsp=UTF-8
+encoding//src/main/webapp/css/H-ui.min.css=UTF-8
+encoding//src/main/webapp/css/main.css=UTF-8
+encoding//src/test/java=UTF-8
+encoding//src/test/resources=UTF-8
+encoding/<project>=UTF-8

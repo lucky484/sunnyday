@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao2.TemporaryDao">
+
+	<resultMap type="com.hd.pfirs.model.Temporary" id="TemporaryModelMap">
+		<result column="LDXXBH" property="ldxxbh" />
+		<result column="LKZLBH" property="lkzlbh" />
+		<result column="LKZLLX" property="lkzllx" />
+		<result column="LKZLJB" property="lkzljb" />
+		<result column="BKTS" property="bkts" />
+		<result column="BKQSSJ" property="bkqssj" />
+		<result column="BKJZSJ" property="bkjzsj" />
+		<result column="BBKRZJLX" property="bbkrzjlx" />
+		<result column="BBKRZJHM" property="bbkrzjhm" />
+		<result column="BBKRXM" property="bbkrxm" />
+		<result column="BBKRXB" property="bbkrxb" />
+		<result column="BBKRCSRQ" property="bbkrcsrq" />
+		<result column="photo" property="photo" />
+	</resultMap>
+		<resultMap type="com.hd.pfirs.model.Temporary" id="TemporaryModelMap1">
+		<result column="LKZLJB" property="lkzljb" />
+		<result column="BBKRZJHM" property="bbkrzjhm" />
+		<result column="BBKRXM" property="bbkrxm" />
+		<result column="BBKRXB" property="bbkrxb" />
+	</resultMap>
+	
+	<select id="getTemporary" resultMap="TemporaryModelMap">
+		select
+		LKZLJB,
+		BBKRXM,
+		BBKRXB,
+		BBKRZJHM,
+		(select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP where sfzh = bbkrzjhm ) photo 
+		from T_QB_LK_LKBK
+		where ID = #{id}
+	</select>
+		<select id="queryTemporaryById" parameterType="java.util.List" resultMap="TemporaryModelMap1">
+       select BBKRXM,BBKRXB,BBKRZJHM,LKZLJB from T_QB_LK_LKBK where id in  
+		<foreach collection="list" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		<if test="bbkrxm != null and bbkrxm != ''">
+		and bbkrxm = #{bbkrxm} 
+		</if>
+		<if test="bbkrxb != null and bbkrxb != ''">
+		and bbkrxb = #{bbkrxb} 
+		</if>
+		<if test="bbkrzjhm != null and bbkrzjhm != ''">
+		and bbkrzjhm = #{bbkrzjhm} 
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao2.FugitivesDao">
+
+	<resultMap type="com.hd.pfirs.model.T_QB_RY_ZTRYJBXX" id="T_QB_RY_ZTRYJBXXModelMap">
+	    <id column="id" property="id" />
+		<result column="XM" property="xm" />
+		<result column="XB" property="xb" />
+		<result column="YSFZH" property="ysfzh" />
+		<result column="AJLBDM" property="ajlbdm" />
+		<result column="context" property="context" />
+		<result column="photo" property="photo" />
+	</resultMap>
+	
+	<resultMap type="com.hd.pfirs.model.IdCardComPoliceModel" id="ctlModelMap">
+		<result column="ctlId" property="ctlId" />
+		<result column="tableName" property="tableName" />
+		<result column="content" property="content" />
+		<result column="Xm" property="xm" />
+		<result column="Xb" property="xb" />
+		<result column="idCarNo" property="idCarNo" />
+	</resultMap>
+	<select id="getT_QB_RY_ZTRYJBXX" resultMap="T_QB_RY_ZTRYJBXXModelMap" parameterType="string">
+		SELECT
+		T_QB_RY_ZTRYJBXX.ID,
+		T_QB_RY_ZTRYJBXX.XM,
+		T_QB_RY_ZTRYJBXX.XB,
+		T_QB_RY_ZTRYJBXX.YSFZH,
+		T_QB_RY_ZTRYJBXX.AJLBDM,
+		ajlx.context,
+		(select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP where sfzh =T_QB_RY_ZTRYJBXX.ysfzh ) photo
+		FROM T_QB_RY_ZTRYJBXX T_QB_RY_ZTRYJBXX,ZaiTaoAJLX ajlx  WHERE T_QB_RY_ZTRYJBXX.ajlbdm = ajlx.code and ID = #{id} AND ROWNUM=1
+	</select>
+	
+
+	<select id="queryT_QB_RY_ZTRYJBXXByCardNo" resultMap="T_QB_RY_ZTRYJBXXModelMap">
+		SELECT
+		ID,
+		XM,
+		XB,
+		YSFZH,
+		AJLBDM
+		FROM T_QB_RY_ZTRYJBXX WHERE YSFZH = #{cardno} AND ROWNUM=1
+	</select>
+	
+	
+	<select id="queryAtCtlLibsByCardNo" parameterType="string" resultMap="ctlModelMap">
+		select id ctlId, '1' tableName, b.context content from T_QB_RY_ZTRYJBXX a,ZaiTaoAJLX b where a.ajlbdm = b.code and ysfzh = #{cardno}
+		union all
+		select id ctlId, '0' tableName, lkzljb content from T_QB_LK_LKBK where bbkrzjhm = #{cardno}
+		union all
+		select id ctlId, '2' tableName , zdrylbbj content from T_QB_RY_CKRYJBXX where sfzh = #{cardno}
+	</select>
+	
+	<select id="queryIdCardCompareResult" parameterType="string" resultMap="ctlModelMap">
+	
+		select id ctlId, '1' tableName, b.context content,xm Xm,decode(xb,'1' ,'男','2', '女','男') Xb, ysfzh idCardNo from T_QB_RY_ZTRYJBXX a,ZaiTaoAJLX b where a.ajlbdm = b.code and ysfzh = #{cardno}
+		union all
+		select id ctlId, '0' tableName, lkzljb content,bbkrxm Xm,decode(bbkrxb,'1' ,'男','2', '女','男') Xb, bbkrzjhm idCardNo from T_QB_LK_LKBK where bbkrzjhm = #{cardno}
+		union all
+		select id ctlId, '2' tableName , zdrylbbj content,xm Xm,decode(xb,'1' ,'男','2', '女','男') Xb, sfzh idCardNo from T_QB_RY_CKRYJBXX where sfzh = #{cardno}
+	</select>
+	
+	
+	
+	
+
+	<select id="getJiKong" resultMap="T_QB_RY_ZTRYJBXXModelMap">
+		SELECT
+		XM,
+		XB,
+		YSFZH,
+		AJLBDM,
+		(select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP where sfzh =YSFZH ) photo 
+		FROM T_QB_RY_ZTRYJBXX WHERE ID = #{id}
+	</select>
+   
+   	<select id="queryFugitivesById" resultMap="T_QB_RY_ZTRYJBXXModelMap" parameterType="java.util.List">
+		SELECT
+		T_QB_RY_ZTRYJBXX.ID,
+		T_QB_RY_ZTRYJBXX.XM,
+		T_QB_RY_ZTRYJBXX.XB,
+		T_QB_RY_ZTRYJBXX.YSFZH,
+		T_QB_RY_ZTRYJBXX.AJLBDM,
+		ajlx.context
+		FROM T_QB_RY_ZTRYJBXX T_QB_RY_ZTRYJBXX,ZaiTaoAJLX ajlx  WHERE T_QB_RY_ZTRYJBXX.ajlbdm = ajlx.code 
+		<if test="xm != null and xm != ''">
+		and T_QB_RY_ZTRYJBXX.xm=#{xm} 
+		</if>
+		<if test="xb != null and xb != ''">
+		and T_QB_RY_ZTRYJBXX.xb=#{xb} 
+		</if>
+		<if test="ysfzh != null and ysfzh != ''">
+		and T_QB_RY_ZTRYJBXX.ysfzh=#{ysfzh} 
+		</if>
+		and T_QB_RY_ZTRYJBXX.id in
+	   	<foreach collection="list" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+	</select>
+</mapper>

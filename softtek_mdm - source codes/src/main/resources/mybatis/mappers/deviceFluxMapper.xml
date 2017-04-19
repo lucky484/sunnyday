@@ -1,0 +1,211 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceFluxDao">
+
+ <resultMap id="BaseResultMap" type="com.softtek.mdm.model.DeviceFluxModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId"  />
+  	<result column="device_name" property="deviceName"  />
+  	<result column="device_type" property="deviceType"  />
+  	<result column="sn" property="sn"  />
+  	<result column="esnorimei" property="esnorimei"  />
+  	<result column="device_status" property="deviceStatus"  />
+  	<result column="create_time" property="createTime"  />
+  	<result column="flux" property="flux"  />
+  	<result column="user_id" property="userId"  />
+  	<result column="device_basic_info_id" property="flux"  />
+  	<result column="statistical_time" property="statisticalTime"  />
+  	<result column="update_time" property="statisticalTime"  />
+  	<result column="is_abnormal" property="isAbnormal"  />
+ 	<result column="is_report" property="isReport"  />
+ 	<result column="real_name" property="realName"  />
+ 	<result column="user_name" property="userName"  />
+ 	<result column="phone" property="phone"  />
+  </resultMap>
+  
+	  <!-- 查询设备用户当天是否已经上报过当日流量 -->
+	<select id="findFluxByUserId" resultMap="BaseResultMap" parameterType="com.softtek.mdm.model.DeviceFluxModel">
+		SELECT
+			*
+		FROM
+			user_flux
+		where
+			user_id = #{userId}
+		and sn = #{sn}
+		and DATE_FORMAT(update_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+	</select>
+	<!-- 新增当天第一天流量记录 -->
+	<insert id="saveSumFlux" parameterType="com.softtek.mdm.model.DeviceFluxModel">
+		INSERT INTO user_flux (
+					org_id,
+					device_name,
+					device_type,
+					sn,
+					esnorimei,
+					create_time,
+					flux,
+					user_id,
+					statistical_time,
+					update_time
+				) VALUES (
+					#{orgId},
+					#{deviceName},
+					#{deviceType},
+			 	 	#{sn},
+				  	#{esnorimei},
+					now(),
+					#{flux},
+					#{userId},
+					now(),
+					now()
+				)
+	</insert>
+	<!-- 同步更新当天流量使用情况 -->
+	<update id="updateSumFlux" parameterType="com.softtek.mdm.model.DeviceFluxModel">
+		UPDATE 
+			`USER_FLUX`
+		SET
+			FLUX = #{flux},
+			UPDATE_TIME = NOW()
+		WHERE
+			ID = #{id};
+	</update>
+	
+	<!-- 查询今天是否有符合要求计算是否流量异常的设备 -->
+	<select id="findAllTodyFlux" resultMap="BaseResultMap">
+		SELECT
+			id,
+			org_id,
+     		sn,
+			esnorimei,
+			flux,
+			user_id,
+			COUNT(0) as number
+		from
+			user_flux
+		where
+			user_id in (
+				select
+					user_id
+				from
+					user_flux
+				where
+					statistical_time > DATE_FORMAT(now(), '%Y-%m-%d')
+			) and is_abnormal = 0 and is_report = 0 GROUP BY user_id,sn having COUNT(0) >= 10  
+	</select>
+	
+	<select id="findAllFluxBySnAndUserId" resultType="java.lang.Double" >
+		SELECT flux from user_flux where user_id = #{1} and sn = #{0} and is_abnormal = 0 and is_report=0 ORDER BY statistical_time desc LIMIT 31 
+	</select>
+	
+	<update id="addAbnormal">
+		update user_flux set is_abnormal = 1 where sn = #{sn} and user_id = #{userId}  and DATE_FORMAT(now(), '%Y-%m-%d') = DATE_FORMAT(statistical_time, '%Y-%m-%d')
+	</update>
+	
+	<select id="findDeviceIsAbnormalAndIsReport" resultMap="BaseResultMap">
+		SELECT * FROM `user_flux` where user_id = #{userId} and sn = #{sn} and DATE_FORMAT(statistical_time,'%Y-%m-%d') != DATE_FORMAT(now(),'%Y-%m-%d')ORDER BY statistical_time desc limit 1
+	</select>
+	
+	<insert id="updaloadFluxDetail" parameterType="java.util.Map">
+		INSERT INTO user_flux_detail (
+			app_flux,
+			sn,
+			user_id,
+			statistical_time,
+			update_time,
+			appid,
+			app_version,
+			app_status,
+			app_name,
+			user_flux_id
+		)
+		VALUES
+			<foreach collection = "appInfo" item = "item" index = "index" separator = "," > (
+				#{item.app_flux},
+				#{deviceInfo.sn},
+				#{deviceInfo.user.id},
+				now(),
+				now(),
+				#{item.appid},
+				#{item.app_version},
+				#{item.app_status},
+				#{item.name},
+				#{userFluxId}
+		)
+			</foreach>
+ 	</insert>
+	<update id="updateIsReport">
+	UPDATE user_flux set is_report = 1 where user_id = #{user.id}  and sn = #{sn} 
+	AND  is_abnormal = 1
+	</update>
+	
+	<select id="getFluxAbListsByMap"  resultMap="BaseResultMap">
+	SELECT
+	  	flux.id,
+		user.real_name,
+		flux.user_id,
+		flux.sn,
+		`user`.user_name,
+		`user`.phone,
+		flux.statistical_time,
+		flux.device_name,
+		FORMAT(flux.flux/1024,2) as flux
+	FROM
+		user_flux flux
+	LEFT JOIN users user on flux.user_id = user.id
+	where
+		flux.is_report = 1
+	and flux.is_abnormal = 1
+	and user.is_active = 1
+	and `user`.org_id = #{org_id}
+	<if test="groupId != null">
+				AND user.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	</select>
+	
+	<select id="getFluxAbCountByMap"  resultType="int">
+	SELECT
+	  count(0)
+	FROM
+		user_flux flux
+	LEFT JOIN users user on flux.user_id = user.id
+	where
+		flux.is_report = 1
+	and flux.is_abnormal = 1
+	and user.is_active = 1
+	<if test="groupId != null">
+				AND user.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	and `user`.org_id = #{org_id}
+	</select>
+	
+	<select id="getFluxAborListsByMap" resultMap="BaseResultMap">
+	SELECT
+		statistical_time,
+		device_name,
+		FORMAT(flux/1024,2) as flux
+	from
+		user_flux
+	where
+		user_id = #{userId}
+		and sn = #{sn}
+	ORDER BY
+		statistical_time asc
+	</select>
+	<!-- 获得主键id -->
+	<select id="findPriKey" resultMap="BaseResultMap">
+	SELECT * FROM user_flux where is_abnormal = 1 
+		and sn = #{sn}
+		and user_id = #{user.id}
+		ORDER BY statistical_time desc limit 1
+	</select>
+	<delete id="deleteFluxJob">
+		delete FROM user_flux where statistical_time<![CDATA[<]]>DATE_SUB(CURDATE(), INTERVAL 2 MONTH);
+	</delete>
+	
+	
+</mapper>

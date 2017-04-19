@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd   
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context.xsd 
+       http://www.springframework.org/schema/task 
+       http://www.springframework.org/schema/task/spring-task-4.0.xsd
+       http://www.springframework.org/schema/mvc 
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--后台管理的包-->
+    <context:component-scan base-package="com.f2b.security.action"/>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean"/>
+	<bean id="SpringContextUtils" class="com.f2b.security.action.SpringContextUtils" lazy-init="false"></bean>
+    <mvc:annotation-driven/>
+
+    <!-- 上传接收100M的总文件大小 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="maxUploadSize" value="104857600"/>
+    </bean>
+
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/web/admin/**"/>
+            <bean class="com.f2b.security.interceptor.AuthorityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 当Spring容器启动完成后执行下面的这个Bean -->
+    <bean class="com.f2b.sugar.start.InstantiationTracingBeanPostProcessor"/>
+      
+    <!-- 零点更新 -->
+    <task:annotation-driven /> <!-- 定时器开关 -->
+	<task:scheduled-tasks>
+		 <task:scheduled ref="orderScheduled" method="updateStatus"
+			cron="0 0 0 * * ?" /> 
+		 <task:scheduled ref="checkOrderSuccessScheduled" method="updateStatus"
+			cron="* 0/30 * * * ?" /> 
+			<!-- 测试
+			<task:scheduled ref="orderScheduled" method="updateStatus"
+			cron="*/5 * * * * ?" /> -->
+	</task:scheduled-tasks>
+</beans>

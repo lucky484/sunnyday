@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceAppInfoDao">
+
+	<select id="findByPage" resultType="DeviceAppInfo">
+		SELECT id,name,appid,app_version,app_status
+		FROM device_app_info
+		WHERE device_id=#{did}
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findCountByDid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_app_info
+		WHERE device_id=#{did}
+	</select>
+	
+	<insert id="save" parameterType="DeviceAppInfo">
+		INSERT INTO device_app_info(id,name,appid,app_version,app_status,app_belong,device_id)
+		VALUES(#{id},#{name},#{appid},#{app_version},#{app_status},#{app_belong},#{belongDevice.id})
+	</insert>
+	
+	<!-- 批量保存规则到虚拟组 -->
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO device_app_info(name,appid,app_version,app_status,app_belong,device_id)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.name},#{item.appid},#{item.app_version},#{item.app_status},#{item.app_belong},#{item.belongDevice.id})
+		</foreach>
+	</insert>
+	
+	<delete id="truncateWithDeviceId" parameterType="java.lang.Integer">
+		DELETE FROM device_app_info
+		WHERE device_id=#{did}
+	</delete>
+
+    <select id="getAppFluxLsitCount"  resultType="java.lang.Integer">
+        SELECT count(0) from user_flux_detail where user_id = #{userId} and sn = #{sn} and user_flux_id=#{id}
+    </select>
+    <select id="getAppFluxLsit"  resultType="DeviceAppInfo">
+        SELECT app_name as name,FORMAT(app_flux/1024,2) as app_flux from user_flux_detail where user_id = #{userId} and sn = #{sn} and user_flux_id=#{id} limit #{start},#{offset}
+    </select>
+
+</mapper>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.AppDepartmentAuthorizationDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.AppDepartmentAuthorization" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="org_structure_id" property="orgStructureId" jdbcType="INTEGER" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="is_install" property="isInstall" jdbcType="CHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, org_structure_id, app_id, is_install, create_date, create_user, update_date, 
+    update_user, delete_time
+  </sql>
+  
+  <!-- 根据主键查询应用部门授权表  -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_department_authorization
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除应用部门授权表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from app_department_authorization
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入应用部门授权表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.AppDepartmentAuthorization" >
+    insert into app_department_authorization (id, org_structure_id, app_id, 
+      is_install, create_date, create_user, 
+      update_date, update_user, delete_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{orgStructureId,jdbcType=INTEGER}, #{appId,jdbcType=INTEGER}, 
+      #{isInstall,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 插入可选的应用部门授权表数据 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.AppDepartmentAuthorization" >
+    insert into app_department_authorization
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orgStructureId != null" >
+        org_structure_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+      <if test="isInstall != null" >
+        is_install,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orgStructureId != null" >
+        #{orgStructureId,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=INTEGER},
+      </if>
+      <if test="isInstall != null" >
+        #{isInstall,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的应用部门授权表字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.AppDepartmentAuthorization" >
+    update app_department_authorization
+    <set >
+      <if test="orgStructureId != null" >
+        org_structure_id = #{orgStructureId,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=INTEGER},
+      </if>
+      <if test="isInstall != null" >
+        is_install = #{isInstall,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新应用部门授权表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.AppDepartmentAuthorization" >
+    update app_department_authorization
+    set org_structure_id = #{orgStructureId,jdbcType=INTEGER},
+      app_id = #{appId,jdbcType=INTEGER},
+      is_install = #{isInstall,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 加载部门权限数据 -->
+  <select id="loadDepartAuth" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.AppDepartmentAuthorization">
+     select 
+       t1.id,
+       t1.org_structure_id as orgStructureId,
+       t1.is_install as isInstall,
+       t2.name 
+     from app_department_authorization t1 
+     left join org_structure t2 on t1.org_structure_id = t2.id 
+     where 
+       t1.delete_time is null 
+     <if test="params.id != null and params.id != ''">
+     and t1.app_id = #{params.id} 
+     </if> 
+  </select>
+     
+  <!-- 批量插入应用授权关联表  start-->
+  <insert id="insertBatchAppDepartment" parameterType="java.util.List" useGeneratedKeys="true">
+    insert into app_department_authorization  
+    (id,org_structure_id,app_id,is_install,create_date,create_user,update_date,update_user) 
+    values 
+    <foreach collection="list" item="item" index="index" separator=",">
+     (#{item.id},#{item.orgStructureId},#{item.appId},#{item.isInstall},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser})  
+    </foreach>
+  </insert>
+  <!-- 批量插入应用授权关联表  end-->
+  
+  <!-- 根据应用ID删除相关联数据  start-->
+  <update id="deleteByAppId" parameterType="java.lang.Integer">
+     update 
+       app_department_authorization 
+     set delete_time = now() 
+     where app_id = #{id}
+  </update>
+  <!-- 根据应用ID删除相关联数据  end-->
+  
+  <select id="selectUserByAppIds" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	SELECT T5.userId FROM 
+	(SELECT 
+	  T1.id as userId  
+	FROM users T1 
+	LEFT JOIN app_department_authorization T2 ON T1.group_id = T2.org_structure_id 
+	WHERE T2.app_id = #{appId} AND T1.delete_time IS NULL AND T2.delete_time IS NULL 
+	UNION 
+	SELECT 
+	  T3.user_id as userId 
+	 FROM users_virtual_group T3 
+	LEFT JOIN app_virtual_group_authorization T4 ON T4.virtual_group_id = T3.virtual_id
+	WHERE T3.delete_time IS NULL AND T4.delete_time IS NULL AND T4.app_id = #{appId}  
+	) as T5 
+  </select>
+</mapper>

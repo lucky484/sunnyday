@@ -1,0 +1,74 @@
+      * {
+            margin: 0;
+            padding: 0;
+            text-align: left;
+        }
+        a {
+            text-decoration: none;
+        }
+        #conter {
+            width: 1000px;
+            margin: auto;
+        }
+        #help-left {
+            width: 200px;
+            font-family: 'microsoft YaHei';
+            float: left;
+        }
+        .menu {
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+        }
+        .menu:last-child {
+            border-bottom: 1px solid #ccc;
+        }
+        .menu summary {
+            /* height: 40px;
+            line-height: 40px;
+            text-indent: 10px;
+            outline: none;
+            font-size: 14px;
+            font-weight: 700;
+            border-top: 1px solid #ddd; */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FEFEFE), color-stop(1, #CCCCCC));
+            cursor: pointer;
+        }
+        .menu summary::-webkit-details-marker {
+            display: none;
+        }
+        /*可用图片或字符,如果使用图片，请把content的值设置成空字符*/
+        .menu summary:before {
+/*             content: "+"; */
+            /*background: url(images/Ias_right.png) no-repeat center center;*/ /*收起时的图片*/
+            /*vertical-align: middle;*/
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            font-size:18px;
+            font-weight:700;
+        }
+        .menu[open] summary:before {
+/*             content: "-"; */
+            /*background: url(images/Ias_down.png) no-repeat center center;*/ /*展开时的图片*/
+        }
+        .menu ul {
+            padding: 10px 0;
+        }
+        .menu ul li {
+            list-style: none;
+            text-indent: 25px;
+            font-size: 12px;
+            height: 30px;
+            line-height: 30px;
+        }
+        .menu ul li a {
+            display: block;
+            color: #666;
+        }
+        .menu ul li a:hover {
+            text-decoration: underline;
+        }
+        .btn-group{
+        	text-align: center;
+        }

@@ -1,0 +1,41 @@
+.portlet-body {
+	position: relative;
+}
+
+.searchCondition {
+	position: inherit;
+	z-index: 99;
+}
+
+.searchCondition label {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.searchCondition .condition {
+	display: inline-block;
+	margin-right: 134px;
+}
+
+.searchCondition .condition  select {
+	width: 120px;
+}
+.searchCondition .condition  input {
+	width: 120px;
+	height:23px;
+	margin-top:-8px;
+	border:1px solid #ccc
+}
+.searchCondition .search{
+	display: inline-block;
+	margin: 0 0 0 56px;
+}
+.button{
+	margin-top:-6px;
+}
+.search>button{
+	width: 69px;
+    height: 30px;
+    vertical-align: middle;
+    margin-top:-5px;
+}

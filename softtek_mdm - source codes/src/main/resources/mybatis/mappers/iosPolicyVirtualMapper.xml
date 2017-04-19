@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.IosPolicyVirtualDao">
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.IosPolicyVirtual">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="virtual_group_id" jdbcType="INTEGER" property="virtualGroupId" />
+    <result column="ios_device_policy_id" jdbcType="INTEGER" property="iosDevicePolicyId" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+    <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, virtual_group_id, ios_device_policy_id, create_date, create_user, update_date, 
+    update_user, delete_time
+  </sql>
+  
+  <!-- 根据主键查询表-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ios_policy_virtual
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ios_policy_virtual
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.IosPolicyVirtual">
+    insert into ios_policy_virtual (id, virtual_group_id, ios_device_policy_id, 
+      create_date, create_user, update_date, 
+      update_user, delete_time)
+    values (#{id,jdbcType=INTEGER}, #{virtualGroupId,jdbcType=INTEGER}, #{iosDevicePolicyId,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!--插入可选的字段表  -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.IosPolicyVirtual">
+    insert into ios_policy_virtual
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="virtualGroupId != null">
+        virtual_group_id,
+      </if>
+      <if test="iosDevicePolicyId != null">
+        ios_device_policy_id,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="deleteTime != null">
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="virtualGroupId != null">
+        #{virtualGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="iosDevicePolicyId != null">
+        #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null">
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.IosPolicyVirtual">
+    update ios_policy_virtual
+    <set>
+      <if test="virtualGroupId != null">
+        virtual_group_id = #{virtualGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="iosDevicePolicyId != null">
+        ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null">
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!--根据主键更新表-->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.IosPolicyVirtual">
+    update ios_policy_virtual
+    set virtual_group_id = #{virtualGroupId,jdbcType=INTEGER},
+      ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据策略id获取关联的虚拟组 start-->
+  <select id="selectVirtualById" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+     select 
+         t1.virtual_group_id as virtualGroupId  
+       from 
+         ios_policy_virtual t1 
+     where t1.delete_time is null 
+       and t1.ios_device_policy_id = #{id} 
+  </select>
+  
+  <!-- 根据虚拟组id获取对应的策略id start-->
+  <select id="selectIosPolicyIdByVirtualId" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.IosPolicyVirtual">
+     select 
+         t1.id,
+         t1.ios_device_policy_id as iosDevicePolicyId,
+         t1.virtual_group_id as virtualGroupId,
+         t1.update_date as updateDate,
+         t1.create_date as createDate   
+       from 
+         ios_policy_virtual t1 
+       left join ios_device_policy t2 on t1.ios_device_policy_id = t2.id 
+     where t1.delete_time is null 
+      and t2.delete_time is null 
+       and t1.ios_device_policy_id != #{params.id}  
+       and t1.virtual_group_id = #{params.virtualId}  
+       and t2.is_enable = 1 
+       and t2.org_id = #{params.orgId} 
+     order by t1.update_date desc 
+  </select>
+  
+  <!-- 根据策略id删除关联的虚拟组id start-->
+  <update id="deleteByVirtualGroupId" parameterType="java.lang.Integer" >
+    update ios_policy_virtual   
+    set delete_time = now() 
+    where ios_device_policy_id = #{id} 
+    and delete_time is null 
+  </update>
+  
+  <!-- 批量插入Ios设备策略授权虚拟组关联表  start-->
+  <insert id="insertBatchIosPolicyVirtual" parameterType="java.util.List" useGeneratedKeys="true">
+    insert into ios_policy_virtual    
+    (virtual_group_id,ios_device_policy_id,create_date,create_user,update_date,update_user) 
+    values 
+    <foreach collection="list" item="item" index="index" separator=","> 
+     (#{item.virtualGroupId},#{item.iosDevicePolicyId},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser})  
+    </foreach>
+  </insert>
+  
+  <!-- 根据策略id获取关联的虚拟组 start-->
+  <select id="selectIosVirtualGroupById" parameterType="java.lang.Integer" resultType="com.softtek.mdm.model.IosPolicyVirtual">
+     select 
+         t1.virtual_group_id as virtualGroupId  
+       from 
+         ios_policy_virtual t1 
+     where t1.delete_time is null 
+       and t1.ios_device_policy_id = #{id} 
+  </select>
+  
+  <!-- 根据虚拟组id获取用户List -->
+  <select id="selectVirtualUserList" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.IosPolicyUser">
+     select 
+       t1.user_id as userId,
+       t1.virtual_id as fatherId 
+     from users_virtual_group t1 
+     <where>
+       t1.delete_time is null 
+       and t1.org_id = #{params.orgId} 
+       and t1.virtual_id in 
+    <foreach item="item" collection="params.list" separator="," open="(" close=")" index="">    
+      #{item}  
+    </foreach> 
+    </where>
+  </select>
+  
+  <!-- 根据虚拟组id获取用户id -->
+  <select id="selectVirtualUserIds" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">
+     select 
+       t1.user_id as usersId 
+     from users_virtual_group t1 
+     <where>
+       t1.delete_time is null 
+       and t1.org_id = #{params.orgId} 
+       and t1.virtual_id in 
+    <foreach item="item" collection="params.list" separator="," open="(" close=")" index="">    
+      #{item.virtualGroupId}  
+    </foreach> 
+    </where>
+  </select>
+  
+  <!-- 根据策略id删除关联的虚拟组id start-->
+  <update id="updateByVirtualGroupId" parameterType="java.lang.Integer" >
+    update android_device_virtual_group  
+    set delete_time = now() 
+    where android_device_policy_id = #{id} 
+    and delete_time is null 
+  </update>
+  <!-- 根据策略id删除关联的虚拟组id end-->
+</mapper>

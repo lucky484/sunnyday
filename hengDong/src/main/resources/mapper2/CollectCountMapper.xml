@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao2.CollectCountDao">
+	
+	<resultMap type="com.hd.pfirs.model.CollectCountModel" id="CollectCountMap">
+		<result column="tableName" property="tableName" />
+		<result column="idCardNo" property="idCardNo" />
+		<result column="idCardSex" property="idCardSex" />
+		<result column="idCardNane" property="idCardName" />
+		<result column="idCardPic" property="idCardPic" />
+		<result column="content" property="content" />
+		<result column="idCardInfoCompareResult" property="idCardInfoCompareResult" />
+		
+	</resultMap>
+	<resultMap type="com.hd.pfirs.model.IntegratedQueryMessageModel" id="IntegratedQueryMessageModelMap">
+		<result column="IdCardNo" property="idCardNo" />
+		<result column="ZaiTaoAJLX" property="ZaiTaoAJLX" />
+	</resultMap>
+	
+	
+	<select id="getidCardInfoCompareResult" resultType="int">
+		select count(1) count from ${compareBaseID} where ${colum} = #{idCardNo} 		
+	</select>
+	
+	<!-- 暂时不需要 -->
+	<select id="getidCardInfoCompareResultList"  resultMap="CollectCountMap">
+	 	select ysfzh from T_QB_RY_ZTRYJBXX where ysfzh in (#{idCardNoList})
+	</select>
+	<!-- 根据身份证获得在逃库信息 -->
+	<select id="getIdCardInfoCompareResultType" resultMap="CollectCountMap">
+		select 'T_QB_RY_ZTRYJBXX' tableName,a.ysfzh idCardNo,b.context content from T_QB_RY_ZTRYJBXX a,ZaiTaoAJLX b where a.ajlbdm = b.code and ysfzh=#{idCardNo}
+	</select>
+	<!-- 根据身份证获得lingkong库信息 -->
+	<select id="getIdCardInfoCompareResultTypeByT_QB_LK_LKBK" resultMap="CollectCountMap">
+		select 'T_QB_LK_LKBK' tableName,bbkrzjhm idCardNo,lkzljb content from T_QB_LK_LKBK where bbkrzjhm = #{idCardNo} 
+	</select>
+	<!-- 根据身份证获得在T_QB_RY_CKRYJBXX库信息 -->
+	<select id="getIdCardInfoCompareResultTypeByT_QB_RY_CKRYJBXX" resultMap="CollectCountMap">
+		select 'T_QB_RY_CKRYJBXX' tableName,sfzh idCardNo,zdrylbbj content from T_QB_RY_CKRYJBXX where sfzh = #{idCardNo} 
+	</select>
+	<!-- 根据身份证获得在公安库信息 -->
+	<!-- <select id="getIdCardInfoCompareResultTypeByjk" resultMap="CollectCountMap">
+		select 'T_QB_RY_ZTRYJBXX' tableName,a.ysfzh idCardNo,b.context content from T_QB_RY_ZTRYJBXX a,ZaiTaoAJLX b where a.ajlbdm = b.code and ysfzh=#{idCardNo}
+		union all
+		select 'T_QB_RY_CKRYJBXX' tableName,sfzh idCardNo,zdrylbbj content from T_QB_RY_CKRYJBXX where sfzh = #{idCardNo} 
+		union all
+		select 'T_QB_LK_LKBK' tableName,bbkrzjhm idCardNo,lkzljb content from T_QB_LK_LKBK where bbkrzjhm = #{idCardNo} 
+		 		 
+	</select> -->
+	<select id="getIdCardInfoCompareResultTypeByjk" resultMap="CollectCountMap">
+		select 'T_QB_RY_ZTRYJBXX' tableName,a.ysfzh idCardNo,b.context content,xm idCardName,decode(xb,'1','男','2','女','男') idCardSex,(select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP where sfzh =ysfzh ) idCardPic from T_QB_RY_ZTRYJBXX a,ZaiTaoAJLX b where a.ajlbdm = b.code and ysfzh=#{idCardNo} 
+		<if test="compareBaseID != '' and compareBaseID!= null">
+		and '1' = trim(#{compareBaseID})
+		</if>
+    	union all
+		select 'T_QB_RY_CKRYJBXX' tableName,sfzh idCardNo,zdrylbbj content,xm idCardName,decode(xb,'1','男','2','女','男') idCardSex,(select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP where sfzh =sfzh ) idCardPic from T_QB_RY_CKRYJBXX where sfzh = #{idCardNo} 
+		<if test="compareBaseID != '' and compareBaseID!= null">
+		and '2' = trim(#{compareBaseID})
+		</if>
+		union all
+		select 'T_QB_LK_LKBK' tableName,bbkrzjhm idCardNo,lkzljb content,bbkrxm idCardName,decode(bbkrxb,'1','男','2','女','男') idCardSex,(select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP where sfzh =bbkrzjhm ) idCardPic from T_QB_LK_LKBK where bbkrzjhm = #{idCardNo} 
+		<if test="compareBaseID != '' and compareBaseID!= null">
+		and '0' = trim(#{compareBaseID})
+		</if>
+		 		 
+	</select>
+	
+	<select id="getCompareResult" resultMap="IntegratedQueryMessageModelMap">
+		select ysfzh IdCardNo,b.context ZaiTaoAJLX from T_QB_RY_ZTRYJBXX a,ZaiTaoAJLX b where a.ajlbdm = b.code and a.id=#{ctrlBaseId}
+	</select>
+	
+</mapper>

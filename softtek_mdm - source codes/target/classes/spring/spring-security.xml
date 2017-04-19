@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security.xsd">
+	<!--开启注解 -->
+	<!--注解是方法级别的 支持事先或事后 @PreAuthorize("hasRole('ROLE_USER')") -->
+	<global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
+	
+	<!-- 访问除去过滤之外的，任意url所需要的权限规则 -->
+	<!-- 使用自定义Filter时需要将http节点的auto-config="true"属性删除，并且要通过entry-point-ref指定一个入口  -->  
+	<http use-expressions="true" entry-point-ref="authenticationEntryPoint" authentication-manager-ref="myAuthenticationManager">
+	    <!-- 开启csrf -->
+		<csrf request-matcher-ref="csrfSecurityRequestMatcher"/>
+		<!-- 对登录页面，所有的用户都可以访问 ，资源不做权限管理-->
+        <intercept-url pattern="/resources/**" access="permitAll" />
+        <intercept-url pattern="/webjars/**" access="permitAll" />
+        <intercept-url pattern="/" access="permitAll" />
+		<!-- <intercept-url pattern="/login*" access="permitAll" /> -->
+		<intercept-url pattern="/manager/**" access="permitAll" />
+		<!-- 处理移动设备的访问登录 -->
+		<intercept-url pattern="/terminal/**" access="permitAll" />
+		<!-- 高权限必须放在低权限前面 -->
+		<!-- 超级管理员AUTH_ADMIN  -->
+		<intercept-url pattern="/admin/**" access="hasRole('AUTH_ADMIN')" />
+		<!-- 机构管理员AUTH_INSTITUTION  -->
+        <intercept-url pattern="/institution/**" access="hasRole('AUTH_INSTITUTION')" />
+        <!--部门管理员AUTH_MANAGER  -->
+        <!-- <intercept-url pattern="/manager/**" access="hasRole('AUTH_MANAGER')" /> -->
+        <!--普通用户AUTH_CUSTOMER  -->
+        <intercept-url pattern="/customer/**" access="hasRole('AUTH_CUSTOMER')" />
+	    
+		<!-- 配置登录页面为login.jsp ，
+		             登录成功调用authoritySuccess处理跳转，
+		             登录失败返回login.jsp并携带参数error=true
+	     -->
+		<!-- <form-login login-page="/login"  default-target-url="/login"
+			authentication-failure-url="/login?error=true" 
+			authentication-success-handler-ref="authoritySuccess"/> -->
+			 
+		<!-- remember-me -->
+		<remember-me key="myKey"/>
+		<custom-filter before="FORM_LOGIN_FILTER" ref ="MyHeadUsernamePasswordAuthenticationFilter" />
+		<custom-filter position="FORM_LOGIN_FILTER" ref="MyUsernamePasswordAuthenticationFilter"/>
+		<custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter"/>
+		
+		<custom-filter before="LOGOUT_FILTER" ref="logoutFilter" />   
+        <custom-filter position="LOGOUT_FILTER" ref="adminLogoutFilter" />
+		
+		<session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" 
+		invalid-session-url="/" session-authentication-error-url="/"/>
+		<!-- <session-management>
+			<concurrency-control error-if-maximum-exceeded="true"  max-sessions="1"/>
+   		</session-management> -->
+		<!-- 退出配置 -->
+		
+<!-- 		<logout invalidate-session="true" delete-cookies="JSESSIONID" logout-success-url="/login" logout-url="/j_spring_security_logout"/> -->
+	  
+     </http>
+     <!-- 排除设备端的拦截 -->
+       <beans:bean id="csrfSecurityRequestMatcher" class="com.softtek.mdm.security.CsrfSecurityRequestMatcher">
+          <beans:property name="execludeUrls">
+             <beans:list>
+                 <beans:value>/terminal/</beans:value>
+             </beans:list>
+         </beans:property>
+     </beans:bean> 
+
+	 <!-- 用户权限获取 -->
+	<beans:bean id="myUserDetailServiceImpl"
+		class="com.softtek.mdm.security.MyUserDetailServiceImpl"/>
+	
+	<!-- 后端认证成功之后跳转 -->
+	<beans:bean id="authoritySuccess" class="com.softtek.mdm.security.AuthenticationSuccess">
+		<beans:property name = "alwaysUseDefaultTargetUrl" value = "true" />   
+	    <beans:property name = "defaultTargetUrl" value = "/manager" />
+	</beans:bean>
+	
+	<!-- 前端认证成功之后跳转 -->
+	<beans:bean id="authorityHeadSuccess" class="com.softtek.mdm.security.AuthenticationHeadSuccess">
+		<beans:property name = "alwaysUseDefaultTargetUrl" value = "true" />   
+	    <beans:property name = "defaultTargetUrl" value = "/" />
+	</beans:bean>
+	
+	<!-- 前端认证失败 -->
+	<beans:bean id="failureHandler"    
+                class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler" >   
+      	<beans:property name="defaultFailureUrl" value="/" />   
+    </beans:bean>
+	<!-- 后端认证失败 -->
+	<beans:bean id="adminFailureHandler"    
+                class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler" >   
+      	<beans:property name="defaultFailureUrl" value="/manager" />   
+    </beans:bean>
+    
+    <!-- 前端注销 -->
+     <beans:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter" >   
+        <beans:constructor-arg value="/" />   
+        <beans:constructor-arg>   
+            <beans:list>   
+                <beans:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />   
+            </beans:list >   
+        </beans:constructor-arg>   
+        <beans:property name = "filterProcessesUrl" value ="/j_spring_security_logout"   />   
+    </beans:bean > 
+    
+	<!-- 后端注销 -->
+	<beans:bean id="adminLogoutFilter" class = "org.springframework.security.web.authentication.logout.LogoutFilter" >   
+        <beans:constructor-arg  value ="/manager"/>   
+        <beans:constructor-arg>   
+            <beans:list>   
+                <beans:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"   />   
+            </beans:list>   
+        </beans:constructor-arg>   
+        <beans:property name="filterProcessesUrl" value="/manager/j_spring_security_logout" />   
+    </beans:bean>  
+	
+	<!-- 实现了UserDetailsService的Bean -->
+	<authentication-manager id="myAuthenticationManager" alias="authenticationManager" erase-credentials="false">
+		<authentication-provider ref="authenticationProvider" />
+	</authentication-manager>
+	
+	<beans:bean id="sessionRegistry"  
+    class="org.springframework.security.core.session.SessionRegistryImpl" />
+    
+    <!-- 自定义的过滤器 -->
+    <!-- 前端 -->
+    <beans:bean id="MyHeadUsernamePasswordAuthenticationFilter" 
+    class="com.softtek.mdm.security.MyHeadUsernamePasswordAuthenticationFilter">
+	     <beans:property name="authenticationManager" ref="myAuthenticationManager" />
+	     <beans:property name="authenticationSuccessHandler" ref="authorityHeadSuccess" />
+	     <beans:property name = "authenticationFailureHandler" ref="failureHandler" />
+	     <beans:property name="filterProcessesUrl" value="/j_spring_security_check"/>
+    </beans:bean>
+    
+    <!-- 后端 -->
+    <beans:bean id="MyUsernamePasswordAuthenticationFilter" 
+    class="com.softtek.mdm.security.MyUsernamePasswordAuthenticationFilter">
+	     <beans:property name="authenticationManager" ref="myAuthenticationManager" />
+	     <beans:property name="authenticationSuccessHandler" ref="authoritySuccess" />
+	     <beans:property name = "authenticationFailureHandler" ref="adminFailureHandler" />
+	     <beans:property name="filterProcessesUrl"  value="/manager/j_spring_security_check"/>
+    </beans:bean>
+    
+    <!-- <beans:bean id="authenticationEntryPoint" 
+    class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:property name="loginFormUrl" value="/login" />
+    </beans:bean> -->
+    <beans:bean id="authenticationEntryPoint" 
+    class="com.softtek.mdm.security.LoginEntryPoint">
+    </beans:bean>
+    
+    <beans:bean id="encoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+    
+    <!-- 自己提供用户权限 -->
+	<beans:bean id="authenticationProvider" 
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="myUserDetailServiceImpl" />
+		<beans:property name="hideUserNotFoundExceptions" value="false" />
+		<beans:property name="passwordEncoder" ref="encoder" />
+	</beans:bean>
+	
+	<beans:bean id="concurrencyFilter"
+		class="org.springframework.security.web.session.ConcurrentSessionFilter">
+		<beans:property name="sessionRegistry" ref="sessionRegistry" />
+		<beans:property name="expiredUrl" value="/" />
+	</beans:bean>
+	
+	<beans:bean id="sessionAuthenticationStrategy"
+		class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+		<beans:constructor-arg name="sessionRegistry" ref="sessionRegistry" />
+		<beans:property name="maximumSessions" value="1" />
+	</beans:bean>
+	
+	    
+	<!-- 指定国际化语言为中文-->
+    <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">  
+        <beans:property name="basenames" value="classpath:message/security" />  
+    </beans:bean>
+    
+    <beans:bean id="messageSourceService" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<beans:property name="basenames">
+			<beans:list>
+				<beans:value>message/messages</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+    
+</beans:beans>

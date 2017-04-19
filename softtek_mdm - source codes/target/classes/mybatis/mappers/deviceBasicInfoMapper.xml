@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceBasicInfoDao">
+	<sql id="filterRecordSql">
+		(
+		<if test="user==null">
+		SELECT id FROM org_managers
+		WHERE org_managers.delete_time IS NULL
+		AND user_id IS NOT NULL
+		AND org_managers.create_by IN (
+			SELECT r.manager_id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		)
+		
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		<if test="user!=null">
+			SELECT id FROM org_managers
+			WHERE delete_time IS NULL
+			AND user_id=#{user.id}
+			AND org_id=#{orgId}
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		)
+	</sql>
+	
+	<resultMap type="DeviceBasicInfo" id="DeviceBasicInfoMap">
+		<id property="id" column="id"/>
+		<result property="device_name" column="device_name"/>
+		<result property="orgId" column="orgId"/>
+		<result property="device_type" column="device_type"/>
+		<result property="sn" column="sn"/>
+		<result property="esnorimei" column="esnorimei"/>
+		<result property="belong" column="belong"/>
+		<result property="isActive" column="is_active"/>
+		<result property="device_status" column="device_status"/>
+		<result property="os_version" column="os_version"/>
+		<result property="ip" column="ip"/>
+		<result property="sdCard" column="sd_card"/>
+		<result property="app_versoin" column="app_version"/>
+		<result property="phone_number" column="phone_number"/>
+		<result property="app_versoin" column="app_versoin"/>
+		<result property="power" column="power"/>
+		<result property="resolution" column="resolution"/>
+		<result property="udid" column="udid"/>
+		<result property="capacity" column="capacity"/>
+		<result property="last_login_time" column="last_login_time"/>
+		<result property="imsi" column="imsi"/>
+		<result property="last_collection_time" column="last_collection_time"/>
+		<result property="update_time" column="update_time"/>
+		<result property="deviceToken" column="device_token"/>
+		<association property="user" javaType="User">
+			<id property="id" column="user_id"/>
+			<result property="username" column="user_name"/>
+			<result property="realname" column="real_name"/>
+		</association>
+		<association property="deviceNetworkStatus" javaType="DeviceNetworkStatus">
+			<id property="id" column="device_id"></id>
+			<result property="vendor" column="vendor"/>
+			<result property="net_type_id" column="net_type_id"/>
+			<result property="wifi_mac" column="wifi_mac"/>
+			<result property="blue_tooth_mac" column="blue_tooth_mac"/>
+			<result property="data_roam" column="data_roam"/>
+		</association>
+	</resultMap>
+	<resultMap id="deviceLocationMap" type="DeviceBasicInfo">
+	   <result column="longitude" property="longitude" />
+	   <result column="latitude" property="latitude" />
+	</resultMap>
+	<select id="checkIosRight" resultType="int">
+		SELECT count(1) FROM device_basic_info
+		WHERE user_id=#{userId}
+		AND udid=#{udid}
+		AND ISNULL(delete_time)
+	</select>
+	
+	<select id="findNeedUpdate" resultMap="DeviceBasicInfoMap">
+		SELECT
+			org_id,
+			device_name,
+			device_type,
+			sn,
+			esnorimei,
+			belong,
+			device_status,
+			user_id,
+			os_version,
+			phone_number,
+			app_versoin,
+			ip,
+			power,
+			resolution,
+			udid,
+			capacity,
+			last_login_time,
+			last_collection_time,
+			is_active,
+			break_status,
+			sd_card,
+			irr_status,
+			create_time,
+			flux,
+			imsi,
+			device_token,
+			ios_uuid
+		FROM
+			device_basic_info
+		WHERE
+			app_versoin > #{version}
+		<if test="orgIds !=null">
+			AND org_id IN 
+			<foreach collection="orgIds" item="item" open="(" separator=","  close=")">
+				#{item}
+		    </foreach>
+		</if>
+		
+		<if test="platform != null">
+			AND device_type = #{platform}
+		</if>
+		AND ISNULL(delete_time)
+	</select>
+	
+	<select id="findCountByUser" parameterType="User" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_basic_info
+		WHERE user_id=#{id}
+	</select>
+	
+	<select id="findCountWithoutCurrentByUser" parameterType="User" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_basic_info
+		WHERE user_id=#{id}
+	</select>
+
+	
+	<insert id="save" parameterType="DeviceBasicInfo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO device_basic_info(org_id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,is_active,break_status,sd_card,irr_status,create_time,flux,imsi,device_token,ios_uuid)
+		VALUES(#{orgId},#{device_name},#{device_type},#{sn},#{esnorimei},#{belong},#{device_status},#{user.id},#{os_version},#{phone_number},#{app_versoin},#{ip},#{power},#{resolution},#{udid},#{capacity},#{last_login_time},#{last_collection_time},#{isActive},#{break_status},#{sdCard},#{irr_status},NOW(),#{flux},#{imsi},#{deviceToken},#{iosUuid})
+	</insert>
+	
+	<select id="findByUserId" parameterType="java.lang.Integer" resultMap="DeviceBasicInfoMap">
+		SELECT id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,is_active,replace(`device_token`,' ','') as device_token
+		FROM device_basic_info
+		WHERE user_id=#{id}
+	</select>
+	
+	<select id="findByUdid" parameterType="java.lang.String" resultMap="DeviceBasicInfoMap">
+		SELECT id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,is_active,replace(`device_token`,' ','') as device_token
+		FROM device_basic_info
+		WHERE udid=#{udid} and delete_time is null
+		LIMIT 1
+	</select>
+	
+	<select id="findBySN" parameterType="java.lang.String" resultMap="DeviceBasicInfoMap">
+		SELECT device_basic_info.id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,user_name,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,imsi,device_basic_info.is_active
+		FROM device_basic_info
+		LEFT JOIN users
+		ON users.id=device_basic_info.user_id
+		WHERE sn=#{sn} and device_basic_info.delete_time is null
+		LIMIT 1
+	</select>
+	
+	<select id="findOne" parameterType="java.lang.Integer" resultMap="DeviceBasicInfoMap">
+		SELECT id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,is_active,replace(device_token,' ','') AS device_token
+		FROM device_basic_info
+		WHERE id=#{id} 
+		LIMIT 1
+	</select>
+	
+	<select id="findOneWithNetInfo" parameterType="java.lang.Integer" resultMap="DeviceBasicInfoMap">
+		SELECT bi.id as id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,is_active,sd_card,
+		vendor,net_type_id,wifi_mac,blue_tooth_mac,data_roam,voice_roam
+		FROM device_basic_info bi left join device_network_status bs on bi.id = bs.device_id 
+		WHERE bi.id=#{id} 
+		LIMIT 1
+	</select>
+	
+	<select id="findCountByUsers" resultType="java.lang.Integer" parameterType="int">
+		SELECT count(1)
+		FROM device_basic_info d,
+		(select id,group_id,org_id from users where delete_time is null) u,
+		(select id from org_structure where delete_time is null) s
+		WHERE d.user_id = u.id and u.group_id = s.id
+		<if test="idList != null">
+		    and s.id in 
+			 <foreach collection="idList" item="item" open="(" separator=","
+			  close=")">#{item}
+		     </foreach>
+		</if>
+		AND u.org_id = #{orgId}
+		AND d.delete_time is null
+	</select>
+	
+	<select id="findCountByDepartIds" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_basic_info
+		LEFT JOIN users
+		ON users.id=device_basic_info.user_id
+		WHERE device_basic_info.delete_time is null
+		AND users.delete_time is NULL
+		AND device_basic_info.org_id=#{orgId}
+		<if test="user!=null">
+		AND group_id in
+		<foreach item="item" index="index" collection="ids" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		</if>
+		<!-- AND device_basic_info.create_by in
+		<include refid="filterRecordSql" /> -->
+	</select>
+	
+	<select id="isExists" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_basic_info
+		WHERE user_id =#{0}
+		AND　device_name=#{1}
+	</select>
+	
+	<update id="update" parameterType="DeviceBasicInfo">
+		update device_basic_info
+		set
+		<if test="orgId != null">
+		org_id = #{orgId},
+		</if>
+		<if test="user != null">
+			user_id = #{user.id},
+		</if>
+		<if test="os_version != null">
+		os_version = #{os_version},
+		</if>
+		<if test="phone_number != null">
+		phone_number = #{phone_number},
+		</if>
+		<if test="app_versoin != null">
+		app_versoin = #{app_versoin},
+		</if>
+		<if test="ip != null">
+		ip = #{ip},
+		</if>
+		<if test="power != null">
+		power = #{power},
+		</if>
+		<if test="capacity != null">
+		capacity = #{capacity},
+		</if>
+		<if test="last_login_time != null">
+		last_login_time=#{last_login_time},
+		</if>
+		<if test="isActive != null">
+		is_active = #{isActive},
+		</if>
+		<if test="device_status != null">
+		device_status = #{device_status},
+		</if>
+		<if test="sdCard != null">
+		sd_card = #{sdCard},
+		</if>
+		<if test="irr_status != null">
+		irr_status = #{irr_status},
+		</if>
+		<if test="flux != null">
+		flux = #{flux},
+		</if>
+		<if test="imsi != null">
+		imsi = #{imsi},
+		</if>
+		<if test="deviceToken != null">
+		device_token = #{deviceToken},
+		</if>
+		last_collection_time=NOW(),
+		update_time=NOW(),
+		delete_time=null
+		WHERE id=#{id}
+	</update>
+	
+	<update id="updateIosDevice" parameterType="DeviceBasicInfo">
+		update device_basic_info
+		set
+		<if test="orgId != null">
+		org_id = #{orgId},
+		</if>
+		<if test="user != null">
+			user_id = #{user.id},
+		</if>
+		<if test="os_version != null">
+		os_version = #{os_version},
+		</if>
+		<if test="phone_number != null">
+		phone_number = #{phone_number},
+		</if>
+		<if test="app_versoin != null">
+		app_versoin = #{app_versoin},
+		</if>
+		<if test="ip != null">
+		ip = #{ip},
+		</if>
+		<if test="power != null">
+		power = #{power},
+		</if>
+		<if test="capacity != null">
+		capacity = #{capacity},
+		</if>
+		<if test="last_login_time != null">
+		last_login_time=#{last_login_time},
+		</if>
+		<if test="isActive != null">
+		is_active = #{isActive},
+		</if>
+		<if test="device_status != null">
+		device_status = #{device_status},
+		</if>
+		<if test="sdCard != null">
+		sd_card = #{sdCard},
+		</if>
+		<if test="irr_status != null">
+		irr_status = #{irr_status},
+		</if>
+		<if test="flux != null">
+		flux = #{flux},
+		</if>
+		<if test="imsi != null">
+		imsi = #{imsi},
+		</if>
+		<if test="deviceToken != null">
+		device_token = #{deviceToken},
+		</if>
+		<if test="sn != null">
+		sn = #{sn},
+		</if>
+		<if test="udid != null">
+		udid = #{udid},
+		</if>
+		<if test="esnorimei != null">
+		esnorimei = #{esnorimei},
+		</if>
+		last_collection_time=NOW(),
+		update_time=NOW(),
+		delete_time=null
+		WHERE ios_uuid = #{iosUuid}
+	</update>
+	
+	<update id="updateDeviceStatusByUdid" parameterType="DeviceBasicInfo">
+	    update device_basic_info set device_status = #{device_status},is_active=#{isActive} where udid = #{udid}
+    </update>
+	
+	<delete id="trucateWithUserId" parameterType="java.lang.Integer">
+		DELETE FROM device_basic_info
+		WHERE user_id=#{userId}
+	</delete>
+	
+	<delete id="trucateWithUserIds">
+		DELETE FROM device_basic_info
+		WHERE user_id in 
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<select id="findCountByOrgId" resultType="java.lang.Integer">
+	  select count(1) from ( select id,
+        (select user_name from users where id = user_id) as user_name,
+        (select real_name from users where id = user_id) as real_name,
+        device_name,
+        device_type,
+        sn,
+        udid,
+        user_id,
+        esnorimei,
+        belong,
+        device_status,
+        irr_status,
+        lost_status,
+        break_status,
+        visit_status,
+        last_collection_time,
+        is_active
+        from device_basic_info
+        where user_id in 
+        (select u.id 
+        from org_structure s,
+        users u 
+        where s.id = u.group_id
+        <if test="idlist != null">  
+        and u.group_id in
+        <foreach collection="idlist" item="item" open="(" separator=","
+            close=")">#{item}
+        </foreach>
+        </if>
+        and u.delete_time is null)
+        and delete_time is null
+        and org_id = #{orgId}
+        <if test="isAndroid==0">
+        and lower(device_type) like '%ios%'
+        </if>
+        <if test="isAndroid==1">
+        and lower(device_type) like '%android%'
+        </if>) tmp 
+
+	</select>
+	
+  <!-- 根据策略id获取已分配的设备类表 -->
+  <select id="getDeviceListByPolicy" resultMap="DeviceBasicInfoMap" parameterType="com.softtek.mdm.util.DataGridModel">
+      select 
+        t8.id,
+        t2.user_name,
+        t2.real_name,
+        t8.device_name,
+        t8.os_version,
+        t8.belong,
+        date_format(t8.update_time,'%Y-%m-%d %H:%i:%S') as update_time 
+      from 
+        device_basic_info t8 
+      left join users t2 on t8.user_id = t2.id 
+      where 
+       (t2.id in (select t3.users_id from android_device_users t3 where t3.android_device_policy_id = #{params.policyId} and t3.delete_time is null)
+		or t2.group_id in (select t4.org_structure_id from android_device_department t4 where t4.android_device_policy_id = #{params.policyId} and t4.delete_time is null) 
+		or t2.id in (
+		SELECT t5.user_id from users_virtual_group t5 
+		inner join android_device_virtual_group t6 
+		on t5.virtual_id = t6.virtual_group_id 
+		 where t6.android_device_policy_id = #{params.policyId} and t5.delete_time is null and t6.delete_time is null and t5.org_id = #{params.orgId})) 
+      and t8.delete_time is null 
+      and t8.device_type = 'android' 
+      and t8.org_id = #{params.orgId} and t2.org_id = #{params.orgId}  
+      order by t8.update_time desc 
+      limit #{begin},#{num} 
+  </select>
+	
+  <!-- 根据策略id获取已分配的iOS设备类表 -->
+  <select id="getIosDeviceListByPolicy" resultMap="DeviceBasicInfoMap" parameterType="com.softtek.mdm.util.DataGridModel">
+      select 
+        t8.id,
+        t2.user_name,
+        t2.real_name,
+        t8.device_name,
+        t8.os_version,
+        t8.belong,
+        date_format(t8.update_time,'%Y-%m-%d %H:%i:%S') as update_time 
+      from 
+        device_basic_info t8 
+      left join users t2 on t8.user_id = t2.id 
+      where 
+       (t2.id in (select t3.user_id from ios_policy_user t3 where t3.ios_device_policy_id = #{params.policyId} and t3.delete_time is null)
+		or t2.group_id in (select t4.org_structure_id from ios_policy_department t4 where t4.ios_device_policy_id = #{params.policyId} and t4.delete_time is null) 
+		or t2.id in (
+		SELECT t5.user_id from users_virtual_group t5 
+		inner join ios_policy_virtual t6 
+		on t5.virtual_id = t6.virtual_group_id 
+		 where t6.ios_device_policy_id = #{params.policyId} and t5.delete_time is null and t6.delete_time is null and t5.org_id = #{params.orgId} )) 
+      and t8.delete_time is null 
+      and t8.device_type = 'ios' 
+      and t8.org_id = #{params.orgId}  and t2.org_id = #{params.orgId} 
+      order by t8.update_time desc 
+      limit #{begin},#{num} 
+  </select>
+	
+  <!-- 根据策略id获取已分配的设备数 -->
+  <select id="getDeviceSizeByPolicy" resultType="java.lang.Integer" parameterType="com.softtek.mdm.util.DataGridModel">
+      select 
+        count(t8.id) 
+      from 
+        device_basic_info t8 
+      left join users t2 on t8.user_id = t2.id 
+      where 
+       (t2.id in (select t3.users_id from android_device_users t3 where t3.android_device_policy_id = #{params.policyId} and t3.delete_time is null)
+		or t2.group_id in (select t4.org_structure_id from android_device_department t4 where t4.android_device_policy_id = #{params.policyId} and t4.delete_time is null) 
+		or t2.id in (
+		SELECT t5.user_id from users_virtual_group t5 
+		inner join android_device_virtual_group t6 
+		on t5.virtual_id = t6.virtual_group_id 
+		 where t6.android_device_policy_id = #{params.policyId} and t5.delete_time is null and t6.delete_time is null and t5.org_id = #{params.orgId})) 
+      and t8.delete_time is null 
+      and t8.device_type = 'android' 
+      and t8.org_id = #{params.orgId} and t2.org_id = #{params.orgId}  
+      order by t8.update_time desc 
+  </select>
+  
+  <!-- 根据策略id获取已分配的设备数 -->
+  <select id="getDeviceIosSizeByPolicy" resultType="java.lang.Integer" parameterType="com.softtek.mdm.util.DataGridModel">
+    select 
+      count(t8.id) 
+    from 
+      device_basic_info t8 
+    left join users t2 on t8.user_id = t2.id 
+    where 
+      (t2.id in (select t3.user_id from ios_policy_user t3 where t3.ios_device_policy_id = #{params.policyId} and t3.delete_time is null)
+	or t2.group_id in (select t4.org_structure_id from ios_policy_department t4 where t4.ios_device_policy_id = #{params.policyId} and t4.delete_time is null) 
+	or t2.id in (
+	SELECT t5.user_id from users_virtual_group t5 
+	inner join ios_policy_virtual t6 
+	on t5.virtual_id = t6.virtual_group_id 
+	 where t6.ios_device_policy_id = #{params.policyId} and t5.delete_time is null and t6.delete_time is null and t5.org_id = #{params.orgId})) 
+     and t8.delete_time is null 
+     and t8.device_type = 'ios' 
+     and t8.org_id = #{params.orgId} and t2.org_id = #{params.orgId}
+  </select>
+  
+  <select id="findDeviceIdsByUserIds" resultType="java.lang.Integer">
+  	SELECT id
+  	FROM device_basic_info
+  	WHERE user_id in
+  	<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+	</foreach>
+	AND delete_time is null
+  </select>
+  
+  <update id="updateLongiAndLati">
+    	  update device_basic_info set longitude = #{longitude},update_time =NOW(),latitude=#{latitude} where sn= #{sn}
+  </update>
+  
+  <!-- 设备定位 -->
+  <select id="queryDeviceLocation" parameterType="int" resultMap="deviceLocationMap">
+			  select 
+				longitude,
+				latitude,
+				update_time
+			from
+				device_basic_info
+			where
+				id = #{id}
+  </select>
+  
+  <select id="findListsByOrgId" parameterType="java.lang.Integer" resultMap="DeviceBasicInfoMap">
+		SELECT id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,flux,org_id
+		FROM device_basic_info
+		WHERE org_id=#{org_id}
+	</select>
+ <select id="getDeviceCountByMap" resultType="int">
+ 		SELECT count(0) from(
+ 		SELECT
+			d.id
+		from
+			device_statistics d,
+			users u
+		where
+			d.user_id = u.id
+		and u.delete_time is null
+		and d.org_id=#{org_id} and d.delete_time is null  and d.statistical_time BETWEEN CONCAT(#{firstDay},':00:00:00') And CONCAT(#{lastDay},':23:59:59')
+			<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+			group by
+				DATE_FORMAT(
+					d.statistical_time,
+					'%Y-%m-%d'
+				)
+				) a
+	</select>
+
+
+<select id="getDeviceListsByMap" resultType="DeviceStatistics">
+SELECT	a.id,a.create_time as create_time,IFNULL(total_device,0)as total_device,IFNULL(b.active_device,0) as active_device,
+IFNULL(c.irr_status,0)as irr_status,IFNULL(d.leave_device,0)as leave_device,IFNULL(e.monitor_device,0)as monitor_device,IFNULL(f.noactivation_device,0)as noactivation_device,IFNULL(g.new_device,0)as new_device,IFNULL(h.delete_device,0)as delete_device from(
+SELECT d.id,DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as total_device from device_statistics d,users u  where d.user_id=u.id and u.delete_time is null and d.org_id=#{org_id} and d.delete_time is null  and d.statistical_time BETWEEN CONCAT(#{firstDay},':00:00:00') And CONCAT(#{lastDay},':23:59:59')
+<if test="groupId != null">AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d')  )a LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as active_device from device_statistics d,users u where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[<]]>604800 
+ and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+ group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d') )b 
+on a.create_time=b.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as irr_status from device_statistics d,users u where d.org_id=#{org_id} and d.delete_time is null and d.irr_status=1  
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+ group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))c 
+on a.create_time=c.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as leave_device from device_statistics d,users u  where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[>]]>#{outtime} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))d
+ON a.create_time=d.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as monitor_device from device_statistics d ,users u where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[<]]>#{outtime} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))e
+on a.create_time=e.create_time left JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as noactivation_device from  device_statistics d ,users u where d.org_id=#{org_id} and d.delete_time is null and d.is_active=0 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))f
+on a.create_time=f.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as new_device from  device_statistics d ,users u  where d.org_id=#{org_id} and d.delete_time is null and DATE_FORMAT(d.statistical_time,'%Y-%m-%d')=DATE_FORMAT(d.create_time,'%Y-%m-%d') 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))g
+on a.create_time=g.create_time LEFT JOIN
+(SELECT d.id,DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as delete_device from deleted_device d,users u where d.org_id=#{org_id} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d') )h
+on a.create_time=h.create_time ORDER BY create_time desc
+ limit #{start},#{offset} 
+	</select>
+	
+<select id="getChartDeviceListsByMap" resultType="DeviceStatistics">
+SELECT	a.id,a.create_time as create_time,IFNULL(total_device,0)as total_device,IFNULL(b.active_device,0) as active_device,
+IFNULL(c.irr_status,0)as irr_status,IFNULL(d.leave_device,0)as leave_device,IFNULL(e.monitor_device,0)as monitor_device,IFNULL(f.noactivation_device,0)as noactivation_device,IFNULL(g.new_device,0)as new_device,IFNULL(h.delete_device,0)as delete_device from(
+SELECT d.id,DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as total_device from device_statistics d,users u  where d.user_id=u.id and u.delete_time is null and d.org_id=#{org_id} and d.delete_time is null  and d.statistical_time BETWEEN CONCAT(#{firstDay},':00:00:00') And CONCAT(#{lastDay},':23:59:59')
+<if test="groupId != null">AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d')  )a LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as active_device from device_statistics d,users u where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[<]]>604800 
+ and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+ group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d') )b 
+on a.create_time=b.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as irr_status from device_statistics d,users u where d.org_id=#{org_id} and d.delete_time is null and d.irr_status=1  
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+ group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))c 
+on a.create_time=c.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as leave_device from device_statistics d,users u  where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[>]]>#{outtime} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))d
+ON a.create_time=d.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as monitor_device from device_statistics d ,users u where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[<]]>#{outtime} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))e
+on a.create_time=e.create_time left JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as noactivation_device from  device_statistics d ,users u where d.org_id=#{org_id} and d.delete_time is null and d.is_active=0 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))f
+on a.create_time=f.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as new_device from  device_statistics d ,users u  where d.org_id=#{org_id} and d.delete_time is null and DATE_FORMAT(d.statistical_time,'%Y-%m-%d')=DATE_FORMAT(d.create_time,'%Y-%m-%d') 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))g
+on a.create_time=g.create_time LEFT JOIN
+(SELECT d.id,DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as delete_device from deleted_device d,users u where d.org_id=#{org_id} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d') )h
+on a.create_time=h.create_time ORDER BY create_time asc
+</select>
+<select id="getExportDeviceListsByMap" resultType="DeviceStatistics">
+SELECT	a.id,a.create_time as create_time,IFNULL(total_device,0)as total_device,IFNULL(b.active_device,0) as active_device,
+IFNULL(c.irr_status,0)as irr_status,IFNULL(d.leave_device,0)as leave_device,IFNULL(e.monitor_device,0)as monitor_device,IFNULL(f.noactivation_device,0)as noactivation_device,IFNULL(g.new_device,0)as new_device,IFNULL(h.delete_device,0)as delete_device from(
+SELECT d.id,DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as total_device from device_statistics d,users u  where d.user_id=u.id and u.delete_time is null and d.org_id=#{org_id} and d.delete_time is null  and d.statistical_time BETWEEN CONCAT(#{firstDay},':00:00:00') And CONCAT(#{lastDay},':23:59:59')
+<if test="groupId != null">AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d')  )a LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as active_device from device_statistics d,users u where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[<]]>604800 
+ and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+ group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d') )b 
+on a.create_time=b.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as irr_status from device_statistics d,users u where d.org_id=#{org_id} and d.delete_time is null and d.irr_status=1  
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+ group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))c 
+on a.create_time=c.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as leave_device from device_statistics d,users u  where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[>]]>#{outtime} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if>
+group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))d
+ON a.create_time=d.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as monitor_device from device_statistics d ,users u where d.org_id=#{org_id} and d.delete_time is null and UNIX_TIMESTAMP(d.statistical_time)-UNIX_TIMESTAMP(d.last_collection_time)<![CDATA[<]]>#{outtime} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))e
+on a.create_time=e.create_time left JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as noactivation_device from  device_statistics d ,users u where d.org_id=#{org_id} and d.delete_time is null and d.is_active=0 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))f
+on a.create_time=f.create_time LEFT JOIN
+(SELECT DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as new_device from  device_statistics d ,users u  where d.org_id=#{org_id} and d.delete_time is null and DATE_FORMAT(d.statistical_time,'%Y-%m-%d')=DATE_FORMAT(d.create_time,'%Y-%m-%d') 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d'))g
+on a.create_time=g.create_time LEFT JOIN
+(SELECT d.id,DATE_FORMAT(d.statistical_time,'%Y-%m-%d')as create_time,COUNT(0) as delete_device from deleted_device d,users u where d.org_id=#{org_id} 
+and u.id = d.user_id <if test="groupId != null"> AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item} </foreach></if> group by DATE_FORMAT(d.statistical_time,'%Y-%m-%d') )h
+on a.create_time=h.create_time ORDER BY create_time desc
+	</select>
+	
+	<insert id="autoBackupDevice">
+		insert into device_statistics (
+	org_id,
+	device_name,
+	device_type,
+	sn,
+	esnorimei,
+	belong,
+	device_status,
+	user_id,
+	os_version,
+	phone_number,
+	app_versoin,
+	ip,
+	power,
+	resolution,
+	udid,
+	capacity,
+	last_login_time,
+	last_collection_time,
+	create_time,
+	create_by,
+	update_time,
+	update_by,
+	delete_time,
+	irr_status,
+	lost_status,
+	break_status,
+	visit_status,
+	is_active,
+	sd_card,
+	device_unique_id,
+	longitude,
+	latitude,
+	flux,
+	statistical_time
+) select
+	d.org_id,
+	d.device_name,
+	d.device_type,
+	d.sn,
+	d.esnorimei,
+	d.belong,
+	d.device_status,
+	d.user_id,
+	d.os_version,
+	d.phone_number,
+	d.app_versoin,
+	d.ip,
+	d.power,
+	d.resolution,
+	d.udid,
+	d.capacity,
+	d.last_login_time,
+	d.last_collection_time,
+	d.create_time,
+	d.create_by,
+	d.update_time,
+	d.update_by,
+	d.delete_time,
+	d.irr_status,
+	d.lost_status,
+	d.break_status,
+	d.visit_status,
+	d.is_active,
+	d.sd_card,
+	d.device_unique_id,
+	d.longitude,
+	d.latitude,
+	d.flux,
+	now()
+from
+	device_basic_info d;
+
+	</insert>
+	
+	<select id="getDevicesByUserId" parameterType="java.lang.Integer" resultMap="DeviceBasicInfoMap">
+		
+		select id,org_id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,udid,is_active,imsi,device_token,ios_uuid from device_basic_info
+		
+		where user_id = #{userId}
+		
+	</select>
+	
+	<select id="queryDeviceInfoByUdid" parameterType="String" resultMap="DeviceBasicInfoMap">
+        select id,device_name,device_type,udid from device_basic_info where delete_time is null and udid = #{udid}
+    </select>
+    
+    <select id="getTodayDeviceByMap" resultType="DeviceStatistics">
+        SELECT
+	a.id,
+	DATE_FORMAT(now(), '%Y-%m-%d') as create_time,
+	IFNULL(a.total_device, 0) as total_device,
+	IFNULL(b.active_device, 0) as active_device,
+	IFNULL(c.irr_status, 0) as irr_status,
+	IFNULL(d.leave_device, 0) as leave_device,
+	IFNULL(e.monitor_device, 0) as monitor_device,
+	IFNULL(f.noactivation_device, 0) as noactivation_device,
+	IFNULL(g.new_device, 0) as new_device,
+IFNULL(h.delete_device, 0) as delete_device
+from
+	(
+		SELECT
+			d.id,
+			COUNT(0) as total_device
+		from
+			device_basic_info d,
+			users u
+		where
+			d.delete_time is null
+		and u.delete_time is null
+		and d.org_id = #{org_id}
+		and d.delete_time is null
+		and d.user_id = u.id
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) a,
+	(
+		SELECT
+			COUNT(0) as active_device
+		from
+			device_basic_info d,
+			users u
+		where
+			d.delete_time is null
+		and u.delete_time is null
+		and d.org_id = #{org_id}
+		and d.delete_time is null
+		and d.user_id = u.id
+		and UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(last_collection_time) <![CDATA[<]]> 604800
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) b,
+	(
+		SELECT
+			COUNT(0) as irr_status
+		from
+			device_basic_info d,
+			users u
+		where
+			d.delete_time is null
+		and u.delete_time is null
+		and d.org_id = #{org_id}
+		and d.delete_time is null
+		and d.user_id = u.id
+		and d.irr_status = 1
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) c,
+	(
+		SELECT
+			COUNT(0) as leave_device
+		from
+			device_basic_info d,
+			users u
+		where
+			d.delete_time is null
+		and u.delete_time is null
+		and d.org_id = #{org_id}
+		and d.delete_time is null
+		and d.user_id = u.id
+		and d.device_status != 1
+		and UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(last_collection_time) <![CDATA[>]]> #{outtime}
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) d,
+	(
+		SELECT
+			COUNT(0) as monitor_device
+		from
+			device_basic_info d,
+			users u
+		where
+			d.delete_time is null
+		and u.delete_time is null
+		and d.org_id = #{org_id}
+		and d.delete_time is null
+		and d.user_id = u.id
+		and UNIX_TIMESTAMP(now()) - UNIX_TIMESTAMP(last_collection_time) <![CDATA[<]]> #{outtime}
+		and d.device_status != 1
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) e,
+	(
+		SELECT
+			COUNT(0) as noactivation_device
+		from
+			device_basic_info d,
+			users u
+		where
+			d.delete_time is null
+		and u.delete_time is null
+		and d.org_id = #{org_id}
+		and d.delete_time is null
+		and d.user_id = u.id
+		and d.is_active = 0
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) f,
+	(
+		SELECT
+			COUNT(0) as new_device
+		from
+			device_basic_info d,
+			users u
+		where
+			d.delete_time is null
+		and u.delete_time is null
+		and d.org_id = #{org_id}
+		and d.delete_time is null
+		and d.user_id = u.id
+		and DATE_FORMAT(now(), '%Y-%m-%d') = DATE_FORMAT(d.create_time, '%Y-%m-%d')
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) g,
+	(
+		SELECT
+		 COUNT(0) as delete_device
+		from
+			deleted_device d,
+			users u
+		WHERE
+			d.org_id = #{org_id}
+		AND d.user_id = u.id
+		AND DATE_FORMAT(d.statistical_time,'%Y-%m-%d') = curdate()
+		<if test="groupId != null">
+				AND u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	) h;
+    </select>
+    
+	<select id="findByIosUuid" parameterType="java.lang.String" resultMap="DeviceBasicInfoMap">
+		SELECT device_basic_info.id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,user_name,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,imsi,device_basic_info.is_active
+		FROM device_basic_info
+		LEFT JOIN users
+		ON users.id=device_basic_info.user_id
+		WHERE ios_uuid=#{iosUuid} and device_basic_info.delete_time is null
+		LIMIT 1
+	</select>
+	
+	<!-- 根据用户id和iosuuid查询其他绑定的设备 -->
+	<select id="findCountWithoutCurrentByUserAndIosUuid" parameterType="User" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_basic_info
+		WHERE user_id=#{id} and ios_uuid != #{iosUuid}
+	</select>
+	
+	<delete id="deleteDeviceStatisJob">
+		delete FROM device_statistics where statistical_time <![CDATA[<]]> DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+	</delete>
+	
+    <!-- 根据用户列表查询device_token -->
+	<select id="findDeviceTokenListByUserIds" resultType="java.lang.String">
+	  	SELECT replace(device_token,' ','') AS device_token 
+	  	FROM device_basic_info
+	  	WHERE user_id in
+	  	<foreach item="item" index="index" collection="list" open="("
+				separator="," close=")">
+				#{item}
+		</foreach>
+		AND ISNULL(delete_time) AND device_token is NOT NULL 
+	 </select>
+	 
+	 <select id="findUdidsByUserIds" resultType="string">
+	 	SELECT udid 
+	  	FROM device_basic_info
+	  	WHERE user_id IN
+	  	<foreach item="item" index="index" collection="list" open="("
+				separator="," close=")">
+				#{item}
+		</foreach>
+		AND ISNULL(delete_time)
+		AND udid IS NOT NULL
+		<if test="deviceType !=null and deviceType !=''">
+			AND device_type=#{deviceType}
+		</if>
+	 </select>
+</mapper>
+

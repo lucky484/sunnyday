@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.pfirs.dao.FaceComResultDao">
+    <resultMap id="faceComResultMap" type="com.hd.pfirs.model.FaceComResult">
+         	<id column="FaceCompRltID" property="faceCompRltID" />
+           <result column="ReceiveTime" property="receiveTime" />
+           <result column="ReceiveTimeStamp" property="receiveTimeStamp" />
+           <result column="GroupCode" property="groupCode" />
+           <result column="FaceCode" property="faceCode" />
+           <result column="FeatureID" property="featureID" />
+           <result column="CtrlBaseID" property="ctrlBaseID" />
+           <result column="CompareBaseID" property="compareBaseID" />
+           <result column="Photo" property="photo" />
+           <result column="Similarity" property="similarity" />
+           <result column="RemarkDesc" property="remarkDesc" />
+           <result column="DeleteStatus" property="deleteStatus" />
+           <result column="CreateName" property="createName" />
+           <result column="CreateTime" property="createTime" />
+           <result column="UpdateName" property="updateName" />
+           <result column="UpdateTime" property="updateTime" />
+           <result column="receiveTimeStr" property="receiveTimeStr" />
+           <result column="devicecode" property="deviceCode" />
+    </resultMap>
+    
+     <insert id="insertFaceComResult" parameterType="FaceComResult">
+        
+ 	   insert into t_pp_faceCompResult(
+ 	   FaceCompRltID,
+ 	   ReceiveTime,
+ 	   ReceiveTimeStamp,
+ 	   GroupCode,
+ 	   FaceCode,
+ 	   FeatureID,
+ 	   CtrlBaseID,
+ 	   CompareBaseID,
+ 	   Photo,
+ 	   orderNum,
+ 	   Similarity,
+ 	   DeleteStatus,
+ 	   DeviceCode,
+ 	   CreateTime,
+ 	   UpdateTime,
+ 	   flag
+ 	   )values(
+ 	    #{faceCompRltID},
+ 	    #{receiveTime},
+ 	    #{receiveTimeStamp},
+ 	    #{groupCode},
+ 	    #{faceCode},
+ 	    #{featureID},
+ 	    #{ctrlBaseID},
+ 	    #{compareBaseID},
+ 	    #{photo},
+ 	    #{orderNum},
+ 	    #{similarity},
+ 	    #{deleteStatus},
+ 	    #{deviceCode},
+ 	     sysdate,
+ 	    sysdate,
+ 	    '0'
+ 	   )
+        
+     </insert>
+     
+<!--      <select id="getSimiliarity" resultMap="faceComResultMap">
+		select 
+    	b.similarity
+		from T_QB_RY_ZTRYJBXX a,T_PP_FACECOMPRESULT b
+    	where a.ID = (select CtrlBaseID from T_PP_FACECOMPRESULT where facecode=#{faceCode})
+    	and rownum=1 order by b.similarity desc
+	</select>
+      -->
+      
+      <select id="getFaceBySimilarity" resultMap="faceComResultMap">
+      	<!-- SELECT 
+      	FACECOMPRLTID,
+ 	    RECEIVETIME,
+ 	    RECEIVETIMESTAMP,
+ 	    GROUPCODE,
+ 	    FACECODE,
+ 	    FEATUREID,
+ 	    CTRLBASEID,
+ 	    COMPAREBASEID,
+      	PHOTO,
+ 	    SIMILARITY
+      from (select * 
+ 	    FROM T_PP_FACECOMPRESULT
+ 	    WHERE groupcode = (select tmp.groupcode from (select groupcode from T_PP_FACECOMPRESULT where flag='0' and deviceCode = trim(#{deviceCode}) and SIMILARITY >( SELECT FACECOMPALARMVAL FROM T_SS_PARAMSET) order by ReceiveTimeStamp asc) tmp where rownum =1)
+       ORDER BY SIMILARITY DESC) where rownum = 1  -->
+       SELECT 
+      	FACECOMPRLTID,
+ 	    RECEIVETIME,
+ 	    RECEIVETIMESTAMP,
+ 	    GROUPCODE,
+ 	    FACECODE,
+ 	    FEATUREID,
+ 	    CTRLBASEID,
+ 	    COMPAREBASEID,
+      	PHOTO,
+ 	    SIMILARITY
+      from (select * 
+ 	    FROM T_PP_FACECOMPRESULT
+ 	    WHERE groupcode = (select tmp.groupcode from (select groupcode from T_PP_FACECOMPRESULT where deviceCode = trim(#{deviceCode}) and to_char(receivetime,'yyyymmdd hh24:mi:ss') <![CDATA[>=]]> #{warningTime} and SIMILARITY >( SELECT FACECOMPALARMVAL FROM T_SS_PARAMSET) order by ReceiveTimeStamp asc) tmp where rownum =1)
+       
+       ORDER BY SIMILARITY DESC) where rownum = 1 
+      </select>
+      
+      <select id="getLastFaceBySimilarity" resultMap="faceComResultMap">
+      	SELECT 
+      	FACECOMPRLTID,
+ 	    RECEIVETIME,
+ 	    RECEIVETIMESTAMP,
+ 	    GROUPCODE,
+ 	    FACECODE,
+ 	    FEATUREID,
+ 	    CTRLBASEID,
+ 	    COMPAREBASEID,
+      	PHOTO,
+ 	    SIMILARITY
+      from (select * 
+ 	    FROM T_PP_FACECOMPRESULT
+ 	    WHERE groupcode = (select tmp.groupcode from (select groupcode from T_PP_FACECOMPRESULT where deviceCode = trim(#{deviceCode}) and receivetime <![CDATA[>=]]> to_date(to_char(sysdate,'yyyymmdd'),'yyyymmdd' ) and SIMILARITY >( SELECT FACECOMPALARMVAL FROM T_SS_PARAMSET) order by ReceiveTimeStamp desc) tmp where rownum =1)
+       
+       ORDER BY SIMILARITY DESC) where rownum = 1
+      </select>
+      
+      <!-- sql-light -->
+      <select id="queryFaceComWarnNum" resultType="int">
+         select count(*) faceComWarnNum 
+      	 from(select groupcode,max(similarity) 
+      	 from t_pp_facecompresult 
+      	 where TO_CHAR(receivetime, 'yyyy-mm-dd') = TO_CHAR(sysdate, 'yyyy-mm-dd') 
+         and similarity>(SELECT FACECOMPALARMVAL FROM T_SS_PARAMSET)
+         and deviceCode = trim(#{deviceCode}) group by groupcode )
+      </select>
+      
+      <update id="updateFlag">
+		update t_pp_faceCompReSult set flag='1' where groupcode = (select groupcode from t_pp_faceCompReSult where faceCompRltID = #{faceCompRltID})
+	</update>
+	<!--curry.su index预警  -->
+	<select id="indexfaceWarningInfo" resultMap="faceComResultMap">
+	select to_char(receivetime,'yyyymmdd hh24:mi:ss') receiveTimeStr,groupcode,similarity,devicecode from ( select
+	distinct receivetime,groupcode,similarity,devicecode from
+	T_PP_FACECOMPRESULT
+	where GROUPCODE||SIMILARITY in
+	(select GROUPCODE||max(SIMILARITY)
+	from T_PP_FACECOMPRESULT
+	where comparebaseid is not null
+	and ReceiveTime<![CDATA[>=]]>to_date(#{warningTime},'yyyymmdd hh24:mi:ss')
+	and SIMILARITY >( SELECT FACECOMPALARMVAL FROM T_SS_PARAMSET) group by
+	GROUPCODE,devicecode ) order by receivetime desc) where rownum <![CDATA[<=]]>5
+      </select>
+</mapper>

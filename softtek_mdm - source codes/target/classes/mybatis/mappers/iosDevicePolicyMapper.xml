@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.IosDevicePolicyDao">
+  <sql id="filterRecordSql">
+	(
+	SELECT id FROM org_managers
+	WHERE id=#{mid}
+	UNION ALL
+	SELECT r.manager_id AS id FROM organization_manager_relation r
+	WHERE r.org_id = #{orgId}
+	)
+  </sql>
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.IosDevicePolicy">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="is_enable" jdbcType="CHAR" property="isEnable" />
+    <result column="org_id" jdbcType="INTEGER" property="orgId" />
+    <result column="is_enable_password" jdbcType="INTEGER" property="isEnablePassword" />
+    <result column="allow_simple_value" jdbcType="CHAR" property="allowSimpleValue" />
+    <result column="letter_digit_value" jdbcType="CHAR" property="letterDigitValue" />
+    <result column="password_length" jdbcType="CHAR" property="passwordLength" />
+    <result column="password_complexity" jdbcType="CHAR" property="passwordComplexity" />
+    <result column="lock_longest_time" jdbcType="CHAR" property="lockLongestTime" />
+    <result column="grace_time" jdbcType="CHAR" property="graceTime" />
+    <result column="failure_times" jdbcType="CHAR" property="failureTimes" />
+    <result column="validity_period" jdbcType="INTEGER" property="validityPeriod" />
+    <result column="password_history" jdbcType="INTEGER" property="passwordHistory" />
+    <result column="allow_install_app" jdbcType="CHAR" property="allowInstallApp" />
+    <result column="allow_remove_app" jdbcType="CHAR" property="allowRemoveApp" />
+    <result column="allow_use_camera" jdbcType="CHAR" property="allowUseCamera" />
+    <result column="allow_face_time" jdbcType="CHAR" property="allowFaceTime" />
+    <result column="allow_screen_catch" jdbcType="CHAR" property="allowScreenCatch" />
+    <result column="allow_siri" jdbcType="CHAR" property="allowSiri" />
+    <result column="allow_voice_dialing" jdbcType="CHAR" property="allowVoiceDialing" />
+    <result column="allow_app_purchase" jdbcType="CHAR" property="allowAppPurchase" />
+    <result column="force_iTunes_store" jdbcType="CHAR" property="forceItunesStore" />
+    <result column="limit_advert_tracking" jdbcType="CHAR" property="limitAdvertTracking" />
+    <result column="allow_modify_user" jdbcType="CHAR" property="allowModifyUser" />
+    <result column="allow_find_friends" jdbcType="CHAR" property="allowFindFriends" />
+    <result column="allow_host_pair" jdbcType="CHAR" property="allowHostPair" />
+    <result column="allow_display_news" jdbcType="CHAR" property="allowDisplayNews" />
+    <result column="allow_fingerprint_unlock" jdbcType="CHAR" property="allowFingerprintUnlock" />
+    <result column="allow_notice_news" jdbcType="CHAR" property="allowNoticeNews" />
+    <result column="allow_display_passbook" jdbcType="CHAR" property="allowDisplayPassbook" />
+    <result column="allow_use_youtube" jdbcType="CHAR" property="allowUseYoutube" />
+    <result column="allow_use_iTunes" jdbcType="CHAR" property="allowUseItunes" />
+    <result column="allow_airDrop" jdbcType="CHAR" property="allowAirdrop" />
+    <result column="allow_iMessage" jdbcType="CHAR" property="allowImessage" />
+    <result column="allow_iBook_store" jdbcType="CHAR" property="allowIbookStore" />
+    <result column="allow_game_center" jdbcType="CHAR" property="allowGameCenter" />
+    <result column="allow_use_safari" jdbcType="CHAR" property="allowUseSafari" />
+    <result column="allow_backup" jdbcType="CHAR" property="allowBackup" />
+    <result column="allow_document_synchronization" jdbcType="CHAR" property="allowDocumentSynchronization" />
+    <result column="allow_photo_stream" jdbcType="CHAR" property="allowPhotoStream" />
+    <result column="safe_type" jdbcType="CHAR" property="safeType" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+    <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+    <result column="allow_open_from_managed_to_unmanaged" jdbcType="CHAR" property="allowOpenFromManagedToUnmanaged" />
+    <result column="allow_open_from_unmanaged_to_managed" jdbcType="CHAR" property="allowOpenFromUnmanagedToManaged" />
+    <result column="allow_global_background_fetch_when_roaming" jdbcType="CHAR" property="allowGlobalBackgroundFetchWhenRoaming" />
+    <result column="allow_assistant_while_locked" jdbcType="CHAR" property="allowAssistantWhileLocked" />
+    <result column="allow_lock_screen_today_view" jdbcType="CHAR" property="allowLockScreenTodayView" />
+    <result column="allow_cloud_keychain_sync" jdbcType="CHAR" property="allowCloudKeychainSync" />
+    <result column="allow_lock_screen_control_center" jdbcType="CHAR" property="allowLockScreenControlCenter" />
+    <result column="allow_finger_print_for_unlock" jdbcType="CHAR" property="allowFingerprintForUnlock" />
+    <result column="allow_lock_screen_notifications_view" jdbcType="CHAR" property="allowLockScreenNotificationsView" />
+    <result column="allow_managed_apps_cloud_sync" jdbcType="CHAR" property="allowManagedAppsCloudSync" />
+    <result column="allow_cloud_photo_library" jdbcType="CHAR" property="allowCloudPhotoLibrary" />
+    <result column="allow_shared_stream" jdbcType="CHAR" property="allowSharedStream" />
+    <result column="allow_activity_continuation" jdbcType="CHAR" property="allowActivityContinuation" />
+    <result column="allow_adding_game_center_friends" jdbcType="CHAR" property="allowAddingGameCenterFriends" />
+    <result column="allow_multiplayer_gaming" jdbcType="CHAR" property="allowMultiplayerGaming" />
+    <result column="is_net_limit" jdbcType="CHAR" property="isNetLimit" />
+    <result column="visit_time_str" jdbcType="CHAR" property="visitTimeStr" />
+    <result column="enable_blacklist" jdbcType="CHAR" property="enableBlacklist" />
+    <result column="enable_app_name_list" jdbcType="CHAR" property="enableAppNameList" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, description, is_enable, org_id, is_enable_password, allow_simple_value, letter_digit_value, 
+    password_length, password_complexity, lock_longest_time, grace_time, failure_times, 
+    validity_period, password_history, allow_install_app, allow_remove_app, allow_use_camera, 
+    allow_face_time, allow_screen_catch, allow_siri, allow_voice_dialing, allow_app_purchase, 
+    force_iTunes_store, limit_advert_tracking, allow_modify_user, allow_find_friends, 
+    allow_host_pair, allow_display_news, allow_fingerprint_unlock, allow_notice_news, 
+    allow_display_passbook, allow_use_youtube, allow_use_iTunes, allow_airDrop, allow_iMessage, 
+    allow_iBook_store, allow_game_center, allow_use_safari, allow_backup, allow_document_synchronization, 
+    allow_photo_stream, safe_type, create_date, create_user, update_date, update_user, 
+    delete_time,allow_open_from_managed_to_unmanaged,allow_open_from_unmanaged_to_managed,
+    allow_global_background_fetch_when_roaming,allow_assistant_while_locked,allow_lock_screen_today_view,
+    allow_cloud_keychain_sync,allow_lock_screen_control_center,allow_finger_print_for_unlock,
+    allow_lock_screen_notifications_view,allow_managed_apps_cloud_sync,allow_cloud_photo_library,
+    allow_shared_stream,allow_activity_continuation,allow_adding_game_center_friends,allow_multiplayer_gaming, 
+    is_net_limit,visit_time_str,enable_blacklist,enable_app_name_list,version 
+  </sql>
+  
+  <!-- 根据主键查询表 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ios_device_policy
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+ 
+  <!-- 根据主键删除表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ios_device_policy
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.IosDevicePolicy">
+    insert into ios_device_policy (id, name, description, 
+      is_enable, org_id, is_enable_password, allow_simple_value, 
+      letter_digit_value, password_length, password_complexity, 
+      lock_longest_time, grace_time, failure_times, 
+      validity_period, password_history, allow_install_app, 
+      allow_remove_app, allow_use_camera, allow_face_time, 
+      allow_screen_catch, allow_siri, allow_voice_dialing, 
+      allow_app_purchase, force_iTunes_store, limit_advert_tracking, 
+      allow_modify_user, allow_find_friends, allow_host_pair, 
+      allow_display_news, allow_fingerprint_unlock, allow_notice_news, 
+      allow_display_passbook, allow_use_youtube, allow_use_iTunes, 
+      allow_airDrop, allow_iMessage, allow_iBook_store, 
+      allow_game_center, allow_use_safari, allow_backup, 
+      allow_document_synchronization, allow_photo_stream, 
+      safe_type, create_date, create_user, 
+      update_date, update_user, delete_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{isEnable,jdbcType=CHAR}, #{orgId,jdbcType=INTEGER}, #{isEnablePassword,jdbcType=CHAR}, #{allowSimpleValue,jdbcType=CHAR}, 
+      #{letterDigitValue,jdbcType=CHAR}, #{passwordLength,jdbcType=CHAR}, #{passwordComplexity,jdbcType=CHAR}, 
+      #{lockLongestTime,jdbcType=CHAR}, #{graceTime,jdbcType=CHAR}, #{failureTimes,jdbcType=CHAR}, 
+      #{validityPeriod,jdbcType=INTEGER}, #{passwordHistory,jdbcType=INTEGER}, #{allowInstallApp,jdbcType=CHAR}, 
+      #{allowRemoveApp,jdbcType=CHAR}, #{allowUseCamera,jdbcType=CHAR}, #{allowFaceTime,jdbcType=CHAR}, 
+      #{allowScreenCatch,jdbcType=CHAR}, #{allowSiri,jdbcType=CHAR}, #{allowVoiceDialing,jdbcType=CHAR}, 
+      #{allowAppPurchase,jdbcType=CHAR}, #{forceItunesStore,jdbcType=CHAR}, #{limitAdvertTracking,jdbcType=CHAR}, 
+      #{allowModifyUser,jdbcType=CHAR}, #{allowFindFriends,jdbcType=CHAR}, #{allowHostPair,jdbcType=CHAR}, 
+      #{allowDisplayNews,jdbcType=CHAR}, #{allowFingerprintUnlock,jdbcType=CHAR}, #{allowNoticeNews,jdbcType=CHAR}, 
+      #{allowDisplayPassbook,jdbcType=CHAR}, #{allowUseYoutube,jdbcType=CHAR}, #{allowUseItunes,jdbcType=CHAR}, 
+      #{allowAirdrop,jdbcType=CHAR}, #{allowImessage,jdbcType=CHAR}, #{allowIbookStore,jdbcType=CHAR}, 
+      #{allowGameCenter,jdbcType=CHAR}, #{allowUseSafari,jdbcType=CHAR}, #{allowBackup,jdbcType=CHAR}, 
+      #{allowDocumentSynchronization,jdbcType=CHAR}, #{allowPhotoStream,jdbcType=CHAR}, 
+      #{safeType,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 插入可选的字段表  -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.IosDevicePolicy" useGeneratedKeys="true" keyProperty="id">
+    insert into ios_device_policy
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="isEnable != null">
+        is_enable,
+      </if>
+      <if test="orgId != null">
+        org_id,
+      </if>
+      <if test="isEnablePassword != null">
+        is_enable_password,
+      </if>
+      <if test="allowSimpleValue != null">
+        allow_simple_value,
+      </if>
+      <if test="letterDigitValue != null">
+        letter_digit_value,
+      </if>
+      <if test="passwordLength != null">
+        password_length,
+      </if>
+      <if test="passwordComplexity != null">
+        password_complexity,
+      </if>
+      <if test="lockLongestTime != null">
+        lock_longest_time,
+      </if>
+      <if test="graceTime != null">
+        grace_time,
+      </if>
+      <if test="failureTimes != null">
+        failure_times,
+      </if>
+      <if test="validityPeriod != null">
+        validity_period,
+      </if>
+      <if test="passwordHistory != null">
+        password_history,
+      </if>
+      <if test="allowInstallApp != null">
+        allow_install_app,
+      </if>
+      <if test="allowRemoveApp != null">
+        allow_remove_app,
+      </if>
+      <if test="allowUseCamera != null">
+        allow_use_camera,
+      </if>
+      <if test="allowFaceTime != null">
+        allow_face_time,
+      </if>
+      <if test="allowScreenCatch != null">
+        allow_screen_catch,
+      </if>
+      <if test="allowSiri != null">
+        allow_siri,
+      </if>
+      <if test="allowVoiceDialing != null">
+        allow_voice_dialing,
+      </if>
+      <if test="allowAppPurchase != null">
+        allow_app_purchase,
+      </if>
+      <if test="forceItunesStore != null">
+        force_iTunes_store,
+      </if>
+      <if test="limitAdvertTracking != null">
+        limit_advert_tracking,
+      </if>
+      <if test="allowModifyUser != null">
+        allow_modify_user,
+      </if>
+      <if test="allowFindFriends != null">
+        allow_find_friends,
+      </if>
+      <if test="allowHostPair != null">
+        allow_host_pair,
+      </if>
+      <if test="allowDisplayNews != null">
+        allow_display_news,
+      </if>
+      <if test="allowFingerprintUnlock != null">
+        allow_fingerprint_unlock,
+      </if>
+      <if test="allowNoticeNews != null">
+        allow_notice_news,
+      </if>
+      <if test="allowDisplayPassbook != null">
+        allow_display_passbook,
+      </if>
+      <if test="allowUseYoutube != null">
+        allow_use_youtube,
+      </if>
+      <if test="allowUseItunes != null">
+        allow_use_iTunes,
+      </if>
+      <if test="allowAirdrop != null">
+        allow_airDrop,
+      </if>
+      <if test="allowImessage != null">
+        allow_iMessage,
+      </if>
+      <if test="allowIbookStore != null">
+        allow_iBook_store,
+      </if>
+      <if test="allowGameCenter != null">
+        allow_game_center,
+      </if>
+      <if test="allowUseSafari != null">
+        allow_use_safari,
+      </if>
+      <if test="allowBackup != null">
+        allow_backup,
+      </if>
+      <if test="allowDocumentSynchronization != null">
+        allow_document_synchronization,
+      </if>
+      <if test="allowPhotoStream != null">
+        allow_photo_stream,
+      </if>
+      <if test="safeType != null">
+        safe_type,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="deleteTime != null">
+        delete_time,
+      </if>
+      <if test="enableBlacklist != null">
+        enable_blacklist,
+      </if>
+      <if test="enableAppNameList != null">
+        enable_app_name_list,
+      </if>
+      <if test="isNetLimit != null">
+        is_net_limit,
+      </if>
+      <if test="visitTimeStr != null">
+        visit_time_str,
+      </if>
+      <if test="allowOpenFromManagedToUnmanaged != null">
+        allow_open_from_managed_to_unmanaged,
+      </if>
+      <if test="allowOpenFromUnmanagedToManaged != null">
+        allow_open_from_unmanaged_to_managed,
+      </if>
+      <if test="allowGlobalBackgroundFetchWhenRoaming != null">
+        allow_global_background_fetch_when_roaming,
+      </if>
+      <if test="allowAssistantWhileLocked != null">
+        allow_assistant_while_locked,
+      </if>
+      <if test="allowLockScreenTodayView != null">
+        allow_lock_screen_today_view,
+      </if>
+      <if test="allowCloudKeychainSync != null">
+        allow_cloud_keychain_sync,
+      </if>
+      <if test="allowLockScreenControlCenter != null">
+        allow_lock_screen_control_center,
+      </if>
+      <if test="allowFingerprintForUnlock != null">
+        allow_finger_print_for_unlock,
+      </if>
+      <if test="allowLockScreenNotificationsView != null">
+        allow_lock_screen_notifications_view,
+      </if>
+      <if test="allowManagedAppsCloudSync != null">
+        allow_managed_apps_cloud_sync,
+      </if>
+       <if test="allowCloudPhotoLibrary != null">
+        allow_cloud_photo_library,
+      </if>
+      <if test="allowSharedStream != null">
+        allow_shared_stream,
+      </if>
+      <if test="allowActivityContinuation != null">
+        allow_activity_continuation,
+      </if>
+      <if test="allowAddingGameCenterFriends != null">
+        allow_adding_game_center_friends,
+      </if>
+      <if test="allowMultiplayerGaming != null">
+        allow_multiplayer_gaming,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null">
+        #{isEnable,jdbcType=CHAR},
+      </if>
+      <if test="orgId != null">
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="isEnablePassword != null">
+        #{isEnablePassword,jdbcType=CHAR},
+      </if>
+      <if test="allowSimpleValue != null">
+        #{allowSimpleValue,jdbcType=CHAR},
+      </if>
+      <if test="letterDigitValue != null">
+        #{letterDigitValue,jdbcType=CHAR},
+      </if>
+      <if test="passwordLength != null">
+        #{passwordLength,jdbcType=CHAR},
+      </if>
+      <if test="passwordComplexity != null">
+        #{passwordComplexity,jdbcType=CHAR},
+      </if>
+      <if test="lockLongestTime != null">
+        #{lockLongestTime,jdbcType=CHAR},
+      </if>
+      <if test="graceTime != null">
+        #{graceTime,jdbcType=CHAR},
+      </if>
+      <if test="failureTimes != null">
+        #{failureTimes,jdbcType=CHAR},
+      </if>
+      <if test="validityPeriod != null">
+        #{validityPeriod,jdbcType=INTEGER},
+      </if>
+      <if test="passwordHistory != null">
+        #{passwordHistory,jdbcType=INTEGER},
+      </if>
+      <if test="allowInstallApp != null">
+        #{allowInstallApp,jdbcType=CHAR},
+      </if>
+      <if test="allowRemoveApp != null">
+        #{allowRemoveApp,jdbcType=CHAR},
+      </if>
+      <if test="allowUseCamera != null">
+        #{allowUseCamera,jdbcType=CHAR},
+      </if>
+      <if test="allowFaceTime != null">
+        #{allowFaceTime,jdbcType=CHAR},
+      </if>
+      <if test="allowScreenCatch != null">
+        #{allowScreenCatch,jdbcType=CHAR},
+      </if>
+      <if test="allowSiri != null">
+        #{allowSiri,jdbcType=CHAR},
+      </if>
+      <if test="allowVoiceDialing != null">
+        #{allowVoiceDialing,jdbcType=CHAR},
+      </if>
+      <if test="allowAppPurchase != null">
+        #{allowAppPurchase,jdbcType=CHAR},
+      </if>
+      <if test="forceItunesStore != null">
+        #{forceItunesStore,jdbcType=CHAR},
+      </if>
+      <if test="limitAdvertTracking != null">
+        #{limitAdvertTracking,jdbcType=CHAR},
+      </if>
+      <if test="allowModifyUser != null">
+        #{allowModifyUser,jdbcType=CHAR},
+      </if>
+      <if test="allowFindFriends != null">
+        #{allowFindFriends,jdbcType=CHAR},
+      </if>
+      <if test="allowHostPair != null">
+        #{allowHostPair,jdbcType=CHAR},
+      </if>
+      <if test="allowDisplayNews != null">
+        #{allowDisplayNews,jdbcType=CHAR},
+      </if>
+      <if test="allowFingerprintUnlock != null">
+        #{allowFingerprintUnlock,jdbcType=CHAR},
+      </if>
+      <if test="allowNoticeNews != null">
+        #{allowNoticeNews,jdbcType=CHAR},
+      </if>
+      <if test="allowDisplayPassbook != null">
+        #{allowDisplayPassbook,jdbcType=CHAR},
+      </if>
+      <if test="allowUseYoutube != null">
+        #{allowUseYoutube,jdbcType=CHAR},
+      </if>
+      <if test="allowUseItunes != null">
+        #{allowUseItunes,jdbcType=CHAR},
+      </if>
+      <if test="allowAirdrop != null">
+        #{allowAirdrop,jdbcType=CHAR},
+      </if>
+      <if test="allowImessage != null">
+        #{allowImessage,jdbcType=CHAR},
+      </if>
+      <if test="allowIbookStore != null">
+        #{allowIbookStore,jdbcType=CHAR},
+      </if>
+      <if test="allowGameCenter != null">
+        #{allowGameCenter,jdbcType=CHAR},
+      </if>
+      <if test="allowUseSafari != null">
+        #{allowUseSafari,jdbcType=CHAR},
+      </if>
+      <if test="allowBackup != null">
+        #{allowBackup,jdbcType=CHAR},
+      </if>
+      <if test="allowDocumentSynchronization != null">
+        #{allowDocumentSynchronization,jdbcType=CHAR},
+      </if>
+      <if test="allowPhotoStream != null">
+        #{allowPhotoStream,jdbcType=CHAR},
+      </if>
+      <if test="safeType != null">
+        #{safeType,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null">
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enableBlacklist != null">
+        #{enableBlacklist,jdbcType=CHAR},
+      </if>
+      <if test="enableAppNameList != null">
+        #{enableAppNameList,jdbcType=CHAR},
+      </if>
+      <if test="isNetLimit != null">
+        #{isNetLimit,jdbcType=CHAR},
+      </if>
+      <if test="visitTimeStr != null">
+        #{visitTimeStr,jdbcType=CHAR},
+      </if>
+      <if test="allowOpenFromManagedToUnmanaged != null">
+        #{allowOpenFromManagedToUnmanaged,jdbcType=CHAR},
+      </if>
+      <if test="allowOpenFromUnmanagedToManaged != null">
+        #{allowOpenFromUnmanagedToManaged,jdbcType=CHAR},
+      </if>
+      <if test="allowGlobalBackgroundFetchWhenRoaming != null">
+        #{allowGlobalBackgroundFetchWhenRoaming,jdbcType=CHAR},
+      </if>
+      <if test="allowAssistantWhileLocked != null">
+        #{allowAssistantWhileLocked,jdbcType=CHAR},
+      </if>
+      <if test="allowLockScreenTodayView != null">
+        #{allowLockScreenTodayView,jdbcType=CHAR},
+      </if>
+      <if test="allowCloudKeychainSync != null">
+        #{allowCloudKeychainSync,jdbcType=CHAR},
+      </if>
+      <if test="allowLockScreenControlCenter != null">
+        #{allowLockScreenControlCenter,jdbcType=CHAR},
+      </if>
+      <if test="allowFingerprintForUnlock != null">
+        #{allowFingerprintForUnlock,jdbcType=CHAR},
+      </if>
+      <if test="allowLockScreenNotificationsView != null">
+        #{allowLockScreenNotificationsView,jdbcType=CHAR},
+      </if>
+      <if test="allowManagedAppsCloudSync != null">
+        #{allowManagedAppsCloudSync,jdbcType=CHAR},
+      </if>
+      <if test="allowCloudPhotoLibrary != null">
+        #{allowCloudPhotoLibrary,jdbcType=CHAR},
+      </if>
+      <if test="allowSharedStream != null">
+        #{allowSharedStream,jdbcType=CHAR},
+      </if>
+      <if test="allowActivityContinuation != null">
+        #{allowActivityContinuation,jdbcType=CHAR},
+      </if>
+      <if test="allowAddingGameCenterFriends != null">
+        #{allowAddingGameCenterFriends,jdbcType=CHAR},
+      </if>
+      <if test="allowMultiplayerGaming != null">
+        #{allowMultiplayerGaming,jdbcType=CHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.IosDevicePolicy">
+    update ios_device_policy
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null">
+        is_enable = #{isEnable,jdbcType=CHAR},
+      </if>
+      <if test="orgId != null">
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="isEnablePassword != null">
+        is_enable_password = #{isEnablePassword,jdbcType=CHAR},
+      </if>
+      <if test="allowSimpleValue != null">
+        allow_simple_value = #{allowSimpleValue,jdbcType=CHAR},
+      </if>
+      <if test="letterDigitValue != null">
+        letter_digit_value = #{letterDigitValue,jdbcType=CHAR},
+      </if>
+      <if test="passwordLength != null">
+        password_length = #{passwordLength,jdbcType=CHAR},
+      </if>
+      <if test="passwordComplexity != null">
+        password_complexity = #{passwordComplexity,jdbcType=CHAR},
+      </if>
+      <if test="lockLongestTime != null">
+        lock_longest_time = #{lockLongestTime,jdbcType=CHAR},
+      </if>
+      <if test="graceTime != null">
+        grace_time = #{graceTime,jdbcType=CHAR},
+      </if>
+      <if test="failureTimes != null">
+        failure_times = #{failureTimes,jdbcType=CHAR},
+      </if>
+      <if test="validityPeriod != null">
+        validity_period = #{validityPeriod,jdbcType=INTEGER},
+      </if>
+      <if test="passwordHistory != null">
+        password_history = #{passwordHistory,jdbcType=INTEGER},
+      </if>
+      <if test="allowInstallApp != null">
+        allow_install_app = #{allowInstallApp,jdbcType=CHAR},
+      </if>
+      <if test="allowRemoveApp != null">
+        allow_remove_app = #{allowRemoveApp,jdbcType=CHAR},
+      </if>
+      <if test="allowUseCamera != null">
+        allow_use_camera = #{allowUseCamera,jdbcType=CHAR},
+      </if>
+      <if test="allowFaceTime != null">
+        allow_face_time = #{allowFaceTime,jdbcType=CHAR},
+      </if>
+      <if test="allowScreenCatch != null">
+        allow_screen_catch = #{allowScreenCatch,jdbcType=CHAR},
+      </if>
+      <if test="allowSiri != null">
+        allow_siri = #{allowSiri,jdbcType=CHAR},
+      </if>
+      <if test="allowVoiceDialing != null">
+        allow_voice_dialing = #{allowVoiceDialing,jdbcType=CHAR},
+      </if>
+      <if test="allowAppPurchase != null">
+        allow_app_purchase = #{allowAppPurchase,jdbcType=CHAR},
+      </if>
+      <if test="forceItunesStore != null">
+        force_iTunes_store = #{forceItunesStore,jdbcType=CHAR},
+      </if>
+      <if test="limitAdvertTracking != null">
+        limit_advert_tracking = #{limitAdvertTracking,jdbcType=CHAR},
+      </if>
+      <if test="allowModifyUser != null">
+        allow_modify_user = #{allowModifyUser,jdbcType=CHAR},
+      </if>
+      <if test="allowFindFriends != null">
+        allow_find_friends = #{allowFindFriends,jdbcType=CHAR},
+      </if>
+      <if test="allowHostPair != null">
+        allow_host_pair = #{allowHostPair,jdbcType=CHAR},
+      </if>
+      <if test="allowDisplayNews != null">
+        allow_display_news = #{allowDisplayNews,jdbcType=CHAR},
+      </if>
+      <if test="allowFingerprintUnlock != null">
+        allow_fingerprint_unlock = #{allowFingerprintUnlock,jdbcType=CHAR},
+      </if>
+      <if test="allowNoticeNews != null">
+        allow_notice_news = #{allowNoticeNews,jdbcType=CHAR},
+      </if>
+      <if test="allowDisplayPassbook != null">
+        allow_display_passbook = #{allowDisplayPassbook,jdbcType=CHAR},
+      </if>
+      <if test="allowUseYoutube != null">
+        allow_use_youtube = #{allowUseYoutube,jdbcType=CHAR},
+      </if>
+      <if test="allowUseItunes != null">
+        allow_use_iTunes = #{allowUseItunes,jdbcType=CHAR},
+      </if>
+      <if test="allowAirdrop != null">
+        allow_airDrop = #{allowAirdrop,jdbcType=CHAR},
+      </if>
+      <if test="allowImessage != null">
+        allow_iMessage = #{allowImessage,jdbcType=CHAR},
+      </if>
+      <if test="allowIbookStore != null">
+        allow_iBook_store = #{allowIbookStore,jdbcType=CHAR},
+      </if>
+      <if test="allowGameCenter != null">
+        allow_game_center = #{allowGameCenter,jdbcType=CHAR},
+      </if>
+      <if test="allowUseSafari != null">
+        allow_use_safari = #{allowUseSafari,jdbcType=CHAR},
+      </if>
+      <if test="allowBackup != null">
+        allow_backup = #{allowBackup,jdbcType=CHAR},
+      </if>
+      <if test="allowDocumentSynchronization != null">
+        allow_document_synchronization = #{allowDocumentSynchronization,jdbcType=CHAR},
+      </if>
+      <if test="allowPhotoStream != null">
+        allow_photo_stream = #{allowPhotoStream,jdbcType=CHAR},
+      </if>
+      <if test="safeType != null">
+        safe_type = #{safeType,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null">
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="enableBlacklist != null">
+        enable_blacklist = #{enableBlacklist,jdbcType=CHAR},
+      </if>
+      <if test="enableAppNameList != null">
+        enable_app_name_list = #{enableAppNameList,jdbcType=CHAR},
+      </if>
+      <if test="isNetLimit != null">
+        is_net_limit = #{isNetLimit,jdbcType=CHAR},
+      </if>
+      <if test="visitTimeStr != null">
+        visit_time_str = #{visitTimeStr,jdbcType=CHAR},
+      </if>
+      <if test="allowOpenFromManagedToUnmanaged != null">
+        allow_open_from_managed_to_unmanaged = #{allowOpenFromManagedToUnmanaged,jdbcType=CHAR},
+      </if>
+      <if test="allowOpenFromUnmanagedToManaged != null">
+        allow_open_from_unmanaged_to_managed = #{allowOpenFromUnmanagedToManaged,jdbcType=CHAR},
+      </if>
+      <if test="allowGlobalBackgroundFetchWhenRoaming != null">
+        allow_global_background_fetch_when_roaming = #{allowGlobalBackgroundFetchWhenRoaming,jdbcType=CHAR},
+      </if>
+      <if test="allowAssistantWhileLocked != null">
+        allow_assistant_while_locked = #{allowAssistantWhileLocked,jdbcType=CHAR},
+      </if>
+      <if test="allowLockScreenTodayView != null">
+        allow_lock_screen_today_view = #{allowLockScreenTodayView,jdbcType=CHAR},
+      </if>
+      <if test="allowCloudKeychainSync != null">
+        allow_cloud_keychain_sync = #{allowCloudKeychainSync,jdbcType=CHAR},
+      </if>
+      <if test="allowLockScreenControlCenter != null">
+        allow_lock_screen_control_center = #{allowLockScreenControlCenter,jdbcType=CHAR},
+      </if>
+      <if test="allowFingerprintForUnlock != null">
+        allow_finger_print_for_unlock = #{allowFingerprintForUnlock,jdbcType=CHAR},
+      </if>
+      <if test="allowLockScreenNotificationsView != null">
+        allow_lock_screen_notifications_view = #{allowLockScreenNotificationsView,jdbcType=CHAR},
+      </if>
+      <if test="allowManagedAppsCloudSync != null">
+        allow_managed_apps_cloud_sync = #{allowManagedAppsCloudSync,jdbcType=CHAR},
+      </if>
+      <if test="allowCloudPhotoLibrary != null">
+        allow_cloud_photo_library = #{allowCloudPhotoLibrary,jdbcType=CHAR},
+      </if>
+      <if test="allowSharedStream != null">
+        allow_shared_stream = #{allowSharedStream,jdbcType=CHAR},
+      </if>
+      <if test="allowActivityContinuation != null">
+        allow_activity_continuation = #{allowActivityContinuation,jdbcType=CHAR},
+      </if>
+      <if test="allowAddingGameCenterFriends != null">
+        allow_adding_game_center_friends = #{allowAddingGameCenterFriends,jdbcType=CHAR},
+      </if>
+      <if test="allowMultiplayerGaming != null">
+        allow_multiplayer_gaming = #{allowMultiplayerGaming,jdbcType=CHAR},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.IosDevicePolicy">
+    update ios_device_policy
+    set name = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      is_enable = #{isEnable,jdbcType=CHAR},
+      org_id = #{isEnablePassword,jdbcType=INTEGER},
+      is_enable_password = #{orgId,jdbcType=CHAR},
+      allow_simple_value = #{allowSimpleValue,jdbcType=CHAR},
+      letter_digit_value = #{letterDigitValue,jdbcType=CHAR},
+      password_length = #{passwordLength,jdbcType=CHAR},
+      password_complexity = #{passwordComplexity,jdbcType=CHAR},
+      lock_longest_time = #{lockLongestTime,jdbcType=CHAR},
+      grace_time = #{graceTime,jdbcType=CHAR},
+      failure_times = #{failureTimes,jdbcType=CHAR},
+      validity_period = #{validityPeriod,jdbcType=INTEGER},
+      password_history = #{passwordHistory,jdbcType=INTEGER},
+      allow_install_app = #{allowInstallApp,jdbcType=CHAR},
+      allow_remove_app = #{allowRemoveApp,jdbcType=CHAR},
+      allow_use_camera = #{allowUseCamera,jdbcType=CHAR},
+      allow_face_time = #{allowFaceTime,jdbcType=CHAR},
+      allow_screen_catch = #{allowScreenCatch,jdbcType=CHAR},
+      allow_siri = #{allowSiri,jdbcType=CHAR},
+      allow_voice_dialing = #{allowVoiceDialing,jdbcType=CHAR},
+      allow_app_purchase = #{allowAppPurchase,jdbcType=CHAR},
+      force_iTunes_store = #{forceItunesStore,jdbcType=CHAR},
+      limit_advert_tracking = #{limitAdvertTracking,jdbcType=CHAR},
+      allow_modify_user = #{allowModifyUser,jdbcType=CHAR},
+      allow_find_friends = #{allowFindFriends,jdbcType=CHAR},
+      allow_host_pair = #{allowHostPair,jdbcType=CHAR},
+      allow_display_news = #{allowDisplayNews,jdbcType=CHAR},
+      allow_fingerprint_unlock = #{allowFingerprintUnlock,jdbcType=CHAR},
+      allow_notice_news = #{allowNoticeNews,jdbcType=CHAR},
+      allow_display_passbook = #{allowDisplayPassbook,jdbcType=CHAR},
+      allow_use_youtube = #{allowUseYoutube,jdbcType=CHAR},
+      allow_use_iTunes = #{allowUseItunes,jdbcType=CHAR},
+      allow_airDrop = #{allowAirdrop,jdbcType=CHAR},
+      allow_iMessage = #{allowImessage,jdbcType=CHAR},
+      allow_iBook_store = #{allowIbookStore,jdbcType=CHAR},
+      allow_game_center = #{allowGameCenter,jdbcType=CHAR},
+      allow_use_safari = #{allowUseSafari,jdbcType=CHAR},
+      allow_backup = #{allowBackup,jdbcType=CHAR},
+      allow_document_synchronization = #{allowDocumentSynchronization,jdbcType=CHAR},
+      allow_photo_stream = #{allowPhotoStream,jdbcType=CHAR},
+      safe_type = #{safeType,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 获取该机构下所有的ios策略 -->
+  <select id="findAllByMap" resultType="IosDevicePolicy">
+  	SELECT id,name
+  	FROM ios_device_policy 
+  	WHERE is_enable=1
+  	AND org_id=#{orgId}
+  	AND delete_time is null
+  	AND create_user in
+  	<include refid="filterRecordSql" />
+  	ORDER BY update_date desc
+  </select>
+  
+   <!-- 根据策略名称获取策略  end -->
+  <select id="findAll" parameterType="java.lang.Integer" resultType="IosDevicePolicy">
+  	SELECT id,name
+  	FROM ios_device_policy 
+  	WHERE is_enable=1
+  	AND org_id=#{orgId}
+  	AND delete_time is null
+  	ORDER BY update_date desc
+  </select>
+  
+  <!-- 根据名称获取策略是否存在 -->
+  <select id="selectDevicePolicyByName" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">
+    select 
+      count(t1.id) 
+    from ios_device_policy t1 
+    where 
+      t1.delete_time is null 
+    and t1.name = #{params.name} 
+    and t1.org_id =  #{params.orgId} 
+     <if test="params.id != null and params.id !=''">
+      and t1.id != #{params.id} 
+      </if>
+  </select>
+  
+  <!-- 根据名称获取策略是否存在 -->
+  <select id="selectUserListByPoicyId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+	  SELECT DISTINCT(T5.userId) FROM (
+	     SELECT  
+	       T1.id as userId 
+	     from users T1 
+	     INNER JOIN ios_policy_department T2 ON T1.group_id = T2.org_structure_id 
+	     WHERE T2.ios_device_policy_id = #{policyId} 
+	     UNION 
+	     SELECT 
+	       T1.user_id as userId 
+	     from ios_policy_user T1 
+	     WHERE T1.ios_device_policy_id = #{policyId}  
+	     UNION 
+	     SELECT 
+	       T1.user_id as userId 
+	     FROM users_virtual_group T1 
+	     INNER JOIN ios_policy_virtual T2 ON T1.virtual_id = T2.virtual_group_id 
+	     WHERE T2.ios_device_policy_id = #{policyId}) T5 
+  </select>
+</mapper>

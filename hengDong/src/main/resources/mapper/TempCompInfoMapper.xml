@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.pfirs.dao.TempCompInfotDao">
+    <resultMap id="tempCompInfoMap" type="com.hd.pfirs.model.TempCompInfo">
+         	<id column="TempCompID" property="tempCompID" />
+           <result column="PersonCode" property="personCode" />
+           <result column="Pic" property="pic" />
+           <result column="Name" property="name" />
+           <result column="Sex" property="sex" />
+           <result column="IDCardNo" property="idCardNo" />
+           <result column="Description" property="description" />
+           <result column="FeatureID" property="featureID" />
+           <result column="RemarkDesc" property="remarkDesc" />
+           <result column="DeleteStatus" property="deleteStatus" />
+           <result column="CreateName" property="createName" />
+           <result column="CreateTime" property="createTime" />
+           <result column="UpdateName" property="updateName" />
+           <result column="UpdateTime" property="updateTime" />
+    </resultMap>
+    <select id="getTempCompinfo" resultMap="tempCompInfoMap">
+       select TempCompID,PersonCode,Pic,Name,Sex,IDCardNo,Description,FeatureID,RemarkDesc,DeleteStatus
+       from T_PP_TempCompInfo 
+    </select>
+</mapper>

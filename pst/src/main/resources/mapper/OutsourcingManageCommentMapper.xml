@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.OutsourcingManageCommentDao">
+     <resultMap type="com.softtek.pst.model.OutsourcingManageCommentModel" id="outsourcingManageCommentMap">
+		<id column="outsourcing_manage_com_id" property="outsourcingManageComId" />
+		<result column="outsourcing_manage_id" property="outsourcingManageId" />
+		<result column="critic" property="critic" />
+		<result column="comment" property="comment" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	  </resultMap>
+	  <select id="queryCommentByOutSourcingManageId" resultMap="outsourcingManageCommentMap" parameterType="long">
+        select outsourcing_manage_com_id,critic,comment,create_time from outsourcing_manage_comment where outsourcing_manage_id = #{outsourcingManageId} order by create_time desc
+      </select>
+      <insert id="addOutsourcingManageComment" parameterType="OutsourcingManageCommentModel" keyProperty="outsourcingManageComId"
+		useGeneratedKeys="true">
+		insert into outsourcing_manage_comment
+		(outsourcing_manage_id,critic,comment,create_time,update_time)
+		values(#{outsourcingManageId},#{critic},#{comment},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	  </insert>
+</mapper>

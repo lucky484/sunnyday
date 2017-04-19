@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.AuthorityDao">
+	<resultMap type="authority" id="authorityMap">
+		<id column="authority_id" property="authorityId" />
+		<result column="authority_name" property="authorityName" />
+		<result column="authority_description" property="authorityDescription" />
+		<result column="authority_url" property="authorityUrl" />
+		<result column="authority_type" property="authorityType" />
+	</resultMap>
+
+	<sql id="authoritySql">
+		select
+		authority_id,authority_name,authority_description,authority_type,authority_url from authority
+	</sql>
+
+	<select id="getAuthorityById" parameterType="long" resultMap="authorityMap">
+		<include refid="authoritySql" />
+		where authority_id=#{authorityId}
+	</select>
+</mapper>

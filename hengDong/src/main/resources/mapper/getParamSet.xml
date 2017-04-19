@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.SearchFaceInfoDao">
+	<resultMap type="com.hd.pfirs.model.ParamSet" id="paramSetModelMap">
+		<id column="PARAMID" property="paramId" />
+		<result column="CTRLSYNCCYCLE" property="ctrlSyncCycle" />
+		<result column="TOTALSYNCCYCLE" property="totalSyncCycle" />
+		<result column="FACECARDCOMPALARMVAL" property="faceCardCompAlarmVal" />
+		<result column="FACECOMPALARMVAL" property="faceCompAlarmVal" />
+		<result column="FACECOMPAREFLAG" property="faceCompareFlag" />
+		<result column="FACECARDCOMPFLAG" property="faceCardCompFlag" />
+		<result column="CARDCOMPAREFLAG" property="cardCompareFlag" />
+		<result column="REMARKDESC" property="remarkDesc" />
+		<result column="DELETESTATUS" property="deleteStatus" />
+	</resultMap>
+
+	
+	<select id="getParamSet" resultMap="paramSetModelMap">
+	    select PARAMID,
+		    CTRLSYNCCYCLE,
+		    TOTALSYNCCYCLE,
+		    FACECARDCOMPALARMVAL,
+		    FACECOMPALARMVAL,
+		    FACECOMPAREFLAG,
+		    FACECARDCOMPFLAG,
+		    CARDCOMPAREFLAG,
+		    REMARKDESC,
+		    DELETESTATUS 
+		    from T_SS_ParamSet 
+	</select>
+	
+</mapper>

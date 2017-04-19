@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.UserTimeDao">
+    <resultMap id="userTimeMap" type="UserTimeModel">
+        <result column="zero" property="zero" jdbcType="INTEGER" />
+        <result column="one" property="one" jdbcType="INTEGER" />
+        <result column="two" property="two" jdbcType="INTEGER" />
+        <result column="three" property="three" jdbcType="INTEGER" />
+        <result column="four" property="four" jdbcType="INTEGER" />
+        <result column="five" property="five" jdbcType="INTEGER" />
+        <result column="six" property="six" jdbcType="INTEGER" />
+        <result column="seven" property="seven" jdbcType="INTEGER" />
+        <result column="eight" property="eight" jdbcType="INTEGER" />
+        <result column="nine" property="nine" jdbcType="INTEGER" />
+        <result column="ten" property="ten" jdbcType="INTEGER" />
+        <result column="eleven" property="eleven" jdbcType="INTEGER" />
+        <result column="twelve" property="twelve" jdbcType="INTEGER" />
+        <result column="thirteen" property="thirteen" jdbcType="INTEGER" />
+        <result column="fourteen" property="fourteen" jdbcType="INTEGER" />
+        <result column="fifteen" property="fifteen" jdbcType="INTEGER" />
+        <result column="sixteen" property="sixteen" jdbcType="INTEGER" />
+        <result column="seventeen" property="seventeen" jdbcType="INTEGER" />
+        <result column="eighteen" property="eighteen" jdbcType="INTEGER" />
+        <result column="nineteen" property="nineteen" jdbcType="INTEGER" />
+        <result column="twenty" property="twenty" jdbcType="INTEGER" />
+        <result column="twenty_one" property="twentyOne" jdbcType="INTEGER" />
+        <result column="twenty_two" property="twentyTwo" jdbcType="INTEGER" />
+        <result column="twenty_three" property="twentyThree" jdbcType="INTEGER" />   
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />   
+    </resultMap>
+    <insert id="insertUserTime" parameterType="UserTimeModel">
+        insert into t_user_time (
+                    org_id,
+			        user_id,
+			        device_id,
+			        <if test="zero != null and zero != ''">
+			        zero,
+			        </if>
+			        <if test="one != null and one != ''">
+			        one,
+			        </if>
+			        <if test="two != null and two != ''">
+			        two,
+			        </if>
+			        <if test="three != null and three != ''">
+			        three,
+			        </if>
+			        <if test="four != null and four != ''">
+			        four,
+			        </if>
+			        <if test="five != null and five != ''">
+			        five,
+			        </if>
+			        <if test="six != null and six != ''">
+			        six,
+			        </if>
+			        <if test="seven != null and seven != ''">
+			        seven,
+			        </if>
+			        <if test="eight != null and eight != ''">
+			        eight,
+			        </if>
+			        <if test="nine != null and nine != ''">
+			        nine,
+			        </if>
+			        <if test="ten != null and ten != ''">
+			        ten,
+			        </if>
+			        <if test="eleven != null and eleven != ''">
+			        eleven,
+			        </if>
+			        <if test="twelve != null and twelve != ''">
+			        twelve,
+			        </if>
+			        <if test="thirteen != null and thirteen != ''">
+			        thirteen,
+			        </if>
+			        <if test="fourteen != null and fourteen != ''">
+			        fourteen,
+			        </if>
+			        <if test="fifteen != null and fifteen != ''">
+			        fifteen,
+			        </if>
+			        <if test="sixteen != null and sixteen != ''">
+			        sixteen,
+			        </if>
+			        <if test="seventeen != null and seventeen != ''">
+			        seventeen,
+			        </if>
+			        <if test="eighteen != null and eighteen != ''">
+			        eighteen,
+			        </if>
+			        <if test="nineteen != null and nineteen != ''">
+			        nineteen,
+			        </if>
+			        <if test="twenty != null and twenty != ''">
+			        twenty,
+			        </if>
+			        <if test="twentyOne != null and twentyOne != ''">
+			        twenty_one,
+			        </if>
+			        <if test="twentyTwo != null and twentyTwo != ''">
+			        twenty_two,
+			        </if>
+			        <if test="twentyThree != null and twentyThree != ''">
+			        twenty_three,
+			        </if>
+			        create_time,
+			        create_by,
+			        update_time,
+			        update_by
+			        )values(
+			         #{orgId},
+			         #{userId},
+			         #{deviceId},
+			         <if test="zero != null and zero != ''">
+			         #{zero},
+			         </if>
+			         <if test="one != null and one != ''">
+			         #{one},
+			         </if>
+			         <if test="two != null and two != ''">
+			         #{two},
+			         </if>
+			         <if test="three != null and three != ''">
+			         #{three},
+			         </if>
+			         <if test="four != null and four != ''">
+			         #{four},
+			         </if>
+			         <if test="five != null and five != ''">
+			         #{five},
+			         </if>
+			         <if test="six != null and six != ''">
+			         #{six},
+			         </if>
+			         <if test="seven != null and seven != ''">
+			         #{seven},
+			         </if>
+			         <if test="eight != null and eight != ''">
+			         #{eight},
+			         </if>
+			         <if test="nine != null and nine != ''">
+			         #{nine},
+			         </if>
+			         <if test="ten != null and ten != ''">
+			         #{ten},
+			         </if>
+			         <if test="eleven != null and eleven != ''">
+			         #{eleven},
+			         </if>
+			         <if test="twelve != null and twelve != ''">
+			         #{twelve},
+			         </if>
+			         <if test="thirteen != null and thirteen != ''">
+			         #{thirteen},
+			         </if>
+			         <if test="fourteen != null and fourteen != ''">
+			         #{fourteen},
+			         </if>
+			         <if test="fifteen != null and fifteen != ''">
+			         #{fifteen},
+			         </if>
+			         <if test="sixteen != null and sixteen != ''">
+			         #{sixteen},
+			         </if>
+			         <if test="seventeen != null and seventeen != ''">
+			         #{seventeen},
+			         </if>
+			         <if test="eighteen != null and eighteen != ''">
+			         #{eighteen},
+			         </if>
+			         <if test="nineteen != null and nineteen != ''">
+			         #{nineteen},
+			         </if>
+			         <if test="twenty != null and twenty != ''">
+			         #{twenty},
+			         </if>
+			         <if test="twentyOne != null and twentyOne != ''">
+			         #{twentyOne},
+			         </if>
+			         <if test="twentyTwo != null and twentyTwo != ''">
+			         #{twentyTwo},
+			         </if>
+			         <if test="twentyThree != null and twentyThree != ''">
+			         #{twentyThree},
+			         </if>
+			         #{createTime},
+			         #{createBy},
+			         #{updateTime},
+			         #{updateBy}
+			        )
+    </insert>
+    
+    <update id="updateUserTime" parameterType="UserTimeModel">
+        update t_user_time 
+                <if test="zero != null">
+                    set zero = #{zero}
+                </if>
+                <if test="one != null">
+                    set one = #{one}
+                </if>
+                <if test="two != null">
+                    set two = #{two}
+                </if>
+                <if test="three != null">
+                    set three = #{three}
+                </if>
+                <if test="four != null">
+                    set four = #{four}
+                </if>
+                <if test="five != null">
+                    set five = #{five}
+                </if>
+                <if test="six != null">
+                    set six = #{six}
+                </if>
+                <if test="seven !=null">
+                    set seven = #{seven}
+                </if>
+                <if test="eight !=null">
+                    set eight = #{eight}
+                </if>
+                <if test="nine !=null">
+                    set nine = #{nine}
+                </if>
+                <if test="ten !=null">
+                    set ten = #{ten}
+                </if>
+                <if test="eleven !=null">
+                    set eleven = #{eleven}
+                </if>
+                <if test="twelve !=null">
+                    set twelve = #{twelve}
+                </if>
+                <if test="thirteen !=null">
+                    set thirteen = #{thirteen}
+                </if>
+                <if test="fourteen !=null">
+                    set fourteen = #{fourteen}
+                </if>
+                <if test="fifteen !=null">
+                    set fifteen = #{fifteen}
+                </if>
+                <if test="sixteen !=null">
+                    set sixteen = #{sixteen}
+                </if>
+                 <if test="seventeen !=null">
+                    set seventeen = #{seventeen}
+                </if>
+                 <if test="eighteen !=null">
+                    set eighteen = #{eighteen}
+                </if>
+                 <if test="nineteen !=null">
+                    set nineteen = #{nineteen}
+                </if>
+                 <if test="twenty !=null">
+                    set twenty = #{twenty}
+                </if>
+                 <if test="twentyOne !=null">
+                    set twenty_one = #{twentyOne}
+                </if>
+                 <if test="twentyTwo !=null">
+                    set twenty_two = #{twentyTwo}
+                </if>
+                 <if test="twentyThree !=null">
+                    set twenty_three = #{twentyThree}
+                </if>
+                where device_id = #{deviceId} and date_format(create_time,'%Y-%m-%d') = date_format(#{updateTime},'%Y-%m-%d')
+    </update> 
+    <select id="queryUserTimeByIdAndDate" resultType="int">
+        select count(1) from t_user_time where device_id = #{deviceId} and date_format(create_time,'%Y-%m-%d') = #{date}
+    </select>
+    
+    
+    <select id="queryUserTime" resultMap="userTimeMap">
+    select
+			sum(t.zero) as zero,
+			sum(t.one) as one,
+			sum(t.two) as two,
+			sum(t.three) as three,
+			sum(t.four) as four,
+			sum(t.five) as five,
+			sum(t.six) as six,
+			sum(t.seven) as seven,
+			sum(t.eight) as eight,
+			sum(t.nine) as nine,
+			sum(t.ten) as ten,
+			sum(t.eleven) as eleven,
+			sum(t.twelve) as twelve,
+			sum(t.four) as four,
+			sum(t.thirteen) as thirteen,
+			sum(t.fourteen) as fourteen,
+			sum(t.fifteen) as fifteen,
+			sum(t.sixteen) as sixteen,
+			sum(t.seventeen) as seventeen,
+			sum(t.eighteen) as eighteen,
+			sum(t.nineteen) as nineteen,
+			sum(t.twenty) as twenty,
+			sum(t.twenty_one) as twenty_one,
+		    sum(t.twenty_two) as twenty_two,
+		    sum(t.twenty_three) as twenty_three
+		from
+			t_user_time t,
+			users u
+		  where t.org_id =  #{orgId} and u.id=t.user_id and date_format(t.create_time, '%Y-%m-%d') 
+		  <if test="groupId != null">
+				and u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+				  and date_format(t.create_time, '%Y-%m-%d') between #{startTime} and #{endTime}
+    
+    <!-- 
+         select
+			sum(zero) as zero,
+			sum(one) as one,
+			sum(two) as two,
+			sum(three) as three,
+			sum(four) as four,
+			sum(five) as five,
+			sum(six) as six,
+			sum(seven) as seven,
+			sum(eight) as eight,
+			sum(nine) as nine,
+			sum(ten) as ten,
+			sum(eleven) as eleven,
+			sum(twelve) as twelve,
+			sum(four) as four,
+			sum(thirteen) as thirteen,
+			sum(fourteen) as fourteen,
+			sum(fifteen) as fifteen,
+			sum(sixteen) as sixteen,
+			sum(seventeen) as seventeen,
+			sum(eighteen) as eighteen,
+			sum(nineteen) as nineteen,
+			sum(twenty) as twenty,
+			sum(twenty_one) as twenty_one,
+		    sum(twenty_two) as twenty_two,
+		    sum(twenty_three) as twenty_three
+		from
+			t_user_time
+		  where org_id = #{orgId} and date_format(create_time, '%Y-%m-%d') between #{startTime} and #{endTime} -->
+    </select>
+    
+    <select id="queryAllUserTime" parameterType="map" resultMap="userTimeMap">
+  select
+			sum(t.zero) as zero,
+			sum(t.one) as one,
+			sum(t.two) as two,
+			sum(t.three) as three,
+			sum(t.four) as four,
+			sum(t.five) as five,
+			sum(t.six) as six,
+			sum(t.seven) as seven,
+			sum(t.eight) as eight,
+			sum(t.nine) as nine,
+			sum(t.ten) as ten,
+			sum(t.eleven) as eleven,
+			sum(t.twelve) as twelve,
+			sum(t.four) as four,
+			sum(t.thirteen) as thirteen,
+			sum(t.fourteen) as fourteen,
+			sum(t.fifteen) as fifteen,
+			sum(t.sixteen) as sixteen,
+			sum(t.seventeen) as seventeen,
+			sum(t.eighteen) as eighteen,
+			sum(t.nineteen) as nineteen,
+			sum(t.twenty) as twenty,
+			sum(t.twenty_one) as twenty_one,
+		    sum(t.twenty_two) as twenty_two,
+		    sum(t.twenty_three) as twenty_three,
+			t.create_time
+		from
+			t_user_time t,
+      users u 
+	    where 
+	        t.org_id = #{orgId} 
+	    and date_format(t.create_time, '%Y-%m-%d') between #{firstDay} and #{lastDay}
+	    <if test="groupId != null">
+				and u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+				 and u.id = t.user_id
+		group by
+			date_format(t.create_time, '%Y-%m-%d') 
+			order by t.create_time desc
+	    limit #{start},#{length}
+    </select>
+    
+        <select id="queryAllUserTimeCount" parameterType="map" resultType="int">
+   select
+		count(0)
+	from
+		(
+			select
+				t.id
+			from
+				t_user_time t,
+				users u
+			where
+				t.org_id = #{orgId}
+			and u.id = t.user_id
+			and date_format(t.create_time, '%Y-%m-%d')  between #{firstDay} and #{lastDay}
+			<if test="groupId != null">
+					and u.group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+			                      				  #{item}
+			     		             </foreach>
+			     		            
+					 </if>
+			group by
+				date_format(t.create_time, '%Y-%m-%d')
+		) a
+    </select>
+</mapper>

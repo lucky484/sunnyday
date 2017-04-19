@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DptManagerDao">
+	 <resultMap type="UserRoleDepartment" id="UserRoleDepartmentMapper">
+	 	<id property="id" column="id"/>
+	 	<result property="departNames" column="department_name"/>
+		<result property="islock" column="islock"/>
+		<result property="mark" column="mark"/>
+		<result property="departIds" column="departIds" />
+		<association property="role" javaType="Role">
+			<result property="name" column="urname"/>
+			<result property="id" column="role_id"/>
+		</association>
+		<association property="user" javaType="User">
+			<result property="id" column="uid"/>
+			<result property="username" column="username"/>
+			<result property="realname" column="omname"/>
+			<result property="phone" column="phone"/>
+			<result property="last_time" column="last_time"/>
+		</association>
+    </resultMap>
+	<select id="findRecordsByPage" resultMap="UserRoleDepartmentMapper">
+	SELECT
+			urd.id,
+		    u.id AS uid,
+		    om.username,
+			om.name AS omname,
+			ur.name AS urname,
+			om.phone,
+			urd.islock, 
+			(SELECT GROUP_CONCAT(T2.name) FROM org_structure T2 LEFT JOIN user_department T3 ON T2.id = T3.depart_id WHERE T3.user_role_department_id = urd.id) AS department_name
+		FROM
+			org_managers om,
+			 users u,	
+			user_role_department urd
+			left join (select id,name from user_role where delete_time is null) ur
+      on urd.role_id = ur.id
+		WHERE
+			om.user_type = 2
+			AND urd.user_id = om.user_id
+			AND om.delete_time IS NULL
+			AND urd.delete_time IS NULL
+			AND urd.org_id =#{orgId}
+			AND u.id=urd.user_id
+			AND u.id=urd.user_id
+			AND om.username like CONCAT('%',#{searchAccountName},'%')
+			AND om.name like CONCAT('%',#{searchRealName},'%')
+			ORDER BY urd.create_time desc
+		LIMIT #{pageNum},#{pageSize}
+		<!-- SELECT
+			urd.id,
+		    u.id AS uid,
+		    om.username,
+			om.name AS omname,
+			ur.name AS urname,
+			om.phone,
+			urd.islock, 
+			u.last_time
+		FROM
+			org_managers om,
+			user_role ur,
+			 users u,	
+			user_role_department urd
+		WHERE
+			om.user_type = 2
+			AND urd.role_id = ur.id
+			AND urd.user_id = om.user_id
+			AND om.delete_time IS NULL
+			AND urd.delete_time IS NULL
+			AND urd.org_id =#{orgId}
+			AND u.id=urd.user_id
+		LIMIT #{pageNum},#{pageSize} -->
+	</select>
+	
+	<select id="queryCountByParamsMap" resultType="java.lang.Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			org_managers om,
+			user_role ur,
+ 			 users u,	
+ 			  user_role_department urd
+		WHERE
+			om.user_type = 2
+			AND urd.role_id = ur.id
+			AND urd.user_id = om.user_id
+			AND om.delete_time IS NULL
+			AND om.username like CONCAT('%',#{searchAccountName},'%')
+			AND om.name like CONCAT('%',#{searchRealName},'%')
+			AND urd.delete_time IS NULL
+			AND urd.org_id = #{orgId}
+			AND u.id=urd.user_id
+	</select>
+	
+	<select id="findRecordsByPageCount" resultType="java.lang.Integer">
+		SELECT
+		    count(0)
+		FROM
+			org_managers om,
+			user_role ur,
+			 users u,	
+			user_role_department urd
+		WHERE
+			om.user_type = 2
+			AND urd.role_id = ur.id
+			AND urd.user_id = om.user_id
+			AND om.delete_time IS NULL
+			AND urd.delete_time IS NULL
+			AND urd.org_id =#{orgId}
+			AND u.id=urd.user_id
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="queryRoleByUid" parameterType="int" resultMap="UserRoleDepartmentMapper">
+		SELECT
+			d.user_id,
+			role_id,
+			d.mark,
+			group_concat(u.depart_id) as departIds
+		FROM
+			user_role_department d,
+			user_department u
+		WHERE
+			d.id = u.user_role_department_id
+		AND d.user_id = #{id}
+	</select>
+	
+		
+	<select id="AllCountByOrgId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT
+			COUNT(1)
+		FROM
+			org_managers om,
+			user_role ur,
+ 			 users u,	
+ 			  user_role_department urd
+		WHERE
+			om.user_type = 2
+			AND urd.role_id = ur.id
+			AND urd.user_id = om.user_id
+			AND om.delete_time IS NULL
+			AND urd.delete_time IS NULL
+			AND urd.org_id = #{orgId}
+			AND u.id=urd.user_id
+	</select>
+	<!-- 根据userid查到部门管理员的相关信息 -->
+	<select id="findOne" parameterType="java.lang.Integer"
+		resultMap="UserRoleDepartmentMapper">
+		SELECT
+			urd.islock,
+			u.real_name AS omname
+		FROM
+			user_role_department urd,
+			users u
+		WHERE
+			urd.delete_time IS NULL
+			AND urd.user_id=u.id
+		AND urd.user_id = #{id}
+			LIMIT 1
+	</select>
+	<!-- 启用禁用管理员 为了方便id用于存放userid-->
+	<update id="update" parameterType="UserRoleDepartment">
+		UPDATE user_role_department		
+        SET islock=#{islock},
+				update_time=NOW()
+		WHERE delete_time is null
+		AND user_id=#{user.id}
+	</update>
+	
+	 <delete id="deleteUrdByUrd" parameterType="java.lang.Integer">  
+  		 DELETE
+			FROM
+				user_role_department
+			WHERE 
+				 id=#{id}
+   </delete>
+    <delete id="deleteOmByUserId" parameterType="java.lang.Integer">  
+  		 DELETE
+			FROM
+				org_managers
+			WHERE 
+				 user_id=#{id}
+   </delete>
+   <delete id="deleteUdByUrd" parameterType="java.lang.Integer">  
+  		 DELETE
+			FROM
+				user_department
+			WHERE 
+				user_role_department_id=#{id}
+   </delete>
+   <select id="findRoleNameById" parameterType="java.lang.Integer"
+		resultType="java.lang.String">
+		SELECT
+				NAME
+		FROM
+	  			user_role
+		WHERE
+				id = #{id}
+		AND 
+				delete_time IS NULL
+	</select>
+	<select id="queryAuthByUid" parameterType="java.lang.Integer"
+		resultType="java.lang.Integer">
+		SELECT auth FROM org_managers where user_id=#{id};
+	</select>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao2.T_QQFW_QGCK_ZP">
+
+	<resultMap type="com.hd.pfirs.model.T_QQFW_QGCK_ZP_Model" id="T_QQFW_QGCK_ZP_ModelMap">
+		<result column="zp" property="photo" />
+		
+	</resultMap>
+	
+	
+	<select id="getPhotoByIdCardNo" resultMap="T_QQFW_QGCK_ZP_ModelMap">
+		select zp from t_qqfw_qgck_zp where sfzh= #{idCardNo} 		
+	</select>
+	
+	
+	
+</mapper>

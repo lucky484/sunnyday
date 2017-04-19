@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.AppVirtualGroupAuthorizationDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.AppVirtualGroupAuthorization" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="virtual_group_id" property="virtualGroupId" jdbcType="INTEGER" />
+    <result column="app_id" property="appId" jdbcType="INTEGER" />
+    <result column="is_install" property="isInstall" jdbcType="CHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, virtual_group_id, app_id, is_install, create_date, create_user, update_date, 
+    update_user, delete_time
+  </sql>
+  
+  <!-- 根据主键查询应用虚拟组授权表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from app_virtual_group_authorization
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除应用虚拟组授权表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from app_virtual_group_authorization
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入应用虚拟组授权表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.AppVirtualGroupAuthorization" >
+    insert into app_virtual_group_authorization (id, virtual_group_id, app_id, 
+      is_install, create_date, create_user, 
+      update_date, update_user, delete_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{virtualGroupId,jdbcType=INTEGER}, #{appId,jdbcType=INTEGER}, 
+      #{isInstall,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 插入可选的应用虚拟组授权表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.AppVirtualGroupAuthorization" >
+    insert into app_virtual_group_authorization
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="virtualGroupId != null" >
+        virtual_group_id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+      <if test="isInstall != null" >
+        is_install,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="virtualGroupId != null" >
+        #{virtualGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=INTEGER},
+      </if>
+      <if test="isInstall != null" >
+        #{isInstall,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的应用虚拟组授权表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.AppVirtualGroupAuthorization" >
+    update app_virtual_group_authorization
+    <set >
+      <if test="virtualGroupId != null" >
+        virtual_group_id = #{virtualGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=INTEGER},
+      </if>
+      <if test="isInstall != null" >
+        is_install = #{isInstall,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新应用虚拟组授权表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.AppVirtualGroupAuthorization" >
+    update app_virtual_group_authorization
+    set virtual_group_id = #{virtualGroupId,jdbcType=INTEGER},
+      app_id = #{appId,jdbcType=INTEGER},
+      is_install = #{isInstall,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 加载虚拟组权限数据 -->
+  <select id="loadVirtualAuth" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.AppVirtualGroupAuthorization">
+     select 
+       t1.id,
+       t1.is_install as isInstall,
+       t2.name 
+     from app_virtual_group_authorization t1 
+     left join virtual_group t2 on t1.virtual_group_id = t2.id and t2.delete_time is null 
+     where 
+       t1.delete_time is null 
+       <if test="params.id != null and params.id != ''">
+        and t1.app_id = #{params.id} 
+       </if> 
+   </select>
+  
+   <!-- 加载应用 未授权的虚拟集合-->
+   <select id="loadFirstVirtualList" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.AppVirtualGroupAuthorization">
+     select 
+       t1.id as fatherId, 
+       t1.name as fatherName 
+     from 
+       virtual_collection t1  
+     where t1.delete_time is null 
+     <if test="params.orgId != null and params.orgId != ''">
+        and t1.org_id = #{params.orgId} 
+     </if> 
+     order by t1.id desc 
+   </select>
+  
+  <!-- 加载应用未授权的虚拟组 -->
+  <select id="loadVirtualGroupList" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.AppVirtualGroupAuthorization">
+     select 
+       t1.id,
+       t1.collection_id as fatherId,
+       t1.name 
+     from virtual_group t1 
+     where 
+       t1.delete_time is null 
+     <if test="params.orgId != null and params.orgId != ''">
+        and t1.org_id = #{params.orgId} 
+     </if> 
+       and t1.id not in (select t2.virtual_group_id from app_virtual_group_authorization t2 where t2.delete_time is null and t2.app_id = #{params.id}) 
+  </select>
+  
+  <!-- 批量插入应用授权关联表  start-->
+  <insert id="insertBatchAppVirtualGroup" parameterType="java.util.List" useGeneratedKeys="true">
+    insert into app_virtual_group_authorization 
+    (id,virtual_group_id,app_id,is_install,create_date,create_user,update_date,update_user) 
+    values 
+    <foreach collection="list" item="item" index="index" separator=",">
+     (#{item.id},#{item.virtualGroupId},#{item.appId},#{item.isInstall},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser})  
+    </foreach>
+  </insert>
+  <!-- 批量插入应用授权关联表  end-->
+  
+    
+  <!-- 根据应用ID删除相关联数据  start-->
+  <update id="deleteByAppId" parameterType="java.lang.Integer">
+     update 
+       app_virtual_group_authorization  
+     set delete_time = now() 
+     where app_id = #{id}
+  </update>
+  <!-- 根据应用ID删除相关联数据  end-->
+</mapper>

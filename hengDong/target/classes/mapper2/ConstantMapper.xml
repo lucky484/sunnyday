@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao2.ConstantDao">
+<resultMap type="com.hd.pfirs.model.Constant" id="ConstantModelMap">
+		<result column="XM" property="xm" />
+		<result column="XB" property="xb" />
+		<result column="SFZH" property="sfzh" />
+		<result column="ZDRYLBBJ" property="zdrylbbj" />
+		<result column="photo" property="photo" />
+	</resultMap>
+	
+	<resultMap type="com.hd.pfirs.model.Constant" id="ConstantModelMap1">
+		<result column="XM" property="xm" />
+		<result column="XB" property="xb" />
+		<result column="SFZH" property="sfzh" />
+		<result column="ZDRYLBBJ" property="zdrylbbj" />
+		<result column="photo" property="photo" />
+	</resultMap>
+	
+	<select id="getConstant" resultMap="ConstantModelMap">
+		select
+		XM,
+		XB,
+		SFZH,
+		ZDRYLBBJ,
+		(select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP where sfzh =sfzh ) photo
+		from T_QB_RY_CKRYJBXX
+		where ID = #{id}
+	</select>
+	<select id="queryConstantById" parameterType="java.util.List" resultMap="ConstantModelMap1">
+       select XM,XB,SFZH,ZDRYLBBJ from T_QB_RY_CKRYJBXX where 
+        id in  
+	  	<foreach collection="list" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		<if test="xm != null and xm != ''">
+		and xm like '%'#{xm}'%' 
+		</if>
+		<if test="xb != null and xb != ''">
+       	and xb=#{xb}
+       	</if>
+       	<if test="sfzh != null and sfzh != ''">
+        and sfzh=#{sfzh} 
+        </if>
+	</select>
+</mapper>

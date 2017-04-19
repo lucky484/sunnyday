@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceLocationRecordDao">
+    <resultMap id="deviceLocationInfo" type="DeviceLocation">
+        <result column="id" property="id" />
+        <result column="device_id" property="deviceId" />
+        <result column="longitude" property="longitude" />
+        <result column="latitude" property="latitude" />
+        <result column="loc_dec" property="locDec" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+    <insert id="insertDeviceLocation" parameterType="DeviceLocation" useGeneratedKeys="true" keyProperty="id">
+        insert into device_location_record (
+              device_id,
+              longitude,
+              latitude,
+              loc_dec,
+              create_by,
+              create_time,
+              update_by,
+              update_time       
+	        )values(
+	          #{deviceId},
+	          #{longitude},
+	          #{latitude},
+	          #{locDec},
+	          #{createBy},
+	          now(),
+	          #{updateBy},
+	          now()
+	        )
+    </insert>
+    <select id="queryDeviceLocation" resultMap="deviceLocationInfo" parameterType="int">
+        select id,device_id,longitude,latitude,loc_dec,create_time from device_location_record where device_id = #{deviceId} and delete_time is null order by create_time desc limit 1
+    </select>
+</mapper>

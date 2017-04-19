@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.WebsiteClassifyDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.WebsiteClassifyModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name
+  </sql>
+  
+  <!-- 根据主键查询网站分类表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from website_classify
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除网站分类表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from website_classify
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入网站分类表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.WebsiteClassifyModel" >
+    insert into website_classify (id, name)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 插入可选字段 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.WebsiteClassifyModel" >
+    insert into website_classify
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选字段的网站分类表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.WebsiteClassifyModel" >
+    update website_classify
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新网站分类 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.WebsiteClassifyModel" >
+    update website_classify
+    set name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 获取网站份类别列表 -->
+  <select id="selectClassifyList" resultMap="BaseResultMap" >
+    select 
+      <include refid="Base_Column_List" /> 
+    from website_classify 
+  </select>
+</mapper>

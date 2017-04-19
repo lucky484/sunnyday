@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ProjectFileDao">
+	<resultMap type="com.softtek.pst.model.ProjectFile" id="ProjectFileMap">
+		<id column="project_file_id" property="projectFileId" />
+		<result column="file_name" property="fileName" />
+		<result column="file_path" property="filePath" />
+		<result column="content_type" property="contentType" />
+		<result column="file_size" property="fileSize" />
+		<result column="create_date" property="createDate" />
+		<result column="update_date" property="updateDate" />
+		<result column="project_id" property="projectId" />
+	</resultMap>
+
+	<sql id="ProjectFileColumns">
+		select
+		project_file_id,file_name,file_path,content_type,file_size,create_date,update_date,project_id
+		from
+		project_file
+	</sql>
+
+	<insert id="addProjectFile" parameterType="ProjectFile"
+		keyProperty="projectFileId" useGeneratedKeys="true">
+		insert into project_file
+		(file_name,file_path,content_type,file_size,create_date,project_id)
+		values(#{fileName},#{filePath},#{contentType},#{fileSize},CURRENT_TIMESTAMP,
+		#{projectId})
+	</insert>
+	<update id="updateProjectFile" parameterType="ProjectFile">
+		update project_file
+		set
+		file_path=(#{filePath}),
+		update_date=(#{updateDate}),
+		file_size=(#{fileSize}),
+		content_type=(#{contentType}),
+		file_name=(#{fileName})
+		where project_file_id=#{projectFileId}
+	</update>
+
+	<select id="getProjectFile" parameterType="long" resultMap="ProjectFileMap">
+		<include refid="ProjectFileColumns" />
+		where project_file_id = #{projectFileId} and delete_time is null
+	</select>
+
+	<select id="getProjectFileByProjectId" parameterType="long"
+		resultMap="ProjectFileMap">
+		<include refid="ProjectFileColumns" />
+		where project_id = #{projectId} and delete_time is null
+	</select>
+	<update id="deleteProjectFileById" parameterType="long">
+		update project_file set delete_time = CURRENT_TIMESTAMP
+		where project_file_id = #{projectFileId}
+	</update>
+</mapper>

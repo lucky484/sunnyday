@@ -1,0 +1,32 @@
+a{
+    text-decoration: none;
+}
+body{
+    font-family:"微软雅黑",Helvetica,Arial,sans-serif;
+    margin:0;
+    padding:0;
+}
+.easyui-layout .mainPanel{padding:4px;}
+.toolBarPadding{padding:5px 5px 3px;}
+.toolBarPadding label{display:inline-block;width:64px;text-align:right;}
+.v-align-middle{vertical-align:middle;}
+
+/*.panel .mainPanel{background-color:#f5f5f5;}*/
+.panel .datagrid-row-selected{background-color:#f1f1f1;color:#000;}
+
+/************* table样式 *************/
+.table-container{font-size:14px; margin:10px 0 20px; width:100%; }
+.table-container .table-row{height:38px; }
+.table-container .item-name{padding-right:4px; text-align:right; width:168px; line-height:28px; }
+.table-container .item-value{}
+.table-container .item-value input[type="text"]{padding-left:5px; width:64%; border:1px solid #BFBFBF; height:22px;}
+.table-container .item-value input[type="password"]{padding-left:5px; width:200px; border:1px solid #BFBFBF; height:22px;}
+.table-container .item-value select{width:200px; font-size:16px;}
+.table-container .item-more{width:120px; vertical-align:top; padding:5px 20px 0 0; text-align:right; }
+.table-container .item-value .textbox .textbox-text{border:none;}
+
+.easyui-layout .textbox, .easyui-layout .window, .easyui-layout .window-shadow{-webkit-border-radius:0;border-radius:0;}
+
+.clear{clear:both;}
+
+

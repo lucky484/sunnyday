@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.ComplexQueryDao">
+       <resultMap id="complexQueryMap" type="com.hd.pfirs.model.ComplexQueryModel">
+         <id column="faceId" property="faceId" />
+         <result column="collectTime" property="collectTime" />
+         <result column="collectPic" property="collectPic" />
+         <result column="collectSite" property="collectSite" />
+         <result column="cardId" property="cardId" />
+         <result column="idCardPic" property="idCardPic" />
+         <result column="idCardName" property="idCardName" />
+         <result column="idCardSex" property="idCardSex" />
+         <result column="idCardNo" property="idCardNo" />
+         <result column="isControlled" property="isControlled" />
+         <result column="cardCompareBaseId" property="cardCompareBaseId" />
+         <result column="Similarity" property="similarity" />
+         <result column="remarkDesc" property="remarkDesc" />
+         <result column="compareBaseID" property="compareBaseID" />
+         <result column="ctrlBaseID" property="ctrlBaseID" />
+         <result column="photo" property="photo" />
+         <result column="faceSimilarity" property="faceSimilarity" />
+         <result column="bbkrxm" property="bbkrxm" />
+         <result column="bbkrxb" property="bbkrxb" />
+         <result column="bbkrzjhm" property="bbkrzjhm" />
+         <result column="lkzllx" property="lkzllx" />
+         <result column="T_QB_RY_CKRYJBXXxm" property="T_QB_RY_CKRYJBXXxm" />
+         <result column="T_QB_RY_CKRYJBXXxb" property="T_QB_RY_CKRYJBXXxb" />
+         <result column="T_QB_RY_CKRYJBXXsfzh" property="T_QB_RY_CKRYJBXXsfzh" />
+         <result column="zdrylbbj" property="zdrylbbj" />
+         <result column="xm" property="xm" />
+         <result column="xb" property="xb" />
+         <result column="ysfzh" property="ysfzh" />
+         <result column="context" property="context" />
+       </resultMap>
+       <resultMap id="faceMap" type="com.hd.pfirs.model.ComplexQueryModel">
+         <result column="collectTime" property="collectTime" />
+         <result column="collectPic" property="collectPic" />
+         <result column="collectSite" property="collectSite" />
+       </resultMap>
+       <resultMap type="com.hd.pfirs.model.ComplexQueryModel" id="idCardInfoMap">
+		<result column="idCardPic" property="idCardPic" />
+		<result column="idCardName" property="idCardName" />
+		<result column="idCardNo" property="idCardNo" />
+		<result column="idCardSex" property="idCardSex" />
+		<result column="idCardNation" property="idCardNation" />
+		<result column="idCardBirth" property="idCardBirth" />
+		<result column="idCardAddress" property="idCardAddress" />
+		<result column="cardUnit" property="cardUnit" />
+		<result column="CardIssueDate" property="cardIssueDate" />
+		<result column="CardExpiryDate" property="cardExpiryDate" />
+	   </resultMap>
+       <resultMap type="com.hd.pfirs.model.ComplexQueryModel" id="idCardCompResultMap">
+		 <result column="isControlled" property="isControlled" />
+		 <result column="compareBaseId" property="compareBaseID" />
+		 <result column="bbkrxm" property="bbkrxm" />
+         <result column="bbkrxb" property="bbkrxb" />
+         <result column="bbkrzjhm" property="bbkrzjhm" />
+         <result column="lkzllx" property="lkzllx" />
+         <result column="T_QB_RY_CKRYJBXXxm" property="T_QB_RY_CKRYJBXXxm" />
+         <result column="T_QB_RY_CKRYJBXXxb" property="T_QB_RY_CKRYJBXXxb" />
+         <result column="T_QB_RY_CKRYJBXXsfzh" property="T_QB_RY_CKRYJBXXsfzh" />
+         <result column="zdrylbbj" property="zdrylbbj" />
+         <result column="xm" property="xm" />
+         <result column="xb" property="xb" />
+         <result column="ysfzh" property="ysfzh" />
+         <result column="context" property="context" />
+         <result column="idCardPic" property="idCardPic" />
+	   </resultMap>
+	   <resultMap type="com.hd.pfirs.model.ComplexQueryModel" id="faceInfoCompResultMap">
+		<result column="Similarity" property="similarity" />
+		<result column="photo" property="photo" />
+		<result column="comparebaseid" property="compareBaseID" />
+		 <result column="bbkrxm" property="bbkrxm" />
+         <result column="bbkrxb" property="bbkrxb" />
+         <result column="bbkrzjhm" property="bbkrzjhm" />
+         <result column="lkzllx" property="lkzllx" />
+         <result column="T_QB_RY_CKRYJBXXxm" property="T_QB_RY_CKRYJBXXxm" />
+         <result column="T_QB_RY_CKRYJBXXxb" property="T_QB_RY_CKRYJBXXxb" />
+         <result column="T_QB_RY_CKRYJBXXsfzh" property="T_QB_RY_CKRYJBXXsfzh" />
+         <result column="zdrylbbj" property="zdrylbbj" />
+         <result column="xm" property="xm" />
+         <result column="xb" property="xb" />
+         <result column="ysfzh" property="ysfzh" />
+         <result column="Content" property="context" />
+         <result column="tableName" property="tableName"/>
+	   </resultMap>
+	   <resultMap type="com.hd.pfirs.model.ComplexQueryModel" id="faceAndCardResultMap">
+	    <result column="collectPic" property="collectPic" />
+	    <result column="idCardPic" property="idCardPic" />
+	    <result column="similarity" property="similarity" />
+	   </resultMap>
+	   <select id="getComplexQueryList" resultMap="complexQueryMap">
+	        select * from (select a.*,rownum rn from (
+	      select faceInfo.faceId,
+	            faceInfo.collectTime,
+	            faceInfo.collectPic,
+	            faceInfo.collectSite,
+	            cardInfo.cardId,
+	            cardInfo.idCardPic,
+	            cardInfo.idCardName,
+	            cardInfo.idCardSex,
+	            cardInfo.idCardNo,
+	            cardCompResult.isControlled,
+	            cardCompResult.compareBaseID as cardCompareBaseId,
+	            faceAndCardResult.similarity,
+	            faceAndCardResult.remarkDesc,
+	            faceCompResult.compareBaseID,
+	            faceCompResult.ctrlBaseID,
+	            <!-- (select T_QQFW_QGCK_ZP.zp 
+	            	from T_QQFW_QGCK_ZP@db_link where  
+	            	T_QB_RY_ZTRYJBXX.ysfzh = T_QQFW_QGCK_ZP.sfzh 
+	            	or T_QB_LK_LKBK.bbkrzjhm = T_QQFW_QGCK_ZP.sfzh 
+	            	or T_QB_RY_CKRYJBXX.sfzh = T_QQFW_QGCK_ZP.sfzh ) photo, -->
+	            	'' photo,
+	            faceCompResult.similarity as faceSimilarity,
+	            T_QB_RY_ZTRYJBXX.xm,
+	            decode(T_QB_RY_ZTRYJBXX.xb,'1','男','2','女') xb,
+	            T_QB_RY_ZTRYJBXX.ysfzh,
+	            T_QB_RY_ZTRYJBXX.context,
+              T_QB_LK_LKBK.bbkrxm,
+              decode(T_QB_LK_LKBK.bbkrxb,'1','男','2','女') bbkrxb,
+              T_QB_LK_LKBK.bbkrzjhm,
+              T_QB_LK_LKBK.lkzllx,
+              T_QB_RY_CKRYJBXX.xm as T_QB_RY_CKRYJBXXxm,
+              decode(T_QB_RY_CKRYJBXX.xb,'1','男','2','女') as T_QB_RY_CKRYJBXXxb,
+              T_QB_RY_CKRYJBXX.sfzh as T_QB_RY_CKRYJBXXsfzh,
+              T_QB_RY_CKRYJBXX.zdrylbbj
+	     from t_pp_faceInfo faceInfo,
+                     (select * from(select row_number() over(partition by faceCode order by createTime desc ) rn,faceCode,compareBaseID,ctrlBaseID,similarity from t_pp_faceCompResult where ordernum = '1') where rn = 1) faceCompResult,
+	                   t_pp_idCardInfo cardInfo,
+	                   t_pp_idCardCompResult cardCompResult,
+                    (select *from(select row_number() over(partition by faceCode order by receiveTime desc ) rn,faceCode,cardCode,similarity,remarkDesc from t_pp_faceAndCardResult)where rn = 1)faceAndCardResult,
+                     T_QB_LK_LKBK@db_link T_QB_LK_LKBK,
+                     T_QB_RY_CKRYJBXX@db_link T_QB_RY_CKRYJBXX,
+                     (select 
+                     T_QB_RY_ZTRYJBXX.id as T_QB_RY_ZTRYJBXXId,
+                     T_QB_RY_ZTRYJBXX.xm,
+                     T_QB_RY_ZTRYJBXX.xb,
+                     T_QB_RY_ZTRYJBXX.ysfzh,
+                     ajlx.context 
+                     from T_QB_RY_ZTRYJBXX@DB_LINK T_QB_RY_ZTRYJBXX,
+                     ZaiTaoAJLX@DB_LINK ajlx 
+                     where T_QB_RY_ZTRYJBXX.ajlbdm = ajlx.code(+)) T_QB_RY_ZTRYJBXX
+	       where faceInfo.faceCode = faceCompResult.faceCode(+)
+	       and faceInfo.faceCode = faceAndCardResult.faceCode(+)
+	       and faceAndCardResult.cardcode = cardInfo.cardcode(+)
+	       and cardInfo.cardCode = cardCompResult.cardCode(+)
+         and faceCompResult.ctrlBaseID = T_QB_RY_CKRYJBXX.id(+)
+         and faceCompResult.ctrlBaseID = T_QB_LK_LKBK.id(+)
+	       and faceCompResult.ctrlBaseID = T_QB_RY_ZTRYJBXX.T_QB_RY_ZTRYJBXXId(+)
+	        <if test="collectTimeStart != '' and collectTimeStart != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[>]]>=#{collectTimeStart}
+	       </if>
+	       <if test="collectTimeEnd != '' and collectTimeEnd != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[<]]>=#{collectTimeEnd}
+	       </if>
+	        <if test="collectSite != '' and collectSite != null">
+	       and upper(faceInfo.collectSite) like '%'||upper(#{collectSite})||'%'
+	       </if>
+	       <if test="idCardName != '' and idCardName != null">
+	       and upper(cardInfo.idCardName) like '%'||upper(#{idCardName})||'%'
+	       </if>
+	       <if test="idCardSex != '' and idCardSex != null">
+	       and cardInfo.idCardSex = #{idCardSex}
+	       </if>
+	       <if test="idCardNo != '' and idCardNo != null">
+	       and upper(cardInfo.idCardNo) like '%'||upper(#{idCardNo})||'%'
+	       </if>
+           <if test="faceCompName != '' and faceCompName != null and faceComp != null and faceComp !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.xm) like '%'||upper(#{faceCompName})||'%' or upper(T_QB_LK_LKBK.bbkrxm) like '%'||upper(#{faceCompName})||'%' or upper(T_QB_RY_CKRYJBXX.xm) like '%'||upper(#{faceCompName})||'%')
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       <if test="sexComp != '' and sexComp != null and faceComp != null and faceComp !=''">
+	       and (T_QB_RY_ZTRYJBXX.xb = #{sexComp} or T_QB_LK_LKBK.bbkrxb = #{sexComp} or T_QB_RY_CKRYJBXX.xb = #{sexComp})
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       <if test="faceCompNo != '' and faceCompNo != null and faceComp != null and faceComp !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.ysfzh) like '%'||upper(#{faceCompNo})||'%' or upper(T_QB_LK_LKBK.bbkrzjhm) like '%'||upper(#{faceCompNo})||'%' or upper(T_QB_RY_CKRYJBXX.sfzh) like '%'||upper(#{faceCompNo})||'%')
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       <if test="cardCompName != '' and cardCompName != null and isControlled != null and isControlled !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.xm) like '%'||upper(#{cardCompName})||'%' or upper(T_QB_LK_LKBK.bbkrxm) like '%'||upper(#{cardCompName})||'%' or upper(T_QB_RY_CKRYJBXX.xm) like '%'||upper(#{cardCompName})||'%')
+	       and cardCompResult.isControlled = '1'
+	       </if>
+	       <if test="cardSexComp != '' and cardSexComp != null and isControlled != null and isControlled !=''">
+	       and (T_QB_RY_ZTRYJBXX.xb = #{cardSexComp} or T_QB_LK_LKBK.bbkrxb = #{cardSexComp} or T_QB_RY_CKRYJBXX.xb = #{cardSexComp})
+	       and cardCompResult.isControlled = '1'
+	       </if>
+	       <if test="cardCompNo != '' and cardCompNo != null and isControlled != null and isControlled !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.ysfzh) like '%'||upper(#{cardCompNo})||'%' or upper(T_QB_LK_LKBK.bbkrzjhm) like '%'||upper(#{cardCompNo})||'%' or upper(T_QB_RY_CKRYJBXX.sfzh) like '%'||upper(#{cardCompNo})||'%')
+	       and cardCompResult.isControlled = '1'
+	       </if>
+	       <if test="isControlled != null and isControlled != ''">
+	       and cardCompResult.isControlled = '1'
+	       </if>
+	       <if test="faceAndIdCardComp != null and faceAndIdCardComp != ''">
+	       <if test="faceAndIdCardComp == 1">
+	       and faceAndCardResult.similarity <![CDATA[>]]>= #{faceCardCompAlarmVal}
+	       </if>
+	       <if test="faceAndIdCardComp == 2">
+	       and faceAndCardResult.similarity <![CDATA[<]]> #{faceCardCompAlarmVal}
+	       </if>
+          <if test="faceAndIdCardComp == 3">
+	       and cardInfo.cardId is null
+	       </if>
+	       </if>
+           <if test="faceComp != null and faceComp !=''">
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       order by faceInfo.collectTimeStamp desc) a 
+	       where rownum <![CDATA[<]]>= #{pageSize}) where rn <![CDATA[>]]> #{start}
+	   </select>
+ 	   <select id="getComplexQueryCount" resultType="int">
+            select count(1) from ( select faceInfo.faceId,
+	            faceInfo.collectTime,
+	            faceInfo.collectPic,
+	            faceInfo.collectSite,
+	            cardInfo.cardId,
+	            cardInfo.idCardPic,
+	            cardInfo.idCardName,
+	            cardInfo.idCardSex,
+	            cardInfo.idCardNo,
+	            cardCompResult.isControlled,
+	            cardCompResult.compareBaseID as cardCompareBaseId,
+	            faceAndCardResult.similarity,
+	            faceAndCardResult.remarkDesc,
+	            faceCompResult.compareBaseID,
+	            faceCompResult.ctrlBaseID,
+	           <!--  (select T_QQFW_QGCK_ZP.zp 
+	            	from T_QQFW_QGCK_ZP@db_link where  
+	            	T_QB_RY_ZTRYJBXX.ysfzh = T_QQFW_QGCK_ZP.sfzh 
+	            	or T_QB_LK_LKBK.bbkrzjhm = T_QQFW_QGCK_ZP.sfzh 
+	            	or T_QB_RY_CKRYJBXX.sfzh = T_QQFW_QGCK_ZP.sfzh ) photo, -->
+	            	''  photo,
+	            faceCompResult.similarity as faceSimilarity,
+	            T_QB_RY_ZTRYJBXX.xm,
+	            T_QB_RY_ZTRYJBXX.xb,
+	            T_QB_RY_ZTRYJBXX.ysfzh,
+	            T_QB_RY_ZTRYJBXX.context,
+              T_QB_LK_LKBK.bbkrxm,
+              T_QB_LK_LKBK.bbkrxb,
+              T_QB_LK_LKBK.bbkrzjhm,
+              T_QB_LK_LKBK.lkzllx,
+              T_QB_RY_CKRYJBXX.xm as T_QB_RY_CKRYJBXXxm,
+              T_QB_RY_CKRYJBXX.xb as T_QB_RY_CKRYJBXXxb,
+              T_QB_RY_CKRYJBXX.sfzh as T_QB_RY_CKRYJBXXsfzh,
+              T_QB_RY_CKRYJBXX.zdrylbbj
+	     from t_pp_faceInfo faceInfo,
+                     (select * from(select row_number() over(partition by faceCode order by createTime desc ) rn,faceCode,compareBaseID,ctrlBaseID,similarity from t_pp_faceCompResult where ordernum = '1') where rn = 1) faceCompResult,
+	                   t_pp_idCardInfo cardInfo,
+	                   t_pp_idCardCompResult cardCompResult,
+                    (select *from(select row_number() over(partition by faceCode order by receiveTime desc ) rn,faceCode,cardCode,similarity,remarkDesc from t_pp_faceAndCardResult)where rn = 1)faceAndCardResult,
+                     T_QB_LK_LKBK@db_link T_QB_LK_LKBK,
+                     T_QB_RY_CKRYJBXX@db_link T_QB_RY_CKRYJBXX,
+                     (select 
+                     T_QB_RY_ZTRYJBXX.id as T_QB_RY_ZTRYJBXXId,
+                     T_QB_RY_ZTRYJBXX.xm,
+                     T_QB_RY_ZTRYJBXX.xb,
+                     T_QB_RY_ZTRYJBXX.ysfzh,
+                     ajlx.context 
+                     from T_QB_RY_ZTRYJBXX@DB_LINK T_QB_RY_ZTRYJBXX,
+                     ZaiTaoAJLX@DB_LINK ajlx 
+                     where T_QB_RY_ZTRYJBXX.ajlbdm = ajlx.code(+)) T_QB_RY_ZTRYJBXX
+	       where faceInfo.faceCode = faceCompResult.faceCode(+)
+	       and faceInfo.faceCode = faceAndCardResult.faceCode(+)
+	       and faceAndCardResult.cardcode = cardInfo.cardcode(+)
+	       and cardInfo.cardCode = cardCompResult.cardCode(+)
+         and faceCompResult.ctrlBaseID = T_QB_RY_CKRYJBXX.id(+)
+         and faceCompResult.ctrlBaseID = T_QB_LK_LKBK.id(+)
+	       and faceCompResult.ctrlBaseID = T_QB_RY_ZTRYJBXX.T_QB_RY_ZTRYJBXXId(+)
+           <if test="collectTimeStart != '' and collectTimeStart != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[>]]>=#{collectTimeStart}
+	       </if>
+	       <if test="collectTimeEnd != '' and collectTimeEnd != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[<]]>=#{collectTimeEnd}
+	       </if>
+	       <if test="collectSite != '' and collectSite != null">
+	       and upper(faceInfo.collectSite) like '%'||upper(#{collectSite})||'%'
+	       </if>
+	       <if test="idCardName != '' and idCardName != null">
+	       and upper(cardInfo.idCardName) like  '%'||upper(#{idCardName})||'%'
+	       </if>
+	       <if test="idCardSex != '' and idCardSex != null">
+	       and cardInfo.idCardSex = #{idCardSex}
+	       </if>
+	       <if test="idCardNo != '' and idCardNo != null">
+	       and upper(cardInfo.idCardNo) like '%'||upper(#{idCardNo})||'%'
+	       </if>
+	       <if test="faceCompName != '' and faceCompName != null and faceComp != null and faceComp !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.xm) like '%'||upper(#{faceCompName})||'%' or upper(T_QB_LK_LKBK.bbkrxm) like '%'||upper(#{faceCompName})||'%' or upper(T_QB_RY_CKRYJBXX.xm) like '%'||upper(#{faceCompName})||'%')
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       <if test="sexComp != '' and sexComp != null and faceComp != null and faceComp !=''">
+	       and (T_QB_RY_ZTRYJBXX.xb = #{sexComp} or T_QB_LK_LKBK.bbkrxb = #{sexComp} or T_QB_RY_CKRYJBXX.xb = #{sexComp})
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       <if test="faceCompNo != '' and faceCompNo != null and faceComp != null and faceComp !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.ysfzh) like '%'||upper(#{faceCompNo})||'%' or upper(T_QB_LK_LKBK.bbkrzjhm) like '%'||upper(#{faceCompNo})||'%' or upper(T_QB_RY_CKRYJBXX.sfzh) like '%'||upper(#{faceCompNo})||'%')
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       <if test="cardCompName != '' and cardCompName != null and isControlled != null and isControlled !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.xm) like '%'||upper(#{cardCompName})||'%' or upper(T_QB_LK_LKBK.bbkrxm) like '%'||upper(#{cardCompName})||'%' or upper(T_QB_RY_CKRYJBXX.xm) like '%'||upper(#{cardCompName})||'%')
+	       and cardCompResult.isControlled = '1'
+	       </if>
+	       <if test="cardSexComp != '' and cardSexComp != null and isControlled != null and isControlled !=''">
+	       and (T_QB_RY_ZTRYJBXX.xb = #{cardSexComp} or T_QB_LK_LKBK.bbkrxb = #{cardSexComp} or T_QB_RY_CKRYJBXX.xb = #{cardSexComp})
+	       and cardCompResult.isControlled = '1'
+	       </if>
+	       <if test="cardCompNo != '' and cardCompNo != null and isControlled != null and isControlled !=''">
+	       and (upper(T_QB_RY_ZTRYJBXX.ysfzh) like '%'||upper(#{cardCompNo})||'%' or upper(T_QB_LK_LKBK.bbkrzjhm) like '%'||upper(#{cardCompNo})||'%' or upper(T_QB_RY_CKRYJBXX.sfzh) like '%'||upper(#{cardCompNo})||'%')
+	       and cardCompResult.isControlled = '1'
+	       </if>
+           <if test="isControlled != null and isControlled != ''">
+	       and cardCompResult.isControlled = '1'
+	       </if>
+	       <if test="faceAndIdCardComp != null and faceAndIdCardComp != ''">
+	       <if test="faceAndIdCardComp == 1">
+	       and faceAndCardResult.similarity <![CDATA[>]]>= #{faceCardCompAlarmVal}
+	       </if>
+	       <if test="faceAndIdCardComp == 2">
+	       and faceAndCardResult.similarity <![CDATA[<]]> #{faceCardCompAlarmVal}
+	       </if>
+          <if test="faceAndIdCardComp == 3">
+	       and cardInfo.cardId is null
+	       </if>
+	       </if>
+           <if test="faceComp != null and faceComp !=''">
+	       and faceCompResult.similarity <![CDATA[>]]>= #{faceCompAlarmVal}
+	       </if>
+	       )
+	   </select>
+	   <select id="queryFaceById" resultMap="faceMap">
+	    	select collectPic,collectTime,collectSite from t_PP_faceinfo where groupcode = 
+			  (select groupcode from t_pp_faceInfo where faceId = #{faceId}  and rownum = 1) and pictype='1' and islast='1'  and rownum = 1 
+			  union all
+			   select collectPic,collectTime,collectSite from t_PP_faceinfo where groupcode = 
+			  (select groupcode from t_pp_faceInfo where faceId = #{faceId}  and rownum = 1) and pictype='0' and islast='1' and rownum = 1
+			  union all
+			   select collectPic,collectTime,collectSite from t_PP_faceinfo where groupcode = 
+			  (select groupcode from t_pp_faceInfo where faceId = #{faceId}  and rownum = 1) and pictype='0'  and islast='0' and rownum = 1
+	   </select>
+	   	<select id="queryCardInfoById" resultMap="idCardInfoMap">
+	   select cardInfo.collectTime,
+	        cardInfo.idCardPic,
+            cardInfo.idCardNo,
+            cardInfo.idCardName,
+            cardInfo.idCardSex,
+            cardInfo.idCardNation,
+            cardInfo.idCardBirth,
+            cardInfo.idCardAddress,
+            cardInfo.cardUnit,
+            cardInfo.CardIssueDate,
+            cardInfo.CardExpiryDate
+     from t_pp_idCardInfo cardInfo,t_pp_faceAndCardResult faceAndCardResult,t_pp_faceInfo faceInfo
+     where cardInfo.cardCode = faceAndCardResult.cardCode 
+       and faceAndCardResult.faceCode = faceInfo.faceCode
+       and faceInfo.faceId = #{faceId} 
+       and rownum = 1 
+       order by cardInfo.collectTimeStamp desc
+	</select>
+	<select id="queryIdCardCompResult" resultMap="idCardCompResultMap" parameterType="java.lang.String">
+	select xm,xb,ysfzh,context,isControlled,compareBaseId from ( select 
+	<if test="compareBaseId == '1'.toString() ">
+		  T_QB_RY_ZTRYJBXX.xm,
+          decode(T_QB_RY_ZTRYJBXX.xb,'1','男','2','女') xb,
+          T_QB_RY_ZTRYJBXX.ysfzh,
+          T_QB_RY_ZTRYJBXX.context,
+	</if>
+	<if test="compareBaseId == '2'.toString() ">
+		  T_QB_RY_CKRYJBXX.xm xm,
+          decode(T_QB_RY_CKRYJBXX.xb,'1','男','2','女') xb,
+          T_QB_RY_CKRYJBXX.sfzh ysfzh,
+          T_QB_RY_CKRYJBXX.zdrylbbj context,
+	</if>
+	<if test="compareBaseId == '0'.toString() ">
+		  T_QB_LK_LKBK.bbkrxm xm,
+          decode(T_QB_LK_LKBK.bbkrxb,'1','男','2','女') xb,
+          T_QB_LK_LKBK.bbkrzjhm ysfzh,
+          T_QB_LK_LKBK.lkzllx context,
+	</if>
+	idCardCompResult.isControlled,
+    idCardCompResult.compareBaseId 
+    from <if test="compareBaseId == '1'.toString() ">
+	     (select T_QB_RY_ZTRYJBXX.id,T_QB_RY_ZTRYJBXX.xm,T_QB_RY_ZTRYJBXX.xb,T_QB_RY_ZTRYJBXX.ysfzh,ajlx.context from 
+	       T_QB_RY_ZTRYJBXX@db_link T_QB_RY_ZTRYJBXX,
+	       ZaiTaoAJLX@db_link ajlx
+         where T_QB_RY_ZTRYJBXX.ajlbdm = ajlx.code)T_QB_RY_ZTRYJBXX,
+	     </if>
+	     <if test="compareBaseId == '2'.toString() ">
+	     T_QB_RY_CKRYJBXX@db_link T_QB_RY_CKRYJBXX,
+	     </if>
+	     <if test="compareBaseId == '0'.toString() ">
+	     T_QB_LK_LKBK@db_link T_QB_LK_LKBK,
+	     </if>
+	     t_pp_idCardCompResult idCardCompResult,
+	     t_pp_faceAndCardResult faceAndCardResult,
+	     t_pp_faceInfo faceInfo
+	where faceInfo.faceCode = faceAndCardResult.faceCode
+         and faceAndCardResult.cardCode = idCardCompResult.cardCode
+         <if test="compareBaseId == '1'.toString() ">
+         and idCardCompResult.ctrlBaseId = T_QB_RY_ZTRYJBXX.id(+)
+         </if>
+          <if test="compareBaseId == '0'.toString() ">
+         and idCardCompResult.ctrlBaseId = T_QB_LK_LKBK.id(+)
+         </if>
+         <if test="compareBaseId == '2'.toString() ">
+         and idCardCompResult.ctrlBaseId = T_QB_RY_CKRYJBXX.id(+)
+         </if>
+         and faceId = #{faceId}
+         order by idCardCompResult.receivetimestamp desc
+	) where rownum = 1
+             
+	</select>
+	<select id="queryFaceInfoCompResult" resultMap="faceInfoCompResultMap">
+	       select 
+	comparebaseid,IdCardNo ysfzh,Content,Similarity,IdCardName xm,IdCardSex xb,
+	'T_QB_RY_ZTRYJBXX' tableName from
+	(select distinct a.comparebaseid, a.ctrlbaseid ctrlBaseId,b.ysfzh IdCardNo,c.context
+	Content,similarity Similarity,b.xm IdCardName,
+  decode(b.xb ,'1','男','2','女','男') IdCardSex
+		from t_pp_facecompresult a,T_QB_RY_ZTRYJBXX@db_link b,ZaiTaoAJLX@db_link c,t_pp_faceInfo d
+	where a.ctrlbaseid =b.id
+	 and a.comparebaseid = '1'
+	 and a.facecode = d.facecode
+	and b.ajlbdm = c.code
+	and d.faceId = #{faceId}
+	and a.similarity <![CDATA[>=]]> #{faceCompAlarmVal}
+	order by similarity desc) e
+  union all
+  select 
+	comparebaseid,IdCardNo ysfzh,Content,Similarity,IdCardName xm,IdCardSex xb,
+	'T_QB_RY_CKRYJBXX' tableName from
+	(select distinct a.comparebaseid,a.ctrlbaseid ctrlBaseId,b.sfzh idCardNo,b.zdrylbbj
+	Content,similarity Similarity,b.xm IdCardName, decode(b.xb ,'1','男','2','女','男') IdCardSex
+	from t_pp_facecompresult a,T_QB_RY_CKRYJBXX@db_link b,t_PP_faceInfo d
+	where a.ctrlbaseid =b.id
+	 and a.comparebaseid = '2'
+	 and a.facecode = d.faceCode
+	and d.faceId = #{faceId}
+	       and a.similarity <![CDATA[>=]]> #{faceCompAlarmVal}
+	order by similarity desc) e
+  union all
+  select 
+	comparebaseid,IdCardNo ysfzh,Content,Similarity,IdCardName xm,IdCardSex xb,
+	'T_QB_LK_LKBK' tableName from
+	(select distinct a.comparebaseid,a.ctrlbaseid ctrlBaseId,b.bbkrzjhm idcardNo,b.lkzljb
+	Content,similarity Similarity,b.bbkrxm IdCardName,decode(b.bbkrxb ,'1','男','2','女','男') IdCardSex
+	from t_pp_facecompresult a,T_QB_LK_LKBK@db_link b,t_pp_faceInfo d
+	where a.ctrlbaseid = b.id
+	and a.comparebaseid = '0'
+	and a.faceCode = d.faceCode
+	and d.faceId = #{faceId}
+	       and a.similarity <![CDATA[>=]]> #{faceCompAlarmVal}
+	order by similarity desc) e
+	</select>
+	
+	<select id="queryFaceAndCardResult" resultMap="faceAndCardResultMap">
+	select faceInfo.collectPic,
+             cardInfo.idCardPic,
+             faceAndCardResult.similarity
+      from t_pp_faceInfo faceInfo,
+           t_pp_idCardInfo cardInfo,
+           t_pp_faceAndCardResult faceAndCardResult 
+    where faceInfo.faceCode = faceAndCardResult.faceCode
+      and faceAndCardResult.cardCode = cardInfo.cardCode
+      and faceInfo.faceId = #{faceId}
+      and rownum = 1 
+       order by faceInfo.collectTimeStamp desc
+	</select>
+</mapper>

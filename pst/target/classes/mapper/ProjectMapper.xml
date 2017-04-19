@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ProjectDao">
+	<resultMap type="com.softtek.pst.model.ProjectModel" id="ProjectModelMap">
+		<id column="Project_Id" property="projectId" />
+		<result column="Project_Code" property="projectCode" />
+		<result column="Project_Name" property="projectName" />
+		<result column="Project_Manager" property="projectManager" />
+		<result column="implement_manager" property="implementManager" />
+		<result column="Start_Time" property="startTime" />
+		<result column="Medial_Time" property="medialTime" />
+		<result column="Lead_Time" property="leadTime" />
+		<result column="Project_Quotation" property="projectQuotation" />
+		<result column="Customer_Name" property="customerName" />
+		<result column="Remark" property="remark" />
+		<result column="create_Time" property="createTime" />
+		<result column="update_Time" property="updateTime" />
+		<result column="creator_id" property="creatorId" />
+		<result column="customer_id" property="customerId" />
+		<result column="project_status" property="projectStatus" />
+		<result column="project_type" property="projectType" />
+		<result column="project_status_number" property="projectStatusNumber" />
+		<result column="project_type_number" property="projectTypeNumber" />
+		<result column="cost" property="cost" />
+		<result column="returned_status" property="returnedStatus" />
+		<result column="project_nature" property="projectNature" />
+		<result column="outsourcing_quotation" property="outsourcingQuotation" />
+		<result column="crTotal" property="crTotal" />
+		<!-- <collection property="crList" javaType="ArrayList" column="Project_Id" 
+			ofType="CRModel" select="com.softtek.pst.dao.CRDao.getCRByProjectId" /> -->
+	</resultMap>
+
+	<resultMap type="ProjectModel" id="ProjectModelMapForFinance">
+		<id column="Project_Id" property="projectId" />
+		<result column="Project_Code" property="projectCode" />
+		<result column="Project_Name" property="projectName" />
+		<result column="Project_Manager" property="projectManager" />
+		<result column="implement_manager" property="implementManager" />
+		<result column="start_Time" property="startTime" />
+		<result column="lead_Time" property="leadTime" />
+		<result column="project_quotation_total" property="projectQuotationTotal" />
+		<result column="receive" property="receive" />
+		<result column="unreceive" property="unreceive" />
+		<result column="outsourcing_quotation" property="outsourcingQuotation" />
+		<result column="payment" property="payment" />
+		<result column="unpayment" property="unpayment" />
+	</resultMap>
+
+	<sql id="ProjectModelColumns">
+		select
+		p.Project_Id,p.Project_Code,p.Project_Name,p.Project_Manager,p.implement_manager,
+		p.Start_Time,p.Medial_Time,p.Lead_Time,p.customer_id,p.creator_id,
+		p.Project_Quotation,p.Customer_Name,p.Remark,p.create_Time,p.update_Time,p.project_status,p.project_type,p.project_status_number,p.project_type_number,
+		p.cost,p.returned_status,p.project_nature,p.outsourcing_quotation,(select count(1) from cr c where c.project_id = p.project_id and c.delete_time is null) as crTotal
+		from
+		project p
+	</sql>
+
+	<select id="getProjectById" parameterType="long" resultMap="ProjectModelMap">
+		<include refid="ProjectModelColumns" />
+		where p.Project_Id=#{projectId}
+	</select>
+
+	<update id="deleteProject" parameterType="long">
+		update project set delete_time = CURRENT_TIMESTAMP
+		where Project_Id = #{projectId}
+	</update>
+
+	<update id="updateProject" parameterType="ProjectModel">
+		update project set
+		Project_Code = (#{projectCode}),
+		Project_Name = (#{projectName}),
+		Project_Manager = (#{projectManager}),
+		implement_manager = (#{implementManager}),
+		Start_Time = (#{startTime}),
+		Medial_Time = (#{medialTime}),
+		Lead_Time = (#{leadTime}),
+		Project_Quotation = (#{projectQuotation}),
+		customer_id =
+		(#{customerId}),
+		Customer_Name = (#{customerName}),
+		Remark =
+		(#{remark}),
+		update_Time = CURRENT_TIMESTAMP,
+		project_status =
+		(#{projectStatus}),
+		project_status_number = (#{projectStatusNumber}),
+		project_type_number = (#{projectTypeNumber}),
+		project_nature = (#{projectNature}),
+		outsourcing_quotation = (#{outsourcingQuotation})
+		where
+		Project_Id = #{projectId}
+	</update>
+
+	<insert id="addProject" parameterType="ProjectModel"
+		keyProperty="projectId" useGeneratedKeys="true">
+		insert into project
+		(Project_Code,Project_Name,Project_Manager,implement_manager,
+		Start_Time,Medial_Time,Lead_Time,
+		Project_Quotation,Customer_Name,Remark,create_Time,update_Time,customer_id,creator_id,project_status,project_status_number,project_type_number,project_nature,outsourcing_quotation)
+		values
+		(#{projectCode},#{projectName},#{projectManager},#{implementManager},
+		#{startTime},#{medialTime},#{leadTime},
+		#{projectQuotation},#{customerName},#{remark},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,#{customerId},#{creatorId},#{projectStatus},#{projectStatusNumber},#{projectTypeNumber},#{projectNature},#{outsourcingQuotation})
+	</insert>
+    <!-- 未完成的项目 -->
+	<select id="getProjects" resultMap="ProjectModelMap">
+		<include refid="ProjectModelColumns" />
+		where p.delete_time is null and p.Project_Code like #{projectNumber}
+		and p.Project_Name like #{projectName} and project_status not in('已完成')
+		<if test="projectManager != null and projectManager != ''">
+			and p.Project_Manager = #{projectManager}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and p.Start_Time = date_format(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="medialTime != null and medialTime != ''">
+			and p.Medial_Time = date_format(#{medialTime},'%Y-%m-%d')
+		</if>
+		<if test="leadTime != null and leadTime != ''">
+			and p.Lead_Time = date_format(#{leadTime},'%Y-%m-%d')
+		</if>
+		and (p.Project_Code LIKE #{search}
+		or p.Project_Name LIKE #{search}
+		or p.Project_Manager LIKE #{search}
+		or p.Customer_Name LIKE #{search})
+		order by
+		${col} ${dir}
+		<if test="start != null">
+			limit #{start},#{length}
+		</if>
+	</select>
+
+	<select id="getProjectsNum" resultType="int">
+		select count(1) from
+		project
+		where delete_time is null and Project_Code like #{projectNumber}
+		and Project_Name like #{projectName} and project_status not in('已完成')
+		<if test="projectManager != null and projectManager != ''">
+			and Project_Manager = #{projectManager}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and Start_Time = date_format(#{startTime},'%Y-%m-%d')
+		</if>
+		<if test="medialTime != null and medialTime != ''">
+			and Medial_Time = date_format(#{medialTime},'%Y-%m-%d')
+		</if>
+		<if test="leadTime != null and leadTime != ''">
+			and Lead_Time = date_format(#{leadTime},'%Y-%m-%d')
+		</if>
+		and (Project_Code LIKE #{search}
+		or Project_Name LIKE #{search}
+		or Project_Manager LIKE #{search}
+		or Customer_Name LIKE #{search})
+	</select>
+	
+	<!-- 已完成的项目 -->
+	<select id="getProjectsForFinsh" resultMap="ProjectModelMap">
+		<include refid="ProjectModelColumns" />
+		where p.delete_time is null and p.Project_Code like #{projectNumber}
+		and p.Project_Name like #{projectName} and project_status = '已完成'
+		<if test="projectManager != null and projectManager != ''">
+			and p.Project_Manager = #{projectManager}
+		</if>
+		and (p.Project_Code LIKE #{search}
+		or p.Project_Name LIKE #{search}
+		or p.Project_Manager LIKE #{search}
+		or p.Customer_Name LIKE #{search})
+		order by
+		${col} ${dir}
+		<if test="start != null">
+			limit #{start},#{length}
+		</if>
+	</select>
+	
+	<select id="getProjectsForFinshNum" resultType="int">
+		select count(1) from
+		project
+		where delete_time is null and Project_Code like #{projectNumber}
+		and Project_Name like #{projectName} and project_status = '已完成'
+		<if test="projectManager != null and projectManager != ''">
+			and Project_Manager = #{projectManager}
+		</if>
+		and (Project_Code LIKE #{search}
+		or Project_Name LIKE #{search}
+		or Project_Manager LIKE #{search}
+		or Customer_Name LIKE #{search})
+	</select>
+
+	<update id="updateFinance" parameterType="ProjectModel">
+		update project set
+		cost = (#{cost}),
+		returned_status = (#{returnedStatus}),
+		update_Time = CURRENT_TIMESTAMP
+		where
+		Project_Id = #{projectId}
+	</update>
+
+	<select id="getProjectsForFinance" resultMap="ProjectModelMapForFinance">
+		select 
+		    a.Project_Id,
+			a.Project_Code,
+			a.Project_Name,
+			a.start_time,
+			a.lead_time,
+			a.Project_Manager,
+			a.implement_manager,
+		  a.project_quotation_total,
+		  a.receive,
+		  (a.project_quotation_total - a.receive) as unreceive,
+		  a.outsourcing_quotation,
+		  a.payment,
+		  (a.outsourcing_quotation - a.payment) as unpayment
+		 from (select
+			Project_Id,
+			Project_Code,
+			Project_Name,
+			start_time,
+			lead_time,
+			Project_Manager,
+			implement_manager,
+			(ifnull((select sum(c.confirm_quotation) from cr c where c.project_id = p.project_id),0) <![CDATA[+]]> project_quotation) as project_quotation_total,
+		  ifnull((select sum(f.receive) from project_financial f where f.project_id = p.project_id and f.payment = 0),0) as receive,
+		  ifnull(outsourcing_quotation,0) as outsourcing_quotation,
+		  ifnull((select sum(f.payment) from project_financial f where f.project_id = p.project_id and f.receive = 0),0) as payment
+		from
+			project p
+		where
+			p.delete_time is null and (Project_Code LIKE #{search}
+				or Project_Name LIKE #{search}
+				or Project_Manager LIKE #{search}
+				or returned_status LIKE #{search}
+		)
+		order by
+		${col} ${dir}
+		<if test="start != null">
+				limit #{start},#{length}
+		</if>
+		)a
+	</select>
+
+	<select id="getProjectsNumForFinance" resultType="int">
+		select count(1)
+			 from (select
+				Project_Id,
+				Project_Code,
+				Project_Name,
+				start_time,
+				lead_time,
+				Project_Manager,
+				implement_manager,
+				(ifnull((select sum(c.confirm_quotation) from cr c where c.project_id = p.project_id),0) <![CDATA[+]]> project_quotation) as project_quotation_total,
+			  ifnull((select sum(f.receive) from project_financial f where f.project_id = p.project_id and f.payment = 0),0) as receive,
+			  ifnull(outsourcing_quotation,0) as outsourcing_quotation,
+			  ifnull((select sum(f.payment) from project_financial f where f.project_id = p.project_id and f.receive = 0),0) as payment
+			from
+				project p
+			where
+				p.delete_time is null 
+			)a
+	</select>
+	<select id="queryProjectCodeIsExist" parameterType="String" resultType="int">
+	    select count(1) from project where project_code = #{projectCode} and delete_time is null
+	</select>
+	<select id="checkProjectCode" resultType="int">
+	    select count(1) from project where project_code = #{projectCode} and delete_time is null and project_id not in (#{projectId})
+	</select>
+	<select id="queryProjectsList" resultMap="ProjectModelMap">
+	    <include refid="ProjectModelColumns" /> where delete_time is null order by update_time desc
+	</select>
+</mapper>

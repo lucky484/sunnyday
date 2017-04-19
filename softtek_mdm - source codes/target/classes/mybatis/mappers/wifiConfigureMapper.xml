@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.WifiConfigureDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.WifiConfigure" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ssid" property="ssid" jdbcType="VARCHAR" />
+    <result column="is_autojoin" property="isAutojoin" jdbcType="CHAR" />
+    <result column="is_hiddennetwork" property="isHiddennetwork" jdbcType="CHAR" />
+    <result column="security_type" property="securityType" jdbcType="CHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="eap_method" property="eapMethod" jdbcType="CHAR" />
+    <result column="stage_authentication" property="stageAuthentication" jdbcType="CHAR" />
+    <result column="ca_certificate" property="caCertificate" jdbcType="CHAR" />
+    <result column="user_certificate" property="userCertificate" jdbcType="CHAR" />
+    <result column="identity" property="identity" jdbcType="VARCHAR" />
+    <result column="anonymous_identity" property="anonymousIdentity" jdbcType="CHAR" />
+    <result column="android_device_policy_id" property="androidDevicePolicyId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ssid, is_autojoin, is_hiddennetwork, security_type, password, eap_method, stage_authentication, 
+    ca_certificate, user_certificate, identity, anonymous_identity, android_device_policy_id, 
+    create_date, create_user, update_date, update_user, delete_time
+  </sql>
+  
+  <!-- 根据key获取WIFI配置表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wifi_configure
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据key删除WIFI配置表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wifi_configure
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入WIFI配置表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.WifiConfigure" >
+    insert into wifi_configure (id, ssid, is_autojoin, 
+      is_hiddennetwork, security_type, password, 
+      eap_method, stage_authentication, ca_certificate, 
+      user_certificate, identity, anonymous_identity, 
+      android_device_policy_id, create_date, create_user, 
+      update_date, update_user, delete_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{ssid,jdbcType=VARCHAR}, #{isAutojoin,jdbcType=CHAR}, 
+      #{isHiddennetwork,jdbcType=CHAR}, #{securityType,jdbcType=CHAR}, #{password,jdbcType=VARCHAR}, 
+      #{eapMethod,jdbcType=CHAR}, #{stageAuthentication,jdbcType=CHAR}, #{caCertificate,jdbcType=CHAR}, 
+      #{userCertificate,jdbcType=CHAR}, #{identity,jdbcType=VARCHAR}, #{anonymousIdentity,jdbcType=CHAR}, 
+      #{androidDevicePolicyId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 插入可选的WIFI配置表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.WifiConfigure" >
+    insert into wifi_configure
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ssid != null" >
+        ssid,
+      </if>
+      <if test="isAutojoin != null" >
+        is_autojoin,
+      </if>
+      <if test="isHiddennetwork != null" >
+        is_hiddennetwork,
+      </if>
+      <if test="securityType != null" >
+        security_type,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="eapMethod != null" >
+        eap_method,
+      </if>
+      <if test="stageAuthentication != null" >
+        stage_authentication,
+      </if>
+      <if test="caCertificate != null" >
+        ca_certificate,
+      </if>
+      <if test="userCertificate != null" >
+        user_certificate,
+      </if>
+      <if test="identity != null" >
+        identity,
+      </if>
+      <if test="anonymousIdentity != null" >
+        anonymous_identity,
+      </if>
+      <if test="androidDevicePolicyId != null" >
+        android_device_policy_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="ssid != null" >
+        #{ssid,jdbcType=VARCHAR},
+      </if>
+      <if test="isAutojoin != null" >
+        #{isAutojoin,jdbcType=CHAR},
+      </if>
+      <if test="isHiddennetwork != null" >
+        #{isHiddennetwork,jdbcType=CHAR},
+      </if>
+      <if test="securityType != null" >
+        #{securityType,jdbcType=CHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="eapMethod != null" >
+        #{eapMethod,jdbcType=CHAR},
+      </if>
+      <if test="stageAuthentication != null" >
+        #{stageAuthentication,jdbcType=CHAR},
+      </if>
+      <if test="caCertificate != null" >
+        #{caCertificate,jdbcType=CHAR},
+      </if>
+      <if test="userCertificate != null" >
+        #{userCertificate,jdbcType=CHAR},
+      </if>
+      <if test="identity != null" >
+        #{identity,jdbcType=VARCHAR},
+      </if>
+      <if test="anonymousIdentity != null" >
+        #{anonymousIdentity,jdbcType=CHAR},
+      </if>
+      <if test="androidDevicePolicyId != null" >
+        #{androidDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的WIFI配置表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.WifiConfigure" >
+    update wifi_configure
+    <set >
+      <if test="ssid != null" >
+        ssid = #{ssid,jdbcType=VARCHAR},
+      </if>
+      <if test="isAutojoin != null" >
+        is_autojoin = #{isAutojoin,jdbcType=CHAR},
+      </if>
+      <if test="isHiddennetwork != null" >
+        is_hiddennetwork = #{isHiddennetwork,jdbcType=CHAR},
+      </if>
+      <if test="securityType != null" >
+        security_type = #{securityType,jdbcType=CHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="eapMethod != null" >
+        eap_method = #{eapMethod,jdbcType=CHAR},
+      </if>
+      <if test="stageAuthentication != null" >
+        stage_authentication = #{stageAuthentication,jdbcType=CHAR},
+      </if>
+      <if test="caCertificate != null" >
+        ca_certificate = #{caCertificate,jdbcType=CHAR},
+      </if>
+      <if test="userCertificate != null" >
+        user_certificate = #{userCertificate,jdbcType=CHAR},
+      </if>
+      <if test="identity != null" >
+        identity = #{identity,jdbcType=VARCHAR},
+      </if>
+      <if test="anonymousIdentity != null" >
+        anonymous_identity = #{anonymousIdentity,jdbcType=CHAR},
+      </if>
+      <if test="androidDevicePolicyId != null" >
+        android_device_policy_id = #{androidDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新WIFI配置表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.WifiConfigure" >
+    update wifi_configure
+    set ssid = #{ssid,jdbcType=VARCHAR},
+      is_autojoin = #{isAutojoin,jdbcType=CHAR},
+      is_hiddennetwork = #{isHiddennetwork,jdbcType=CHAR},
+      security_type = #{securityType,jdbcType=CHAR},
+      password = #{password,jdbcType=VARCHAR},
+      eap_method = #{eapMethod,jdbcType=CHAR},
+      stage_authentication = #{stageAuthentication,jdbcType=CHAR},
+      ca_certificate = #{caCertificate,jdbcType=CHAR},
+      user_certificate = #{userCertificate,jdbcType=CHAR},
+      identity = #{identity,jdbcType=VARCHAR},
+      anonymous_identity = #{anonymousIdentity,jdbcType=CHAR},
+      android_device_policy_id = #{androidDevicePolicyId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 批量插入WIFI配置表数据  start-->
+  <insert id="insertBatchWifiConfigure" parameterType="java.util.List" useGeneratedKeys="true">
+    insert into wifi_configure  
+    (ssid,is_autojoin,android_device_policy_id,security_type,password,eap_method,stage_authentication,ca_certificate,user_certificate,identity,anonymous_identity,create_date,create_user,update_date,update_user) 
+    values 
+    <foreach collection="list" item="item" index="index" separator=",">
+     (#{item.ssid},#{item.isAutojoin},#{item.androidDevicePolicyId},#{item.securityType},#{item.password},#{item.eapMethod},#{item.stageAuthentication},#{item.caCertificate},#{item.userCertificate},#{item.identity},#{item.anonymousIdentity},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser})  
+    </foreach>
+  </insert>
+  <!-- 批量插入WIFI配置表数据   end-->
+  
+  <!-- 根据策略Id删除WIFI配置表数据 -->
+  <update id="updateWifiConfigureByPolicyId" parameterType="java.lang.Integer">
+    update 
+      wifi_configure 
+    set delete_time = now() 
+    where android_device_policy_id = #{policyId} 
+  </update>
+  
+  <!-- 根据策略ID获取WIFI配置表 -->
+  <select id="selectByPolicyKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+      <include refid="Base_Column_List" />
+    from wifi_configure 
+    where android_device_policy_id = #{policyId,jdbcType=INTEGER} 
+    and delete_time is null 
+  </select>
+</mapper>

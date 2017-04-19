@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+    <!-- 1.把数据库的配置和实体类的配置放在persistence.xml文件中,之后再spring配置文件中引用它的实例 -->
+    <!-- persistence.xml的配置文件 -->
+    <persistence-unit name="bp" transaction-type="RESOURCE_LOCAL">
+
+        <!-- 以下在hibernate4.2.8中使用 -->
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <!-- 以下在hibernate4.3.8中使用 -->
+        <!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
+
+        <!-- 启用这一段可以在tomcat中配置数据源 -->
+        <non-jta-data-source>java:comp/env/jdbc/mydb</non-jta-data-source> 
+
+        <!-- 实体配置在这里 -->
+        <properties>
+            <!-- 这一段启用Tomcat时注释掉 { -->
+          <!--   <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mydb?zeroDateTimeBehavior=convertToNull&amp;useUnicode=yes&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true"/>
+            <property name="hibernate.connection.username" value="root"/>
+            <property name="hibernate.connection.password" value="root"/>  -->
+            <!-- } -->
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+        </properties>
+
+        <!-- 实体链接SqlServer配置在这里 -->
+        <!--<properties>
+            <property name="hibernate.connection.driver_class" value="net.sourceforge.jtds.jdbc.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:jtds:sqlserver://127.0.0.1:1433;DatabaseName=dx_project"/>
+            <property name="hibernate.connection.username" value="sa"/>
+            <property name="hibernate.connection.password" value="123123"/>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+        </properties>-->
+
+    </persistence-unit>
+</persistence>

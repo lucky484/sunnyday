@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.LogRecordDao">
+	<resultMap type="com.hd.pfirs.model.InterfaceLogInfo" id="interfaceLogInfoMap">
+		<id column="Num_ID" property="numID" />
+		<result column="Reg_ID" property="regID" />
+		<result column="Interface_Name" property="interfaceName" />
+		<result column="Requester" property="requester" />
+		<result column="User_ID" property="userID" />
+		<result column="Organization" property="organization" />
+		<result column="Organization_ID" property="organizationID" />
+		<result column="User_Name" property="userName" />
+		<result column="Interface_Time" property="interfaceTime" />
+		<result column="Terminal_ID" property="terminalID" />
+		<result column="Interface_Result" property="interfaceResult" />
+		<result column="Error_Code" property="errorCode" />
+		<result column="Interface_Condition" property="interfaceCondition" />
+	</resultMap>
+
+	<resultMap type="com.hd.pfirs.model.OperationLogInfo" id="operationLogInfoMap">
+		<id column="Num_ID" property="numID" />
+		<result column="Reg_ID" property="regID" />
+		<result column="User_ID" property="userID" />
+		<result column="Organization" property="organization" />
+		<result column="Organization_ID" property="organizationID" />
+		<result column="User_Name" property="userName" />
+		<result column="Operate_Time" property="operateTime" />
+		<result column="Terminal_ID" property="terminalID" />
+		<result column="Operate_Type" property="operateType" />
+		<result column="Operate_Result" property="operateResult" />
+		<result column="Error_Code" property="errorCode" />
+		<result column="Operate_Name" property="operateName" />
+		<result column="Operate_Condition" property="operateCondition" />
+		<result column="Result_Data" property="operateDesc" />
+	</resultMap>
+
+	<insert id="recordOperateLog" parameterType="OperationLogInfo">
+		insert into t_ss_operationloginfo values
+			(
+				OPT_LOG_SEQUENCE.nextval,
+				#{regID, jdbcType=VARCHAR},
+				#{userID, jdbcType=VARCHAR},
+				#{organization, jdbcType=VARCHAR},
+				#{organizationID, jdbcType=VARCHAR},
+				#{userName, jdbcType=VARCHAR},
+				#{operateTime, jdbcType=VARCHAR},
+				#{terminalID, jdbcType=VARCHAR},
+				#{operateType, jdbcType=INTEGER},
+				#{operateResult, jdbcType=VARCHAR},
+				#{errorCode, jdbcType=VARCHAR},
+				#{operateName, jdbcType=VARCHAR},
+				#{operateCondition, jdbcType=VARCHAR},
+				#{operateDesc, jdbcType=VARCHAR}
+			)
+	</insert>
+
+	<insert id="recordInterfaceLog" parameterType="InterfaceLogInfo">
+		insert into
+		t_ss_interfaceloginfo values
+		(
+		#{numID, jdbcType=BIGINT},
+		#{regID, jdbcType=VARCHAR},
+		#{interfaceName, jdbcType=VARCHAR},
+		#{requester, jdbcType=VARCHAR},
+		#{userID, jdbcType=VARCHAR},
+		#{organization, jdbcType=VARCHAR},
+		#{organizationID, jdbcType=VARCHAR},
+		#{userName, jdbcType=VARCHAR},
+		#{interfaceTime, jdbcType=VARCHAR},
+		#{terminalID, jdbcType=VARCHAR},
+		#{interfaceResult, jdbcType=VARCHAR},
+		#{errorCode, jdbcType=VARCHAR},
+		#{interfaceCondition, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="getOperationLogInfos" resultMap="operationLogInfoMap">
+		select * from(select a.*,rownum rn from(
+		select
+		*
+		from t_ss_operationloginfo where 1=1
+		<if test="keyWords != '' and keyWords != null">
+			and (Reg_ID like #{keyWords} or Organization like #{keyWords} or
+			User_Name like #{keyWords} or Terminal_ID like #{keyWords} or
+			Operate_Name like #{keyWords} or Operate_Condition like #{keyWords}
+			or Result_Data like #{keyWords})
+		</if>
+		<if test="startTime != '' and startTime != null">
+			and to_date(Operate_Time,'yyyymmddHH24miss') <![CDATA[>]]> to_date(#{startTime},'yyyy/mm/dd')
+		</if>
+		<if test="endTime != '' and endTime != null">
+			and to_date(Operate_Time,'yyyymmddHH24miss') <![CDATA[<]]> to_date(#{endTime},'yyyy/mm/dd')
+		</if>
+		order by Num_ID desc
+		) a) where rn <![CDATA[<]]>
+		(10*#{page} +1) and rn <![CDATA[>]]>
+		10*(#{page}-1)
+	</select>
+
+	<select id="getOperationLogInfosCount" resultType="int">
+		select count(1) from
+		(select
+		*
+		from t_ss_operationloginfo where 1=1
+		<if test="keyWords != '' and keyWords != null">
+			and (Reg_ID like #{keyWords} or Organization like #{keyWords} or
+			User_Name like #{keyWords} or Terminal_ID like #{keyWords} or
+			Operate_Name like #{keyWords} or Operate_Condition like #{keyWords}
+			or Result_Data like #{keyWords})
+		</if>
+		<if test="startTime != '' and startTime != null">
+			and to_date(Operate_Time,'yyyymmddHH24miss') <![CDATA[>]]> to_date(#{startTime},'yyyy/mm/dd')
+		</if>
+		<if test="endTime != '' and endTime != null">
+			and to_date(Operate_Time,'yyyymmddHH24miss') <![CDATA[<]]> to_date(#{endTime},'yyyy/mm/dd')
+		</if>
+		)
+	</select>
+	
+	
+	<select id="getInterfaceLogInfos" resultMap="operationLogInfoMap">
+		select * from(select a.*,rownum rn from(
+		select
+		*
+		from t_ss_interfaceloginfo where 1=1
+		<if test="keyWords != '' and keyWords != null">
+			or Reg_ID like #{keyWords} or Organization like #{keyWords} or
+			User_Name like #{keyWords} or Terminal_ID like #{keyWords} or
+			Operate_Name like #{keyWords} or Operate_Condition like #{keyWords}
+		</if>
+		<if test="startTime != '' and startTime != null">
+			and to_date(Operate_Time,'yyyy-mm-dd HH24:mi:ss') <![CDATA[>]]> to_date(#{startTime},'yyyy-mm-dd HH24:mi:ss')
+		</if>
+		<if test="endTime != '' and endTime != null">
+			and to_date(Operate_Time,'yyyy-mm-dd HH24:mi:ss') <![CDATA[<]]>  to_date(#{endTime},'yyyy-mm-dd HH24:mi:ss')
+		</if>
+		order by Operate_Time desc
+		) a
+		where rownum <![CDATA[<]]>
+		10*#{page} +1) where rn <![CDATA[>]]>
+		10*(#{page}-1)
+	</select>
+
+	<select id="getInterfaceLogInfosCount" resultType="int">
+		select count(1) from
+		(select
+		*
+		from t_ss_interfaceloginfo where 1=1
+		<if test="keyWords != '' and keyWords != null">
+			or Reg_ID like #{keyWords} or Organization like #{keyWords} or
+			User_Name like #{keyWords} or Terminal_ID like #{keyWords} or
+			Operate_Name like #{keyWords} or Operate_Condition like #{keyWords}
+		</if>
+		<if test="startTime != '' and startTime != null">
+			and to_date(Operate_Time,'yyyy-mm-dd HH24:mi:ss') <![CDATA[>]]> to_date(#{startTime},'yyyy-mm-dd HH24:mi:ss')
+		</if>
+		<if test="endTime != '' and endTime != null">
+			and to_date(Operate_Time,'yyyy-mm-dd HH24:mi:ss') <![CDATA[<]]>  to_date(#{endTime},'yyyy-mm-dd HH24:mi:ss')
+		</if>
+		)
+	</select>
+
+</mapper>

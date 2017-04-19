@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+          http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+	<display-name>Softtek MDM Demo</display-name>
+
+	<context-param>
+		<param-name>spring.profiles.active</param-name>
+		<param-value>mybatis,dev</param-value>
+	</context-param>
+	
+	<!-- - Location of the XML file that defines the root application context. 
+		- Applied by ContextLoaderListener. -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring/business-config.xml</param-value>
+	</context-param>
+	
+    <!-- 日志记录 -->
+	<!-- <context-param>
+		日志配置文件路径
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:log4j.properties</param-value>
+	</context-param>
+	<context-param>
+		日志页面的刷新间隔
+		<param-name>log4jRefreshInterval</param-name>
+		<param-value>6000</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener> -->
+	
+    <listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<servlet-name>mdm</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring/mvc-core-config.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>mdm</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	
+	<!-- used to provide the ability to enter Chinese characters inside the 
+		Owner Form -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- spring security filter-->
+	<filter>  
+        <filter-name>springSecurityFilterChain</filter-name>  
+        <filter-class>  
+            org.springframework.web.filter.DelegatingFilterProxy   
+        </filter-class>  
+    </filter>  
+    <filter-mapping>  
+        <filter-name>springSecurityFilterChain</filter-name>  
+        <url-pattern>/*</url-pattern>  
+    </filter-mapping>
+	
+	
+	<!-- druid monitor -->
+	<!-- <filter>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+		<async-supported>true</async-supported>
+		<init-param>
+			<param-name>exclusions</param-name>
+			<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping> -->
+<!-- 错误页面跳转 -->
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/resources/common/404.jsp</location>
+	</error-page>
+	
+	<error-page>
+		<error-code>404</error-code>
+		<location>/resources/common/404.jsp</location>
+	</error-page>
+	
+		<error-page>
+		<error-code>405</error-code>
+		<location>/resources/common/404.jsp</location>
+	</error-page>
+	
+	<error-page>
+		<exception-type>javax.servlet.ServletException</exception-type>
+		<location>/jsp/error/404.jsp</location>
+	</error-page>
+	
+	<security-constraint>
+	  	<web-resource-collection>
+	  		<web-resource-name>SSL</web-resource-name>
+	  		<url-pattern>/*</url-pattern>
+	  	</web-resource-collection>
+	  	
+	  	<user-data-constraint>
+	  		<description>SSL required</description>
+	  		<!-- CONFIDENTIAL: 要保证服务器和客户端之间传输的数据不能够被修改，且不能被第三方查看到
+	        INTEGRAL: 要保证服务器和client之间传输的数据不能够被修改
+	        NONE: 指示容器必须能够在任一的连接上提供数据。（即用HTTP或HTTPS，由客户端来决定） -->
+	  		<transport-guarantee>NONE</transport-guarantee>
+	  	</user-data-constraint>
+ 	</security-constraint>
+</web-app>

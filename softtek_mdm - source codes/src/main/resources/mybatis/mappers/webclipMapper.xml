@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.WebclipDao">
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.Webclip">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="lable" jdbcType="VARCHAR" property="lable" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="icon_path" jdbcType="VARCHAR" property="iconPath" />
+    <result column="is_remove" jdbcType="CHAR" property="isRemove" />
+    <result column="precompose_icon" jdbcType="CHAR" property="precomposeIcon" />
+    <result column="full_screen" jdbcType="CHAR" property="fullScreen" />
+    <result column="ios_device_policy_id" jdbcType="INTEGER" property="iosDevicePolicyId" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="update_date" jdbcType="DATE" property="updateDate" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+    <result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, lable, url, icon_path, is_remove, precompose_icon, full_screen, ios_device_policy_id, 
+    create_date, create_user, update_date, update_user, delete_time
+  </sql>
+  
+  <!-- 根据主键查询表 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from webclip
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from webclip
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.Webclip">
+    insert into webclip (id, lable, url, 
+      icon_path, is_remove, precompose_icon, 
+      full_screen, ios_device_policy_id, create_date, 
+      create_user, update_date, update_user, 
+      delete_time)
+    values (#{id,jdbcType=INTEGER}, #{lable,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
+      #{iconPath,jdbcType=VARCHAR}, #{isRemove,jdbcType=CHAR}, #{precomposeIcon,jdbcType=CHAR}, 
+      #{fullScreen,jdbcType=CHAR}, #{iosDevicePolicyId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=DATE}, #{updateUser,jdbcType=INTEGER}, 
+      #{deleteTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 插入可选的字段表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.Webclip">
+    insert into webclip
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="lable != null">
+        lable,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="iconPath != null">
+        icon_path,
+      </if>
+      <if test="isRemove != null">
+        is_remove,
+      </if>
+      <if test="precomposeIcon != null">
+        precompose_icon,
+      </if>
+      <if test="fullScreen != null">
+        full_screen,
+      </if>
+      <if test="iosDevicePolicyId != null">
+        ios_device_policy_id,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="deleteTime != null">
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="lable != null">
+        #{lable,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="iconPath != null">
+        #{iconPath,jdbcType=VARCHAR},
+      </if>
+      <if test="isRemove != null">
+        #{isRemove,jdbcType=CHAR},
+      </if>
+      <if test="precomposeIcon != null">
+        #{precomposeIcon,jdbcType=CHAR},
+      </if>
+      <if test="fullScreen != null">
+        #{fullScreen,jdbcType=CHAR},
+      </if>
+      <if test="iosDevicePolicyId != null">
+        #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null">
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的字段-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.Webclip">
+    update webclip
+    <set>
+      <if test="lable != null">
+        lable = #{lable,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="iconPath != null">
+        icon_path = #{iconPath,jdbcType=VARCHAR},
+      </if>
+      <if test="isRemove != null">
+        is_remove = #{isRemove,jdbcType=CHAR},
+      </if>
+      <if test="precomposeIcon != null">
+        precompose_icon = #{precomposeIcon,jdbcType=CHAR},
+      </if>
+      <if test="fullScreen != null">
+        full_screen = #{fullScreen,jdbcType=CHAR},
+      </if>
+      <if test="iosDevicePolicyId != null">
+        ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null">
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.Webclip">
+    update webclip
+    set lable = #{lable,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      icon_path = #{iconPath,jdbcType=VARCHAR},
+      is_remove = #{isRemove,jdbcType=CHAR},
+      precompose_icon = #{precomposeIcon,jdbcType=CHAR},
+      full_screen = #{fullScreen,jdbcType=CHAR},
+      ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 批量插入WebClip配置 -->
+  <insert id="insertBatchWebClip" parameterType="java.util.List" useGeneratedKeys="true">
+     insert into webclip (lable,url,icon_path,is_remove,precompose_icon,full_screen,ios_device_policy_id,
+     create_date,create_user,update_date,update_user) 
+     values 
+     <foreach collection="list" item="item" index="index" separator=",">
+       (#{item.lable},#{item.url},#{item.iconPath},#{item.isRemove},#{item.precomposeIcon},#{item.fullScreen},
+       #{item.iosDevicePolicyId},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser}) 
+     </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,24 @@
+<taglib xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1">
+
+	<tlib-version>1.0</tlib-version>
+	<short-name>mdm</short-name>
+	<uri>http://mdm.softtek.com</uri>
+	
+	<tag-file>
+		<name>message</name>
+		<path>/WEB-INF/tags/message.tag</path>
+	</tag-file>
+	
+	<tag-file>
+		<name>pagination</name>
+		<path>/WEB-INF/tags/pagination.tag</path>
+	</tag-file>
+	
+	<tag-file>
+		<name>breadcrumb</name>
+		<path>/WEB-INF/tags/breadcrumb.tag</path>
+	</tag-file>
+	
+</taglib>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.RoleMenuDao">
+	
+	<resultMap type="RoleMenu" id="RoleMenuMap">
+		<id property="id" column="id"/>
+		<association property="menu" javaType="Menu">
+			<id property="id" column="menu_id"/>
+		</association>
+	</resultMap>
+	
+	<insert id="save" parameterType="RoleMenu">
+		INSERT INTO role_menu(id,org_id,role_id,menu_id,address,update_time,create_time,create_by,update_by,delete_time)
+		VALUES(#{id},#{organization.id},#{role.id},#{menu.id},#{address},NOW(),NOW(),null,null,null)
+	</insert>
+	
+	<!-- 批量保存规则到 role_menu-->
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO role_menu(org_id,role_id,menu_id,address,update_time,create_time,create_by,update_by,delete_time)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.organization.id},#{item.role.id},#{item.menu.id},#{item.address},NOW(),NOW(),null,null,null)
+		</foreach>
+	</insert>
+	
+	<select id="findListByRoleId" parameterType="Role" resultMap="RoleMenuMap">
+		SELECT id,menu_id
+		FROM role_menu
+		WHERE delete_time is null
+		AND role_id=#{id}
+	</select>
+	
+	<update id="deleteByRoleId" parameterType="java.lang.Integer">
+		UPDATE role_menu
+		SET delete_time=NOW()
+		WHERE role_id=#{roleId}
+	</update>
+</mapper>

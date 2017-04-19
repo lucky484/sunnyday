@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.UserDao">
+	<resultMap type="userModel" id="UserModelMap">
+		<id column="user_id" property="userId" />
+		<result column="user_name" property="userName" />
+		<result column="user_password" property="userPassword" />
+		<result column="last_login_time" property="lastLoginTime" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="english_name" property="englishName" />
+		<result column="chinese_name" property="chineseName" />
+		<result column="email" property="email" />
+		<result column="is_notification" property="isNotification" />
+		<result column="role_id" property="roleId" />
+		<association column="role_id" property="role"
+			select="com.softtek.pst.dao.RoleDao.getRoleById" />
+	</resultMap>
+
+	<resultMap type="userModel" id="UserModelMap2">
+		<id column="user_id" property="userId" />
+		<result column="user_name" property="userName" />
+		<result column="user_password" property="userPassword" />
+		<result column="last_login_time" property="lastLoginTime" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="english_name" property="englishName" />
+		<result column="chinese_name" property="chineseName" />
+		<result column="email" property="email" />
+		<result column="is_notification" property="isNotification" />
+		<result column="role_id" property="roleId" />
+		<association column="role_id" property="role"
+			select="com.softtek.pst.dao.RoleDao.getRoleById2" />
+	</resultMap>
+	
+	<resultMap type="userModel" id="UserModelMap3">
+		<result column="user_name" property="userName" />
+		<result column="user_password" property="userPassword" />
+		<result column="english_name" property="englishName" />
+		<result column="chinese_name" property="chineseName" />
+	</resultMap>
+	
+	<resultMap type="userModel" id="UserModelMap4">
+		<result property="authorityUrl" column="authority_url"/>
+		<result property="authorityName" column="authority_name"/>
+	</resultMap>
+	
+	<sql id="userSql">
+		select
+		user_id,user_name,user_password,last_login_time,
+		create_time,update_time,role_id,english_name,chinese_name,email,is_notification
+		from
+		user
+	</sql>
+	
+	<select id="getAllUser" resultMap="UserModelMap3">
+	    select
+		user_name,user_password,english_name,chinese_name
+		from
+		user
+		where delete_time is null
+	</select>
+	
+	<select id="getUsersNum" resultType="int">
+		select count(1) from user 
+		where delete_time is null
+		    and (user_name LIKE #{search}
+			or english_name LIKE
+			#{search}
+			or chinese_name LIKE
+			#{search})
+	</select>
+	
+	<select id="getUsers" resultMap="UserModelMap2">
+		<include refid="userSql" />
+		where delete_time is null
+		   and (user_name LIKE #{search}
+			or english_name LIKE
+			#{search}
+			or chinese_name LIKE
+			#{search})
+		order by
+		${col} ${dir}
+		<if test="start != null">
+			limit #{start},#{length}
+		</if>
+	</select>
+
+	<select id="login" resultMap="UserModelMap">
+	    <include refid="userSql" />
+		where user_name = #{username} and user_password = #{password} and delete_time is null
+	</select>
+	
+	<select id="getAuthorityByUserId" resultMap="UserModelMap4">
+	   select a.authority_name,a.authority_url
+		from user u left join role r on u.role_id = r.role_id 
+		left join role_authority ra on r.role_id = ra.role_id
+		left join authority a on ra.authority_id = a.authority_id
+		where u.user_id =#{userId} and u.delete_time is null
+	</select>
+
+	<select id="getUserById" parameterType="long" resultMap="UserModelMap">
+		<include refid="userSql" />
+		where user_id=#{userId}
+	</select>
+	<select id="getUsersByRole" parameterType="long" resultMap="UserModelMap">
+		<include refid="userSql" />
+		where role_id=#{roleId}
+	</select>
+	
+	<insert id="addUser" parameterType="userModel" keyProperty="userId"
+		useGeneratedKeys="true">
+	    insert into user
+	    (user_name,user_password,create_time,english_name,chinese_name,role_id,email,is_notification)
+	    values(#{userName},#{userPassword},CURRENT_TIMESTAMP,#{englishName},#{chineseName},#{roleId},#{email},#{isNotification})
+	</insert>
+	
+	<update id="deleteUser" parameterType="long">
+	    update user set delete_time = CURRENT_TIMESTAMP
+	    where user_id = #{userId}
+	</update>
+	
+	<update id="updateUser" parameterType="userModel">
+		update user
+		set
+		user_name=(#{userName}),
+		user_password=(#{userPassword}),
+		update_time=CURRENT_TIMESTAMP,
+		english_name=(#{englishName}),
+		chinese_name=(#{chineseName}),
+		role_id=(#{roleId}),
+		email=(#{email}),
+		is_notification=(#{isNotification})
+		where user_id = #{userId}
+	</update>
+	
+	<update id="updateLastLoginTime" parameterType="userModel">
+		update user
+		set
+		last_login_time = (#{lastLoginTime})
+		where user_name = #{userName}
+	</update>
+	<select id="queryNotificationUser" resultMap="UserModelMap">
+	    <include refid="userSql" /> where delete_time is null and is_notification = 1
+	</select>
+</mapper>

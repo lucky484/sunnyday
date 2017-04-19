@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceRuleItemRecordDao">
+	
+	<insert id="save" parameterType="DeviceRuleItemRecord" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO device_rule_item_record(type,`condition`,value)
+		VALUES(#{type},#{condition},#{value})
+	</insert>
+	
+	<delete id="truncateWithIds">
+		DELETE FROM device_rule_item_record
+		WHERE id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 批量保存规则到管理表 -->
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO device_rule_item_record(type,`condition`,value)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.type},#{item.condition},#{item.value})
+		</foreach>
+	</insert>
+</mapper>

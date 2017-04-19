@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.ParamSettingDao">
+	
+	<resultMap id="EmailModelContentMap" type="com.softtek.mdm.model.EmailModelContent">
+		<id column="id" property="id"/>
+		<result column="adviceType" property="adviceType"/>
+		<result column="theme" property="theme"/>
+		<result column="content" property="content"/>
+	</resultMap>
+  
+	<insert id="addSysParamSetting" parameterType="SystemParamSetModel">
+		insert into system_param_set values(#{id},#{mdmAddress},#{outManagerTime},#{deviceInfoCollectTime},#{illegalInfoCollectTime})
+	</insert>
+	
+	<update id="updateSysParamSetting" parameterType="SystemParamSetModel">
+			update system_param_set set
+			<if test="mdmAddress!='' and mdmAddress!=null">
+				mdmAddress=#{mdmAddress},
+			</if>
+			<if test="outManagerTime!=null">
+				outManagerTime=#{outManagerTime},
+			</if>
+			<if test="deviceInfoCollectTime!=null">
+				deviceInfoCollectTime=#{deviceInfoCollectTime},
+			</if>
+			<if test="illegalInfoCollectTime!=null">
+				illegalInfoCollectTime=#{illegalInfoCollectTime} 
+			</if>
+			where id = 1 limit 1
+	</update>
+	
+	<select id="querySysParamSetting" resultType="SystemParamSetModel">
+		select * from system_param_set limit 1
+	</select>
+	
+	<update id="updateMessageAdviceParam" parameterType="EmailParamModel">
+		update email_param_setting 
+		<set>
+	   		<if test="host!='' and  host!=null">
+					host=#{host},
+			</if>
+			<if test="port!='' and port!=null">
+					port=#{port},
+			</if>
+			<if test="username!=''and username!=null">
+					username = #{username},
+			</if>
+			<if test="password!='' and password!=null">
+					password  = #{password},
+			</if>
+			<if test="isSSL!=null">
+					isSSL = #{isSSL},
+			</if>
+			<if test="sender!= '' and  sender!= null">
+					sender =#{sender}
+			</if>
+		</set>
+		where id = 1
+	</update>
+	
+	<insert id="saveMessageAdviceParam" parameterType="EmailParamModel">
+		insert into email_param_setting values(1,#{host},#{sender},#{port},#{username},#{password},#{isSSL});
+	</insert>
+	
+	<update id="updateEmailModelsContent" parameterType="java.util.List">
+       <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update email_model_setting  
+                <set>
+                  <if test="item.theme != '' and item.theme != null">
+                  	theme=#{item.theme},
+                  </if>
+                  <if test="item.content != '' and item.content != null">
+                  	content=#{item.content}
+                  </if>
+                </set>
+                 where adviceType = #{item.adviceType}
+       </foreach>
+	</update>
+	
+	<select id="queryEmailParams" resultType="EmailParamModel">
+		select * from email_param_setting
+	</select>
+	
+	<select id="queryEmailModels" resultMap="EmailModelContentMap">
+		select * from email_model_setting
+	</select>
+	<!-- 查询是否默认版权 -->
+	<select id="queryCopyIsDefault" resultType="int">
+		SELECT copyright_isdefault FROM system_style_set where id=987654321;
+	</select>
+	<!-- 查询是否默认LOGO -->
+	<select id="queryLogoIsDefault" resultType="int">
+		SELECT logo_isdefault FROM system_style_set where id=987654321;
+	</select>
+	<!-- 查询是否默认LOGO -->
+	<select id="queryDefaultCopyright" resultType="String">
+		SELECT copyright_default FROM system_style_set where id=987654321;
+	</select>	
+	<select id="queryCopyright" resultType="String">
+		SELECT copyright_new FROM system_style_set where id=987654321;
+	</select>
+	<update id="updateLogoIsDefault">
+	   update system_style_set SET logo_isdefault=0;
+	</update>
+	<update id="updateCopyright" parameterType="String">
+	   update system_style_set SET copyright_isdefault=0,copyright_new=#{copyright} where id=987654321;
+	</update>
+	<update id="resetstyle">
+	   update system_style_set SET copyright_isdefault=1,logo_isdefault=1 where id=987654321;
+	</update>
+	
+	<select id="queryEmailModelContentByType" parameterType="int" resultType="EmailModelContent">
+		select * from email_model_setting where adviceType=#{type}
+	</select>
+</mapper>

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.PushMobileMsgDao" >
+  <resultMap id="PushMobileMsgModelMap" type="com.softtek.mdm.model.PushMobileMsgModel" >
+    <id column="id" property="id"/>
+    <result column="pic_url" property="picUrl"/>
+    <result column="msg_theme" property="msgTheme"/>
+    <result column="create_user" property="createUserId"/>
+    <result column="create_realname" property="createUserName"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_user" property="updateUserId"/>
+    <result column="update_realname" property="updateUserName"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="push_time" property="pushTime"/>
+    <result column="organization_id" property="orgId"/>
+    <result column="content" property="content"/>
+  </resultMap>
+  
+  <resultMap id="PushMsgHistoryModelMap" type="com.softtek.mdm.model.PushMsgHistoryModel" >
+    <id column="id" property="id"/>
+    <result column="userid" property="userId"/>
+    <result column="udid" property="udId"/>
+    <result column="create_user" property="createUser"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_user" property="updateUser"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="organization_id" property="orgId"/>
+    <association property="pushMobileMsgModel" javaType="PushMobileMsgModel">
+			<id property="id" column="msgId" />
+			<result column="msgTheme" property="msgTheme"/>
+			<result column="picUrl" property="picUrl"/>
+			<result column="content" property="content"/>
+	</association>
+  </resultMap>
+  
+  <resultMap type="DeptNetBwListRelation" id="picMsgdeptRelationMap">
+		<id property="id" column="id"/>
+		<result property="orgManagerId" column="orgmanagerid"/>
+		<result property="picMsgId" column="picmsgid"/>
+  </resultMap>
+  
+  <insert id="saveMsg" parameterType="PushMobileMsgModel">
+  	<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+	</selectKey>
+  	insert into push_msg
+  		(
+	  		pic_url,
+	  		msg_theme,
+	  		create_user,
+	  		create_realname,
+	  		create_time,
+	  		update_user,
+	  		update_realname,
+	  		update_time,
+	  		organization_id,
+	  		content,
+	  		departIds,
+	  		virtualIds,
+	  		userIds
+  		)
+  		values
+  		(
+	  		#{picUrl},
+	  		#{msgTheme},
+	  		#{createUserId},
+	  		#{createUserName},
+	  		#{createTime},
+	  		#{updateUserId},
+	  		#{updateUserName},
+	  		#{updateTime},
+	  		#{orgId},
+	  		#{content},
+	  		#{departIds},
+	  		#{virtualIds},
+	  		#{userIds}
+  		)
+  </insert>
+  
+  <select id="find" resultMap="PushMsgHistoryModelMap">
+  	 select h.id, h.create_time,s.id msgId,s.pic_url picUrl,s.msg_theme msgTheme , content content from push_msg_history h left join push_msg s on h.msgid=s.id
+  	 	 where h.userId= #{userId} order by h.create_time desc LIMIT #{offSet},#{pageSize}
+  </select>
+  
+  <select id="count" resultType="int">
+   SELECT
+		count(1)
+	FROM
+		push_msg_history h
+	LEFT JOIN push_msg s ON h.msgid = s.id
+	WHERE
+		h.userId = #{userId}
+	ORDER BY
+		h.create_time ASC
+  </select>
+  
+  
+  
+  <update id="updatePushMobileMsg" parameterType="PushMobileMsgModel">
+  		update push_msg set
+  			msg_theme = #{msgTheme},
+  			content = #{content},
+  			pic_url = #{picUrl},
+  			update_user = #{updateUserId},
+  			update_realname = #{updateUserName},
+  			update_time = #{updateTime},
+  			departIds = #{departIds},
+	  		virtualIds = #{virtualIds},
+	  		userIds = #{userIds}
+  		where id = #{id}
+  </update>
+  
+  <delete id="deletePushMsgByMap" parameterType="PushMobileMsgModel">
+  		delete from push_msg where id = #{id}
+  </delete>
+  
+   <delete id="deletePushMsgHistoryByMap" parameterType="PushMobileMsgModel">
+  		delete from push_msg_history where msgid = #{id}
+  </delete>
+  
+  <select id="queryPushMsgByMap" resultMap="PushMobileMsgModelMap">
+  	 select pic_url,
+	  		msg_theme,
+	  		create_user,
+	  		create_realname,
+	  		create_time,
+	  		update_user,
+	  		update_realname,
+	  		update_time,
+	  		organization_id,
+	  		content,
+	  		departIds,
+	  		virtualIds,
+	  		userIds
+	  		from push_msg
+  	 where organization_id = #{orgId}
+  	 and id = #{id}
+  	 order by create_time desc limit 1;
+  </select>
+  
+   <select id="queryPushMsgByTitle" resultMap="PushMobileMsgModelMap">
+  	 select 
+			pic_url,
+	  		msg_theme,
+	  		create_user,
+	  		create_realname,
+	  		create_time,
+	  		update_user,
+	  		update_realname,
+	  		update_time,
+	  		organization_id,
+	  		content,
+	  		departIds,
+	  		virtualIds,
+	  		userIds
+	 from push_msg
+  	 where organization_id = #{orgId}
+  	 and msg_theme = #{msgTitle}
+  	 <if test="id!=null and id!=''">
+  	 	and id != #{id}
+  	 </if>
+  	 <!-- select * from push_msg where organization_id = #{orgId}
+  	 and msg_theme =  #{msgTitle} and id not in (select id from push_msg
+  	 where organization_id = #{orgId}
+  	 and msg_theme = #{msgTitle} )  -->
+  	 order by create_time desc limit 1;
+  </select>
+  
+  <select id="queryPushMsgListByParams" resultMap="PushMobileMsgModelMap">
+  	 select * from push_msg
+  	 where organization_id = #{orgId}
+  	 <if test="name != null and name != ''">
+  	 	and msg_theme like CONCAT('%',#{name},'%')
+  	 </if>
+  	 <if test="deptIdList != null and  deptIdList.size() != 0">
+    	 	and id in (select picmsgid from department_pushmsg_relation where orgmanagerid in 
+    	 	<foreach item="item" collection="deptIdList" separator="," open="(" close=")" index="">    
+	        	#{item}  
+	       </foreach> )
+    </if>
+  	 order by create_time desc limit #{pageNum},#{pageSize}
+  </select>
+  
+  <select id="queryPushMsgCount" resultType="Integer">
+  	 select count(0) from push_msg
+  	 where organization_id = #{orgId}
+  	 <if test="name != null and name != ''">
+  	 	and msg_theme like CONCAT('%',#{name},'%')
+  	 </if>
+  	 <if test="deptIdList != null and  deptIdList.size() != 0">
+    	 	and id in (select picmsgid from department_pushmsg_relation where orgmanagerid in 
+    	 	<foreach item="item" collection="deptIdList" separator="," open="(" close=")" index="">    
+	        	#{item}  
+	       </foreach> )
+    </if> 
+    
+  	</select>
+  
+  <select id="queryPushMsgById" parameterType="Long" resultType="PushMobileMsgModel">
+  	select id,pic_url picUrl,msg_theme msgTheme,create_user createUserId,create_realname createUserName,create_time createTime,
+  	update_user updateUserId,update_realname updateUserName, update_time updateTime,organization_id orgId,content 
+	from push_msg where id = #{id}
+  </select>
+  <select id="queryPushMsgByIds" parameterType="list" resultMap="PushMobileMsgModelMap">
+  
+  	select * from push_msg where 1=1 and 
+  	<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+	</foreach>
+  	 <if test="msg_theme != null and msg_theme != ''">
+  	 	and msg_theme like CONCAT('%',#{msgTheme},'%')
+  	 </if>
+  	 <if test="content != null and content != ''">
+  	 	and content like CONCAT('%',#{content},'%')
+  	 </if>
+  </select>
+  
+  <insert id="savePushHistory" parameterType="java.util.List">
+		insert into push_msg_history    
+   			 (userid,udid,msgid,create_user,create_time,update_user,update_time,organization_id)  
+    	values 
+    	<foreach collection="list" item="item" index="index" separator=","> 
+    	 (#{item.userId},#{item.udId},#{item.pushMobileMsgModel.id},#{item.pushMobileMsgModel.createUserId},#{item.createTime},#{item.updateUser},#{item.updateTime},#{item.orgId})  
+    	</foreach>
+  </insert>
+  
+  <select id="selectPushHistory" resultMap="PushMsgHistoryModelMap">
+  	 select h.id,h.create_user, h.create_time,s.id msgId,s.pic_url picUrl,s.msg_theme msgTheme , content content from push_msg_history h left join push_msg s on h.msgid=s.id
+  	 	 where h.userId=#{0} order by h.create_time desc limit #{1},#{2}
+  </select>
+  
+   <select id="selectCountPushHistory" resultType="int">
+  	 select count(0) from push_msg_history h left join push_msg s on h.msgid=s.id
+  	 	 where h.userId=#{userId} 
+  </select>
+  
+  <insert id="saveDptPicMsgRelation" parameterType="java.util.List">
+		insert into department_pushmsg_relation (orgmanagerid, picmsgid) values
+		<foreach collection="list" item="item" index="index" separator=","> 
+    	 (#{item.orgManagerId},#{item.picMsgId})  
+    	</foreach>
+	</insert>
+	
+	<delete id="deleteDeptBwListRelation">
+		delete from department_pushmsg_relation where picmsgid=#{pushMsgId}
+	</delete>
+	
+	
+	<select id="queryDptPicMsgRelation" parameterType="list" resultMap="picMsgdeptRelationMap">
+		select id,orgmanagerid,picmsgid from department_pushmsg_relation where orgmanagerid
+		<foreach item="item" collection="list" separator="," open="(" close=")" index="">    
+	        		#{item}  
+	    </foreach> )
+	</select>
+	
+	<select id="findUserByDepartIdList" parameterType="list" resultType="int">
+		select id from users where group_id in
+         <foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+          and delete_time is null
+	</select>
+	
+	
+	<select id="findUserByVirIdList" parameterType="list" resultType="int">
+		select uvg.user_id from users_virtual_group uvg LEFT JOIN users u on uvg.user_id=u.id where u.delete_time is null and uvg.virtual_id in
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<select id="findViewMember" parameterType="list" resultType="com.softtek.mdm.model.UserModel">
+			select user_name as username,real_name as realname from users where org_id = #{orgId} and  id in 
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		order by create_time desc limit #{pageNum},#{pageSize}
+	</select>
+	<update id="updatePushTime" parameterType="java.util.Map">
+	   update push_msg set push_time = now() where id=#{id}
+	</update>
+	
+</mapper>

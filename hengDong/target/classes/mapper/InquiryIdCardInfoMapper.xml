@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.InquiryIdCardInfoDao">
+	<resultMap type="com.hd.pfirs.model.InquiryIdCardInfoModel"
+		id="InquiryIdCardInfoModelMap">
+		<id column="CardId" property="cardId" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="collectTimeStamp" property="collectTimeStamp" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="IDCardPic" property="idCardPic" />
+		<result column="IDCardName" property="idCardName" />
+		<result column="IDCardNo" property="idCardNo" />
+		<result column="IDCardSex" property="idCardSex" />
+		<result column="Similarity" property="similarity" />
+		<result column="isControlled" property="isControlled" />
+		<result column="compareBaseID" property="compareBaseID" />
+		<result column="collectPic" property="collectPic" />
+		<result column="CardCode" property="cardCode" />
+		<result column="idCardBirth" property="idCardBirth"/>
+<!-- 		<result column="photo" property="photo"/> -->
+	</resultMap>
+
+	<select id="getIdCardInfo" resultMap="InquiryIdCardInfoModelMap">
+		select * from (select a.*,rownum rn from (
+		select
+		idCardInfo.collectTime,
+		idCardInfo.collectTimeStamp,
+		idCardInfo.collectSite,
+		idCardInfo.idCardPic,
+		idCardInfo.idCardName,
+		idCardInfo.idCardSex,
+		idCardInfo.idCardNo,
+		idCardInfo.cardCode,
+		Idcardcompresult.Comparebaseid,
+		Idcardcompresult.isControlled,
+		faceAndCardResult.similarity,
+		faceInfo.collectPic
+		from t_pp_idCardInfo
+		idCardInfo,
+		T_Pp_Idcardcompresult Idcardcompresult,
+		t_pp_faceAndCardResult faceAndCardResult,
+		t_pp_faceInfo faceInfo
+		where
+		idCardInfo.cardCode = Idcardcompresult.cardCode(+)
+		and
+		idCardInfo.cardCode = faceAndCardResult.cardCode(+)
+		and
+		faceAndCardResult.faceCode = faceInfo.faceCode(+)
+		<if test="collectTimeStart != '' and collectTimeStart != null">
+			and
+			to_char(idCardInfo.collectTime,'yyyy/mm/dd')&gt;=#{collectTimeStart}
+		</if>
+		<if test="collectTimeEnd != '' and collectTimeEnd != null">
+			and
+			to_char(idCardInfo.collectTime,'yyyy/mm/dd')&lt;=#{collectTimeEnd}
+		</if>
+		<if test="collectSite != '' and collectSite != null">
+			and upper(idCardInfo.collectSite) like '%'||upper(#{collectSite})||'%'
+		</if>
+		<if test="idCardName != '' and idCardName != null">
+			and upper(idCardInfo.idCardName) like '%'||upper(#{idCardName})||'%'
+		</if>
+		<if test="sexSelected != '' and sexSelected != null">
+			and idCardInfo.idCardSex = #{sexSelected}
+		</if>
+		<if test="idCardNo != '' and idCardNo != null">
+		and upper(idCardInfo.idCardNo) like '%'||upper(#{idCardNo})||'%'
+		</if>
+		<if test="isCardInfo != '' and isCardInfo != null">
+			and Idcardcompresult.isControlled = '1'
+		</if>
+		<if test="isFaceAndCard != null and isFaceAndCard !=''">
+		<if test="isFaceAndCard == 1">
+			and faceAndCardResult.similarity <![CDATA[>]]>= #{faceCardCompAlarmVal}
+		</if>
+		<if test="isFaceAndCard == 2">
+			and faceAndCardResult.similarity <![CDATA[<]]> #{faceCardCompAlarmVal}
+		</if>
+		</if>
+		order by
+		Idcardinfo.Collecttimestamp desc
+		) a where rownum <![CDATA[<]]>=
+		#{pageSize}) where rn <![CDATA[>]]>
+		#{start}
+	</select>
+
+	<select id="getIdCardInfoCount" resultType="Integer">
+		select count(1) from
+		(
+		select
+		idCardInfo.collectTime,
+		idCardInfo.collectSite,
+		idCardInfo.idCardPic,
+		idCardInfo.idCardName,
+		idCardInfo.idCardSex,
+		idCardInfo.idCardNo,
+		Idcardcompresult.Comparebaseid,
+		Idcardcompresult.isControlled,
+		faceAndCardResult.similarity,
+		faceInfo.collectPic
+		from t_pp_idCardInfo
+		idCardInfo,
+		T_Pp_Idcardcompresult Idcardcompresult,
+		t_pp_faceAndCardResult
+		faceAndCardResult,
+		t_pp_faceInfo faceInfo
+		where
+		idCardInfo.cardCode =
+		Idcardcompresult.cardCode(+)
+		and
+		idCardInfo.cardCode =
+		faceAndCardResult.cardCode(+)
+		and
+		faceAndCardResult.faceCode =
+		faceInfo.faceCode(+)
+		<if test="collectTimeStart != '' and collectTimeStart != null">
+			and
+			to_char(idCardInfo.collectTime,'yyyy/mm/dd')&gt;=#{collectTimeStart}
+		</if>
+		<if test="collectTimeEnd != '' and collectTimeEnd != null">
+			and
+			to_char(idCardInfo.collectTime,'yyyy/mm/dd')&lt;=#{collectTimeEnd}
+		</if>
+		<if test="collectSite != '' and collectSite != null">
+			and upper(idCardInfo.collectSite) like '%'||upper(#{collectSite})||'%'
+		</if>
+		<if test="idCardName != '' and idCardName != null">
+			and upper(idCardInfo.idCardName) like '%'||upper(#{idCardName})||'%'
+		</if>
+		<if test="sexSelected != '' and sexSelected != null">
+			and idCardInfo.idCardSex = #{sexSelected}
+		</if>
+		<if test="idCardNo != '' and idCardNo != null">
+			and upper(idCardInfo.idCardNo) like '%'||upper(#{idCardNo})||'%'
+		</if>
+		<if test="isCardInfo != '' and isCardInfo != null">
+			and Idcardcompresult.isControlled = '1'
+		</if>
+		<if test="isFaceAndCard != null and isFaceAndCard !=''">
+		<if test="isFaceAndCard == 1">
+			and faceAndCardResult.similarity <![CDATA[>]]>= #{faceCardCompAlarmVal}
+		</if>
+		<if test="isFaceAndCard == 2">
+			and (faceAndCardResult.similarity <![CDATA[<]]> #{faceCardCompAlarmVal} or faceAndCardResult.similarity is null)
+		</if>
+		</if>
+		)
+	</select>
+
+</mapper>

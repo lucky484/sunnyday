@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.IntegratedQueryMessageDao">	
+	<resultMap type="com.hd.pfirs.model.IntegratedQueryMessageModel" id="IntegratedQueryMessageModelMap">
+		<result column="CardCode" property="cardCode" />
+		<result column="FaceCode" property="faceCode" />
+		<result column="IdCardCollectTime" property="idCardCollectTime" />
+		<result column="IdCardCollectTimeStr" property="idCardCollectTimeStr" />
+		<result column="FaceCollectTime" property="faceCollectTime" />
+		<result column="FaceCollectTimeStr" property="faceCollectTimeStr" />
+		<result column="IdCardCollectSite" property="idCardCollectSite" />
+		<result column="CollectIdCardPic" property="collectIdCardPic" />
+		<result column="CollectFacePic" property="collectFacePic" />
+		<result column="IdCardName" property="idCardName" />
+		<result column="IdCardNo" property="idCardNo" />
+		<result column="IdCardSex" property="idCardSex" />
+		<result column="CardUnit" property="cardUnit" />
+		<result column="CardIssueDate" property="cardIssueDate" />
+		<result column="CardExpiryDate" property="cardExpiryDate" />
+		<result column="CollectFacePic" property="collectFacePic" />
+		<result column="Similarity" property="similarity" />
+		<result column="CtrlBaseId" property="ctrlBaseId" />
+		<result column="ZaiTaoAJLX" property="ZaiTaoAJLX" />
+		<result column="Content" property="content" />
+		<result column="tableName" property="tableName" />
+	</resultMap>
+	
+	
+	<select id="getIntegratedQueryMessageModelByCardCode" resultMap="IntegratedQueryMessageModelMap">
+		select b.collectpic CollectFacePic,a.similarity Similarity,a.cardcode CardCode,a.facecode FaceCode from
+		(select max(similarity) similarity,cardcode,facecode from
+		t_pp_faceandcardresult where cardcode = #{cardCode} group by
+		cardcode,facecode) a,t_pp_faceinfo b
+		where a.facecode = b.facecode and rownum = 1
+	</select>
+	<select id="getIntegratedQueryMessageModelListByFaceCode" resultMap="IntegratedQueryMessageModelMap">
+		 select facecode,collectpic CollectFacePic,collecttime FaceCollectTime,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss') FaceCollectTimeStr from t_PP_faceinfo where groupcode = 
+	  (select groupcode from t_pp_faceInfo where facecode = #{facecode}  and rownum = 1) and pictype='1' and islast='1'  and rownum = 1 
+	  union all
+	   select facecode,collectpic CollectFacePic,collecttime FaceCollectTime,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss') FaceCollectTimeStr from t_PP_faceinfo where groupcode = 
+	  (select groupcode from t_pp_faceInfo where facecode = #{facecode}  and rownum = 1) and pictype='0' and islast='1' and rownum = 1
+	  union all
+	   select facecode,collectpic CollectFacePic,collecttime FaceCollectTime,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss') FaceCollectTimeStr from t_PP_faceinfo where groupcode = 
+	  (select groupcode from t_pp_faceInfo where facecode = #{facecode}  and rownum = 1) and pictype='0'  and islast='0' and rownum = 1
+	</select>
+	<select id="getCompareListByFaceCode" resultMap="IntegratedQueryMessageModelMap">
+	select 
+	ctrlBaseId,IdCardNo,Content,Similarity,FaceCode,IdCardName,IdCardSex,CardUnit,cardIssueDate,CardExpiryDate,(select
+	idcardpic from t_pp_idcardInfo f where f.idcardno = e.idcardno and 
+	rownum=1) CollectIdCardPic from
+	(select distinct a.ctrlbaseid ctrlBaseId,b.ysfzh IdCardNo,c.context
+	Content,similarity Similarity,facecode
+	FaceCode,IdCardName,IdCardSex,CardUnit,
+	to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	CardExpiryDate
+	from t_pp_facecompresult a,t_pp_idcardinfo d,T_QB_RY_ZTRYJBXX@db_link
+	b,ZaiTaoAJLX@db_link c
+	where a.ctrlbaseid =b.id
+	and b.ajlbdm = c.code
+	and b.ysfzh = d.idcardno
+	and facecode = #{facecode}
+	order by similarity desc) e
+	</select>
+	
+	<select id="getCompareList" resultMap="IntegratedQueryMessageModelMap">
+	select 
+	ctrlBaseId,IdCardNo,Content,Similarity,FaceCode,IdCardName,IdCardSex,CardUnit,cardIssueDate,CardExpiryDate,(select
+	idcardpic from t_pp_idcardInfo f where f.idcardno = e.idcardno and 
+	rownum=1) CollectIdCardPic from
+	(select distinct a.ctrlbaseid ctrlBaseId,b.ysfzh IdCardNo,c.context
+	Content,similarity Similarity,facecode
+	FaceCode,IdCardName,IdCardSex,CardUnit,
+	to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	CardExpiryDate
+	from t_pp_facecompresult a,t_pp_idcardinfo d,T_QB_RY_ZTRYJBXX@db_link
+	b,ZaiTaoAJLX@db_link c
+	where a.ctrlbaseid =b.id
+	and b.ajlbdm = c.code
+	and b.ysfzh = d.idcardno
+	and facecode = #{facecode}
+	order by similarity desc) e
+	</select>
+	<select id="getCompareListByT_QB_RY_CKRYJBXX" resultMap="IntegratedQueryMessageModelMap">
+	select 
+	ctrlBaseId,IdCardNo,Content,Similarity,FaceCode,IdCardName,IdCardSex,CardUnit,cardIssueDate,CardExpiryDate,(select
+	idcardpic from t_pp_idcardInfo f where f.idcardno = e.idcardno and 
+	rownum=1) CollectIdCardPic from
+	(select distinct a.ctrlbaseid ctrlBaseId,d.idCardNo,b.zdrylbbj
+	Content,similarity Similarity,facecode
+	FaceCode,IdCardName,IdCardSex,CardUnit,
+	to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	CardExpiryDate
+	from t_pp_facecompresult a,t_pp_idcardinfo d,T_QB_RY_CKRYJBXX@db_link
+	b
+	where a.ctrlbaseid =b.id
+	and b.sfzh = d.idcardno
+	and facecode = #{facecode}
+	order by similarity desc) e
+	</select>
+	<select id="getCompareListByT_QB_LK_LKBK" resultMap="IntegratedQueryMessageModelMap">
+	select 
+	ctrlBaseId,IdCardNo,Content,Similarity,FaceCode,IdCardName,IdCardSex,CardUnit,cardIssueDate,CardExpiryDate,(select
+	idcardpic from t_pp_idcardInfo f where f.idcardno = e.idcardno and 
+	rownum=1) CollectIdCardPic from
+	(select distinct a.ctrlbaseid ctrlBaseId,d.IdCardNo,b.lkzljb
+	Content,similarity Similarity,facecode
+	FaceCode,IdCardName,IdCardSex,CardUnit,
+	to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	CardExpiryDate
+	from t_pp_facecompresult a,t_pp_idcardinfo d,T_QB_LK_LKBK@db_link b
+	where a.ctrlbaseid = b.id
+	and b.bbkrzjhm = d.idcardno
+	and facecode = #{facecode}
+	order by similarity desc) e
+	</select>
+	<select id="getCompareListByjk" resultMap="IntegratedQueryMessageModelMap">
+	select 
+	ctrlBaseId,IdCardNo,Content,Similarity,FaceCode,IdCardName,IdCardSex,
+	<!-- (select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP@db_link where sfzh = e.idCardNo ) -->'' CollectIdCardPic,'T_QB_RY_ZTRYJBXX' tableName from
+	(select distinct a.ctrlbaseid ctrlBaseId,b.ysfzh IdCardNo,c.context
+	Content,similarity Similarity,facecode
+	FaceCode,b.xm IdCardName,
+  decode(b.xb ,'1','男','2','女','男') IdCardSex
+		from t_pp_facecompresult a,T_QB_RY_ZTRYJBXX@db_link b,ZaiTaoAJLX@db_link c
+	where a.ctrlbaseid =b.id
+	 and trim(a.comparebaseid) = '1'
+	and b.ajlbdm = c.code
+	and facecode = #{facecode}
+	order by similarity desc) e
+  union all
+  select 
+	ctrlBaseId,IdCardNo,Content,Similarity,FaceCode,IdCardName,IdCardSex,
+	<!-- (select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP@db_link where sfzh =e.idCardNo )  -->'' CollectIdCardPic,'T_QB_RY_CKRYJBXX' tableName from
+	(select distinct a.ctrlbaseid ctrlBaseId,b.sfzh idCardNo,b.zdrylbbj
+	Content,similarity Similarity,facecode
+	FaceCode,b.xm IdCardName, decode(b.xb ,'1','男','2','女','男') IdCardSex
+	from t_pp_facecompresult a,T_QB_RY_CKRYJBXX@db_link b
+	where a.ctrlbaseid =b.id
+	 and a.comparebaseid = '2'
+	 and facecode = #{facecode}
+	order by similarity desc) e
+  union all
+  select 
+	ctrlBaseId,IdCardNo,Content,Similarity,FaceCode,IdCardName,IdCardSex,
+	<!-- (select T_QQFW_QGCK_ZP.zp from T_QQFW_QGCK_ZP@db_link where sfzh =e.idCardNo ) -->'' CollectIdCardPic,'T_QB_LK_LKBK' tableName from
+	(select distinct a.ctrlbaseid ctrlBaseId,b.bbkrzjhm idcardNo,b.lkzljb
+	Content,similarity Similarity,facecode
+	FaceCode,b.bbkrxm IdCardName,decode(b.bbkrxb ,'1','男','2','女','男') IdCardSex
+	from t_pp_facecompresult a,T_QB_LK_LKBK@db_link b
+	where a.ctrlbaseid = b.id
+	and a.comparebaseid = '0'
+	and facecode = #{facecode}
+	order by similarity desc) e
+	</select>
+	
+</mapper>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.OrganizationDao">
+	
+	<resultMap type="Organization" id="OrganizationMap">
+		<id property="id" column="id"/>
+		<result property="orgType" column="org_type"/>
+		<result property="name" column="name"/>
+		<result property="createName" column="create_name"/>
+		<result property="licenseCount" column="license_count"/>
+		<result property="mark" column="mark"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="createTime" column="create_time"/>
+		<result property="deleteTime" column="delete_time"/>
+		<result property="createBy" column="create_by"/>
+		<result property="updateBy" column="update_by"/>
+		<result property="status" column="status"/>
+		<result property="totalDevices" column="totalDevices"/>
+		<result property="totalUsers" column="totalUsers"/>
+		<result property="useUsers" column="useUsers"/>
+	</resultMap>
+	
+	<select id="findOne" parameterType="java.lang.Integer" resultMap="OrganizationMap">
+		SELECT id,org_type,name,license_count,mark,create_time,delete_time,status
+		FROM organization
+		WHERE id = #{id}
+	</select>
+	<select id="findAll" resultType="Organization">
+		SELECT id,org_type,name,license_count,mark
+		FROM organization
+		WHERE delete_time is null and status = 1
+	</select>
+	
+	<select id="findEnableOrganizationRecordsByIds" resultMap="OrganizationMap">
+		SELECT id,org_type,name,license_count,mark,status
+		FROM organization
+		WHERE delete_time IS null 
+		AND status = 1
+		AND id IN
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<insert id="save" parameterType="Organization">
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		insert into organization (org_type,name,license_count,mark,create_by,create_time,status) 
+		values(#{orgType},#{name},#{licenseCount},#{mark},#{createBy},#{createTime},#{status})
+	</insert>
+	
+	<update id="update" parameterType="Organization">
+		update organization 
+		<set>
+			<if test="orgType != null and orgType !=''">
+				org_type = #{orgType},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="licenseCount != null and licenseCount != ''">
+				license_count = #{licenseCount},
+			</if>
+			<if test="mark != null and mark != ''">
+				mark = #{mark},
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				update_time = #{updateTime},
+			</if>
+			<if test="updateBy != null and updateBy != ''">
+				update_by = #{updateBy},
+			</if>
+			<if test="status != null  and status !=''">
+				status = #{status}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="findOrganizationByMap" resultType="Organization">
+		select * from organization 
+		<where>
+			<if test="org_type !=null  and org_type !=''">
+				org_type = #{org_type}
+			</if>
+			<if test="name !=null  and name !=''">
+				name = #{name}
+			</if>
+			<if test="id != null and id != ''">
+		  	 	and id != #{id}
+		  	</if>
+		  	<if test="create_by != null and create_by != ''">
+		  	 	and create_by = #{create_by}
+		  	</if>
+		</where>
+	  	and delete_time is null limit 1;
+	</select>
+	
+	<select id="findOrganizationListsByMap" resultMap="OrganizationMap">
+		select o.id as id ,org_type,o.name as name ,m.name as create_name, o.license_count as license_count,o.delete_time as delete_time,o.status as status,
+		a.totalDevices as totalDevices,b.totalUsers as totalUsers,c.useUsers as useUsers from organization o left join(SELECT o.id,count(dbi.id) as totalDevices
+		FROM organization o left join device_basic_info dbi on o.id = dbi.org_id 
+		GROUP BY dbi.org_id) a on a.id = o.id left join (SELECT o.id,count(u.id) as totalUsers
+		FROM organization o left join users u on o.id = u.org_id 
+		GROUP BY u.org_id) b on b.id = o.id left join (SELECT o.id,count(u.id) as useUsers
+		FROM organization o left join users u on o.id = u.org_id 
+		and u.is_active = 1 GROUP BY u.org_id) c on c.id = o.id left join 
+		org_managers m on o.create_by = m.id where o.create_by = #{create_by} 
+		<if test="orgType != null and orgType != ''">
+			and o.org_type like CONCAT('%',#{orgType},'%')
+		</if>
+		<if test="name != null and name != ''">
+			and o.name like CONCAT('%',#{name},'%')
+		</if>
+		and o.delete_time is null order by o.create_time desc limit #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findOrganizationCountsByMap" resultType="Integer">
+		select count(0) from organization o left join 
+		org_managers m on o.create_by = m.id where o.create_by = #{create_by}
+		<if test="orgType != null and orgType != ''">
+			and o.org_type like CONCAT('%',#{orgType},'%')
+		</if>
+		<if test="name != null and name != ''">
+			and o.name like CONCAT('%',#{name},'%')
+		</if>
+		and o.delete_time is null order by o.create_time desc
+	</select>
+	
+	<delete id="deleteWithPk" parameterType="Integer">
+		delete from organization where id = #{id}
+	</delete>
+	
+	<update id="lock" parameterType="Organization">
+		update organization 
+		<set>
+			<if test="updateTime !=null and updateTime !=''">
+				update_time = #{updateTime},
+			</if>
+			<if test="updateBy !=null and updateBy !=''">
+				update_by = #{updateBy},
+			</if>
+			<if test="deleteTime !=null and deleteTime !=''">
+				delete_time = #{deleteTime},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="findManagerListById" parameterType="java.lang.Integer" resultMap="OrganizationMap">
+		SELECT id,org_type,name,license_count,mark,create_time,delete_time from 
+			organization  where id in 
+				(select org_id from organization_manager_relation where manager_id = #{id})
+			and delete_time is null and status = 1
+	</select>
+	
+	<select id="findAllOrganization" resultMap="OrganizationMap">
+		select id,name from organization where delete_time is null and status = 1
+	</select>
+	
+	<update id="updateOrganizationWithLock" parameterType="Organization">
+		update organization 
+		<set>
+			<if test="updateBy!=null  and updateBy!=''">
+				update_by = #{updateBy},
+			</if>
+			<if test="updateTime!=null and updateTime!=''">
+				update_time = #{updateTime},
+			</if>
+			<if test="status!=null and status!=''">
+				status = #{status},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="deleteOrganization" parameterType="Organization">
+		update organization
+		<set>
+			<if test="updateBy!=null and updateBy!=''">
+				update_by = #{updateBy},
+			</if>
+			<if test="updateTime!=null and updateTime!=''">
+				update_time = #{updateTime},
+			</if>
+			<if test="deleteTime!=null and deleteTime!=''">
+				delete_time = #{deleteTime},
+			</if>
+		</set>	
+		where id = #{id}
+	</update>
+	
+	<select id="getUserLicenseByMap" resultType="java.lang.Integer">
+		select IFNULL(sum(license_count),0) from organization where create_by = #{create_by} and delete_time is null;
+	</select>
+	
+	<select id="getOrganizationListsByMap" resultMap="OrganizationMap">
+		SELECT id,name
+		FROM organization
+		WHERE delete_time is null and status = 1 and create_by = #{create_by}
+	</select>
+	
+	<select id="findOneById" parameterType="java.lang.Integer" resultMap="OrganizationMap">
+		select o.id,o.org_type,o.name,o.license_count,o.mark,o.create_time,o.delete_time,o.status,
+		a.totalDevices,b.totalUsers,c.useUsers from organization o left join(SELECT o.id,count(dbi.id) as totalDevices
+		FROM organization o left join device_basic_info dbi on o.id = dbi.org_id 
+		WHERE o.id = #{id} GROUP BY dbi.org_id) a on a.id = o.id left join (SELECT o.id,count(u.id) as totalUsers
+		FROM organization o left join users u on o.id = u.org_id 
+		WHERE o.id = #{id} GROUP BY u.org_id) b on b.id = o.id left join (SELECT o.id,count(u.id) as useUsers
+		FROM organization o left join users u on o.id = u.org_id 
+		WHERE o.id = #{id} and u.is_active = 1 GROUP BY u.org_id) c on c.id = o.id where o.id = #{id} limit 1
+	</select>
+	
+	<select id="queryAllOrg" resultMap="OrganizationMap">
+	        select id,name from organization where delete_time is null order by create_time desc
+    </select>
+    
+    <select id="findOrganizationListByMap" resultMap="OrganizationMap">
+		select org_type,o.name as name ,m.name as create_name, a.totalDevices as totalDevices,b.totalUsers as totalUsers,o.license_count as license_count,c.useUsers as useUsers,o.create_time as create_time
+		from organization o left join(SELECT o.id,count(dbi.id) as totalDevices
+		FROM organization o left join device_basic_info dbi on o.id = dbi.org_id 
+		GROUP BY dbi.org_id) a on a.id = o.id left join (SELECT o.id,count(u.id) as totalUsers
+		FROM organization o left join users u on o.id = u.org_id 
+		GROUP BY u.org_id) b on b.id = o.id left join (SELECT o.id,count(u.id) as useUsers
+		FROM organization o left join users u on o.id = u.org_id 
+		and u.is_active = 1 GROUP BY u.org_id) c on c.id = o.id left join 
+		org_managers m on o.create_by = m.id where o.create_by = #{create_by} 
+		<if test="orgType != null and orgType != ''">
+			and o.org_type like CONCAT('%',#{orgType},'%')
+		</if>
+		<if test="name != null and name != ''">
+			and o.name like CONCAT('%',#{name},'%')
+		</if>
+		and o.delete_time is null order by o.create_time desc
+	</select>
+	<select id="queryOrgCode" parameterType="int" resultType="String">
+	    select org_type from organization where id = #{id}	
+	</select>
+	<select id="queryAllOrgId" resultType="String">
+	    select id from organization where delete_time is null
+	</select>
+	<select id="queryOrgByOrgId" resultMap="OrganizationMap" parameterType="Integer">
+	    select org.id,org.name from organization org,organization_manager_relation r where org.id = r.org_id and org.delete_time is null and manager_id = #{id}
+	</select>
+</mapper>
+
+
+
+
+
+

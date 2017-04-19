@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 引入jdbc, Global Settings 配置文件 -->
+	<context:property-placeholder
+		location="classpath:conf/jdbc.properties,classpath:conf/config.properties,classpath:conf/mail.properties" />
+
+	<!-- 扫描文件（自动将service层注入） -->
+	<context:component-scan base-package="com.softtek.pst.service.impl" />
+	
+	<context:component-scan base-package="com.softtek.pst.service.util" />
+	
+	<!-- 利用SpringContextUtils 可以在源码中直接拿到bean，而不用注入 -->
+	<bean id="SpringContextUtils" class="com.softtek.pst.util.SpringContextUtils"
+		lazy-init="false"></bean>
+	<bean id="globalSettingsUtils" class="com.softtek.pst.util.GlobalSettingsUtils"
+		lazy-init="true"></bean>
+	
+	<bean id="ehCacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+		p:shared="true" lazy-init="false">
+		<!-- 指定配置文件的位置 -->
+		<property name="configLocation" value="classpath:conf/ehcache.xml" />
+	</bean>
+
+	<!-- ThreadPoolExecutor -->
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="10" />
+		<property name="keepAliveSeconds" value="300" />
+		<property name="maxPoolSize" value="100" />
+		<property name="queueCapacity" value="50" />
+	</bean>
+	
+</beans>

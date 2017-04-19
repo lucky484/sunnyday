@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.CRFileDao">
+	<resultMap type="CRFile" id="crfileResultMap">
+		<id column="cr_file_id" property="crFileId" />
+		<result column="file_path" property="filePath" />
+		<result column="update_date" property="updateDate" />
+		<result column="create_date" property="createDate" />
+		<result column="file_size" property="fileSize" />
+		<result column="content_type" property="contentType" />
+		<result column="file_name" property="fileName" />
+		<result column="cr_id" property="crId" />
+	</resultMap>
+
+	<insert id="addCRFile" parameterType="CRFile" keyProperty="crFileId"
+		useGeneratedKeys="true">
+		insert into cr_file
+		(file_path,create_date,file_size,content_type,file_name,cr_id)
+		values(#{filePath},CURRENT_TIMESTAMP,#{fileSize},#{contentType},
+		#{fileName},#{crId})
+	</insert>
+
+	<update id="updateCRFile" parameterType="CRFile">
+		update cr_file
+		set
+		file_path=(#{filePath}),
+		update_date=(#{updateDate}),
+		file_size=(#{fileSize}),
+		content_type=(#{contentType}),
+		file_name=(#{fileName})
+		where cr_file_id=#{crFileId}
+	</update>
+
+	<sql id="crFileSql">
+		select
+		cr_file_id,file_path,update_date,create_date,
+		file_size,content_type,file_name,cr_id
+		from cr_file
+	</sql>
+
+	<select id="getCRFile" parameterType="long" resultMap="crfileResultMap">
+		<include refid="crFileSql" />
+		where cr_file_id=#{crFileId} and delete_time is null
+	</select>
+
+	<select id="getCRFilebyCrId" parameterType="long" resultMap="crfileResultMap">
+		<include refid="crFileSql" />
+		where cr_id=#{crId} and delete_time is null
+	</select>
+
+	<update id="deleteCRFileById" parameterType="long">
+		update cr_file set delete_time = CURRENT_TIMESTAMP
+		where cr_file_id = #{crFileId}
+	</update>
+
+</mapper>

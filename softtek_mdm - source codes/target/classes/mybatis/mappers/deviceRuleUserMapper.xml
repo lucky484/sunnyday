@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceRuleUserDao">
+	
+	<resultMap type="DeviceRuleUser" id="DeviceRuleUserMap">
+		<id property="id" column="id"/>
+		<association property="deviceRule" javaType="DeviceRule">
+			<id property="id" column="device_rule_id"/>
+		</association>
+		<association property="user" javaType="User">
+			<id property="id" column="user_id"/>
+			<id property="username" column="user_name"/>
+			<id property="realname" column="real_name"/>
+		</association>
+	</resultMap>
+	
+	<insert id="save" parameterType="DeviceRuleUser">
+		INSERT INTO device_rule_user(id,device_rule_id,user_id)
+		VALUES(#{id},#{deviceRule.id},#{user.id})
+	</insert>
+	
+	<!-- 批量保存规则到虚拟组 -->
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO device_rule_user(device_rule_id,user_id)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.deviceRule.id},#{item.user.id})
+		</foreach>
+	</insert>
+	
+	<select id="findAllByRuleId" parameterType="java.lang.Integer" resultMap="DeviceRuleUserMap">
+		SELECT device_rule_user.id,device_rule_id,user_id,users.real_name,users.user_name
+		FROM device_rule_user
+		LEFT JOIN users
+		ON device_rule_user.user_id=users.id
+		WHERE device_rule_id=#{rid}
+	</select>
+	
+	<delete id="truncateWithRuleId" parameterType="java.lang.Integer">
+		DELETE FROM device_rule_user
+		WHERE device_rule_id=#{rid}
+	</delete>
+</mapper>

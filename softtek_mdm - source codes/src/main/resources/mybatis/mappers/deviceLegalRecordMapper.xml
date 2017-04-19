@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceLegalRecordDao">
+	
+	<resultMap type="DeviceLegalRecord" id="DeviceLegalRecordMap">
+		<id property="id" column="id" />
+		<result property="violate_time" column="violate_time" />
+		<result property="extra" column="extra" />
+		<association property="deviceRule" javaType="DeviceRule">
+			<id property="id" column="device_rule_id"/>
+			<result property="name" column="device_rule_name" />
+		</association>
+		<association property="deviceRuleItemRecord" javaType="DeviceRuleItemRecord">
+			<id property="id" column="device_rule_item_record_id"/>
+			<result property="type" column="type" />
+			<result property="condition" column="condition" />
+			<result property="value" column="value" />
+		</association>
+		<association property="deviceBasicInfo" javaType="DeviceBasicInfo">
+			<id property="id" column="device_id"/>
+			<result property="device_name" column="device_name" />
+			<result property="sn" column="sn" />
+			<association property="user" javaType="User">
+				<id property="id" column="user_id"/>
+				<result property="username" column="user_name" />
+			</association>
+		</association>
+	</resultMap>
+	<insert id="save" parameterType="DeviceLegalRecord">
+		INSERT INTO device_legal_record(id,device_rule_id,violate_time,device_rule_item_record_id,device_id,extra)
+		VALUES(#{id},#{deviceRule.id},NOW(),#{deviceRuleItemRecord.id},#{deviceBasicInfo.id},#{extra})
+	</insert>
+	
+	<!-- 批量保存规则到虚拟组 -->
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO device_legal_record(device_rule_id,violate_time,device_rule_item_record_id,device_id,extra)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.deviceRule.id},NOW(),#{item.deviceRuleItemRecord.id},#{item.deviceBasicInfo.id},#{item.extra})
+		</foreach>
+	</insert>
+	
+	<select id="findByMap" resultMap="DeviceLegalRecordMap">
+		SELECT device_legal_record.id,
+		device_rule_id,
+		violate_time,
+		extra,
+		device_rule.`name` as device_rule_name,
+		device_rule_item_record_id,
+		type,`condition`,
+		`value`,
+		device_id
+		FROM device_legal_record
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_record.device_rule_id
+		LEFT JOIN device_rule_item_record
+		ON device_legal_record.device_rule_item_record_id=device_rule_item_record.id
+		WHERE device_rule_id=#{rid}
+		AND device_id=#{did}
+		ORDER BY violate_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findHistoryByDeviceId" resultMap="DeviceLegalRecordMap">
+		SELECT device_legal_record.id,
+		device_rule_id,
+		violate_time,
+		extra,
+		device_rule.`name` as device_rule_name,
+		device_rule_item_record_id,
+		type,
+		`condition`,
+		`value`,
+		device_id,
+		device_basic_info.device_name
+		FROM device_legal_record
+		LEFT JOIN device_basic_info
+		ON device_legal_record.device_id=device_basic_info.id
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_record.device_rule_id
+		LEFT JOIN device_rule_item_record
+		ON device_legal_record.device_rule_item_record_id=device_rule_item_record.id
+		WHERE device_id=#{did}
+		ORDER BY violate_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findLegalRecordCountByDeviceId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_legal_record
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_record.device_rule_id
+		LEFT JOIN device_rule_item_record
+		ON device_legal_record.device_rule_item_record_id=device_rule_item_record.id
+		WHERE device_id=#{did}
+	</select>
+	
+	<select id="findRecordByOrgIdMap"  resultMap="DeviceLegalRecordMap">
+		SELECT device_legal_record.id,
+		device_rule_id,
+		violate_time,
+		extra,
+		device_rule.`name` as device_rule_name,
+		device_rule_item_record_id,type,
+		`condition`,
+		`value`,
+		device_id,
+		device_name,
+		user_id,
+		user_name
+		FROM device_legal_record
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_record.device_rule_id
+		LEFT JOIN device_rule_item_record
+		ON device_legal_record.device_rule_item_record_id=device_rule_item_record.id
+		LEFT JOIN device_basic_info
+		ON device_basic_info.id=device_legal_record.device_id
+		LEFT JOIN users
+		ON device_basic_info.user_id=users.id
+		WHERE device_rule.org_id=#{orgId}
+		ORDER BY violate_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findCountByRidAndDid" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_legal_record
+		WHERE device_rule_id=#{0}
+		AND device_id=#{1}
+	</select>
+	
+	<select id="findCountByOrgId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_legal_record
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_record.device_rule_id
+		WHERE device_rule.org_id=#{orgId}
+	</select>
+	
+	<delete id="deleteWithPk" parameterType="java.lang.Integer">
+		DELETE FROM device_legal_record
+		WHERE id=#{id}
+	</delete>
+	
+	<select id="queryLegalRecordByParams" resultMap="DeviceLegalRecordMap">
+		SELECT device_legal_record.id,
+		device_rule_id,
+		violate_time,
+		extra,
+		device_rule.`name` as device_rule_name,
+		device_rule_item_record_id,type,
+		`condition`,
+		`value`,
+		device_id,
+		device_name,
+		sn,
+		user_id,
+		user_name
+		FROM device_legal_record
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_record.device_rule_id
+		LEFT JOIN device_rule_item_record
+		ON device_legal_record.device_rule_item_record_id=device_rule_item_record.id
+		LEFT JOIN device_basic_info
+		ON device_basic_info.id=device_legal_record.device_id
+		LEFT JOIN users
+		ON device_basic_info.user_id=users.id and users.user_name like CONCAT('%',#{userName},'%')
+		WHERE device_rule.org_id=#{orgId}
+		and device_rule.name like CONCAT('%',#{roleName},'%')
+		
+		ORDER BY violate_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="queryLegalRecCountByParams" resultType="java.lang.Integer">
+		select count(0) from (SELECT device_legal_record.id,
+		device_rule_id,
+		violate_time,
+		extra,
+		device_rule.`name` as device_rule_name,
+		device_rule_item_record_id,type,
+		`condition`,
+		`value`,
+		device_id,
+		device_name,
+		user_id,
+		user_name
+		FROM device_legal_record
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_record.device_rule_id
+		LEFT JOIN device_rule_item_record
+		ON device_legal_record.device_rule_item_record_id=device_rule_item_record.id
+		LEFT JOIN device_basic_info
+		ON device_basic_info.id=device_legal_record.device_id
+		LEFT JOIN users
+		ON device_basic_info.user_id=users.id and users.user_name like CONCAT('%',#{userName},'%')
+		WHERE device_rule.org_id=#{orgId}
+		and device_rule.name like CONCAT('%',#{roleName},'%')) tmp
+	</select>
+	
+	
+	<delete id="deleteRecordsByOrgId" parameterType="java.lang.Integer">
+		DELETE FROM device_legal_record
+		WHERE device_rule_id in (SELECT id FROM device_rule WHERE org_id=#{orgId})
+	</delete>
+	
+	
+</mapper>

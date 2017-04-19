@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.SearchFaceInfoDao">
+       <resultMap id="SearchFaceInfo" type="com.hd.pfirs.model.SearchFaceInfo">
+         <id column="faceId" property="faceId" />
+         <result column="facecomprltid" property="facecomprltid" />
+         <result column="collectTime" property="collectTime" />
+         <result column="collectPic" property="collectPic" />
+         <result column="collectSite" property="collectSite" />
+         <result column="groupCode" property="groupCode" />
+         <result column="cardId" property="cardId" />
+         <result column="idCardPic" property="idCardPic" />
+         <result column="idCardName" property="idCardName" />
+         <result column="idCardSex" property="idCardSex" />
+         <result column="idCardNo" property="idCardNo" />
+         <result column="isControlled" property="isControlled" />
+         <result column="Similarity" property="similarity" />
+         <result column="remarkDesc" property="remarkDesc" />
+         <result column="compareBaseID" property="compareBaseID" />
+         <result column="ctrlBaseID" property="ctrlBaseID" />
+         <result column="photo" property="photo" />
+         <result column="faceSimilarity" property="faceSimilarity" />
+       </resultMap>
+	
+	   <select id="searchFaceInfo" resultMap="SearchFaceInfo">
+	        select * from (select a.*,rownum rn from (
+	             SELECT faceInfo.faceId,
+				  faceInfo.collectTime,
+				  faceInfo.collectPic,
+				  faceInfo.collectSite,
+				  cardInfo.cardId,
+				  cardInfo.idCardPic,
+				  cardInfo.idCardName,
+				  cardInfo.idCardSex,
+				  cardInfo.idCardNo,
+				  faceAndCardResult.Similarity,
+				  faceCompResult.facecomprltid,
+				  faceCompResult.compareBaseID,
+				  faceCompResult.ctrlBaseID,
+				  faceCompResult.similarity AS faceSimilarity
+				FROM t_pp_faceInfo faceInfo,
+				  (SELECT *
+				  FROM
+				    (SELECT ROW_NUMBER() over(partition BY faceCode order by createTime DESC ) rn,
+				      facecomprltid,
+				      faceCode,
+				      compareBaseID,
+				      ctrlBaseID,
+				      photo,
+				      similarity
+				    FROM t_pp_faceCompResult
+				    WHERE ordernum = '1'
+				    )
+				  WHERE rn = 1
+				  ) faceCompResult,
+				  t_pp_idCardInfo cardInfo,
+				  (SELECT *
+				  FROM
+				    (SELECT ROW_NUMBER() over(partition BY faceCode order by receiveTime DESC ) rn,
+				      faceCode,
+				      cardCode,
+				      similarity
+				    FROM t_pp_faceAndCardResult
+				    )
+				  WHERE rn = 1
+				  )faceAndCardResult
+				WHERE faceInfo.faceCode = faceCompResult.faceCode(+)
+				AND faceInfo.faceCode = faceAndCardResult.faceCode(+)
+				AND faceAndCardResult.cardcode = cardInfo.cardcode(+)
+				AND faceInfo.pictype = '0'
+           <if test="collectTimeStart != '' and collectTimeStart != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[>]]>=#{collectTimeStart}
+	       </if>
+	       <if test="collectTimeEnd != '' and collectTimeEnd != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[<]]>=#{collectTimeEnd}
+	       </if>
+	       <if test="collectSite != '' and collectSite != null">
+	       and faceInfo.collectSite like #{collectSite}
+	       </if>
+	       <if test="faceSimilarity != '' and faceSimilarity != null">
+	       and faceCompResult.Similarity <![CDATA[>]]>= #{faceSimilarity}
+	       </if>   
+	       order by faceInfo.collectTimeStamp desc) a 
+	       where rownum <![CDATA[<]]> 10*#{page} +1) where rn <![CDATA[>]]> 10*(#{page}-1)
+	   </select>
+ 	   <select id="getCount" resultType="int">
+            select count(1) from (
+            	    SELECT faceInfo.faceId,
+					  faceInfo.collectTime,
+					  faceInfo.collectPic,
+					  faceInfo.collectSite,
+					  cardInfo.cardId,
+					  cardInfo.idCardPic,
+					  cardInfo.idCardName,
+					  cardInfo.idCardSex,
+					  cardInfo.idCardNo,
+					  faceAndCardResult.Similarity,
+					  faceCompResult.facecomprltid,
+					  faceCompResult.compareBaseID,
+					  faceCompResult.ctrlBaseID,
+					  faceCompResult.photo,
+					  faceCompResult.similarity AS faceSimilarity
+					FROM t_pp_faceInfo faceInfo,
+					  (SELECT *
+					  FROM
+					    (SELECT ROW_NUMBER() over(partition BY faceCode order by createTime DESC ) rn,
+					      facecomprltid,
+					      faceCode,
+					      compareBaseID,
+					      ctrlBaseID,
+					      photo,
+					      similarity
+					    FROM t_pp_faceCompResult
+					    WHERE ordernum = '1'
+					    )
+					  WHERE rn = 1
+					  ) faceCompResult,
+					  t_pp_idCardInfo cardInfo,
+					  (SELECT *
+					  FROM
+					    (SELECT ROW_NUMBER() over(partition BY faceCode order by receiveTime DESC ) rn,
+					      faceCode,
+					      cardCode,
+					      similarity
+					    FROM t_pp_faceAndCardResult
+					    )
+					  WHERE rn = 1
+					  )faceAndCardResult
+					WHERE faceInfo.faceCode = faceCompResult.faceCode(+)
+					AND faceInfo.faceCode = faceAndCardResult.faceCode(+)
+					AND faceAndCardResult.cardcode = cardInfo.cardcode(+)
+				 	AND faceInfo.pictype = '0'
+		   <if test="collectTimeStart != '' and collectTimeStart != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[>]]>=#{collectTimeStart}
+	       </if>
+	       <if test="collectTimeEnd != '' and collectTimeEnd != null">
+	       and to_char(faceInfo.collectTime,'yyyy/mm/dd')<![CDATA[<]]>=#{collectTimeEnd}
+	       </if>
+	       <if test="collectSite != '' and collectSite != null">
+	       and faceInfo.collectSite like #{collectSite}
+	       </if>
+	       <if test="faceSimilarity != '' and faceSimilarity != null">
+	       and faceCompResult.Similarity <![CDATA[>]]> = #{faceSimilarity}
+	       </if>
+	       )
+	   </select>
+	   
+	   <select id="getFaceInfoBygf" resultMap="SearchFaceInfo">
+	   		select 
+	   		faceInfo.collectPic,
+	   		faceCompResult.ctrlBaseID,
+	   		faceCompResult.compareBaseID,
+	   		faceCompResult.similarity as faceSimilarity
+	   		from t_pp_faceInfo faceInfo,
+	             t_pp_faceCompResult faceCompResult
+	        where faceInfo.groupCode = faceCompResult.groupCode
+	        and faceInfo.faceCode = faceCompResult.faceCode
+	        and faceInfo.groupCode = #{groupCode} 
+	        and faceCompResult.similarity <![CDATA[>]]> = #{faceS}
+	        and faceInfo.pictype = '0'
+	   </select>
+	   
+	   <select id="getFaceBygf" resultMap="SearchFaceInfo">
+	   		select 
+	   		faceInfo.collectPic,
+	   		faceCompResult.ctrlBaseID,
+	   		faceCompResult.compareBaseID,
+	   		faceCompResult.similarity as faceSimilarity
+	   		from t_pp_faceInfo faceInfo,
+	             t_pp_faceCompResult faceCompResult
+	        where faceInfo.groupCode = faceCompResult.groupCode
+	        and faceInfo.faceCode = faceCompResult.faceCode
+	        and faceInfo.groupCode = #{groupCode} 
+	        and faceInfo.pictype = '0'
+	   </select>
+	   
+</mapper>

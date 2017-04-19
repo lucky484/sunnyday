@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Application context definition for PetClinic Datasource. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" 
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/jdbc
+         http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+<!-- ========================= DATASOURCE DEFINITION ========================= -->
+
+	<!-- Configurer that replaces ${...} placeholders with values from a properties 
+		file -->
+	<!-- (in this case, JDBC-related settings for the dataSource definition below) -->
+	
+	<context:property-placeholder location="classpath:spring/data-access.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"  />
+	
+	<beans profile="dev">
+	<!-- ComboPooledDataSource提供了一个用于关闭数据源的close()方法，这样我们就可以保证Spring容器关闭时数据源能够成功释放。  -->
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<!-- ${xxx}不要有空格，要不然会被一起解析进去 -->
+			<property name="driverClass" value="${mysql.jdbc.driverClassName}" />
+			<property name="jdbcUrl" value="${mysql.jdbc.url}" />
+			<property name="user" value="${mysql.jdbc.username}" />
+			<property name="password" value="${mysql.jdbc.password}" />
+			<property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+			<property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+			<property name="initialPoolSize" value="${c3p0.initialPoolSize}" />
+		</bean>
+	</beans>
+</beans>

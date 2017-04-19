@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.IosBlackListDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.IosBlackList" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ios_device_policy_id" property="iosDevicePolicyId" jdbcType="INTEGER" />
+    <result column="name_list_id" property="nameListId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, ios_device_policy_id, name_list_id, create_date, create_user, update_date, update_user, 
+    delete_time
+  </sql>
+  
+  <!-- 根据主键查询ios设备策略与名单外键的关联表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ios_black_list
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除ios设备策略与名单外键关联表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ios_black_list
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入表-->
+  <insert id="insert" parameterType="com.softtek.mdm.model.IosBlackList" >
+    insert into ios_black_list (id, ios_device_policy_id, name_list_id, 
+      create_date, create_user, update_date, 
+      update_user, delete_time)
+    values (#{id,jdbcType=INTEGER}, #{iosDevicePolicyId,jdbcType=INTEGER}, #{nameListId,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 插入可选字段的表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.IosBlackList" >
+    insert into ios_black_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="iosDevicePolicyId != null" >
+        ios_device_policy_id,
+      </if>
+      <if test="nameListId != null" >
+        name_list_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="iosDevicePolicyId != null" >
+        #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="nameListId != null" >
+        #{nameListId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选字段的表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.IosBlackList" >
+    update ios_black_list
+    <set >
+      <if test="iosDevicePolicyId != null" >
+        ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="nameListId != null" >
+        name_list_id = #{nameListId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.IosBlackList" >
+    update ios_black_list
+    set ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      name_list_id = #{nameListId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 批量插入IOS策略应用名单表  start-->
+  <insert id="insertBatchBlackPolicyList" parameterType="java.util.List"  useGeneratedKeys="true">
+    insert into ios_black_list  
+    (ios_device_policy_id,name_list_id,create_date,create_user,update_date,update_user) 
+    values 
+    <foreach collection="list" item="item" index="index" separator=","> 
+     (#{item.iosDevicePolicyId},#{item.nameListId},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser})  
+    </foreach>
+  </insert>
+  <!-- 批量插入IOS策略应用名单表 end-->
+</mapper>

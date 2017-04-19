@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.FaceWebModelDao">
+	<resultMap type="com.hd.pfirs.model.FaceWebModel" id="faceWebModelMap">
+		<result column="FaceCode" property="faceCode" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="CollectTimeStr" property="collectTimeStr" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="CollectPic" property="collectPic" />
+		<result column="FaceId" property="faceId" />
+		
+
+	</resultMap>	
+
+	<select  id="getFaceWebModelByFaceCode"  resultMap="faceWebModelMap">
+	select FaceId,FaceCode,CollectTime,to_char(collectTime,'yyyy-mm-dd hh24:mi:ss')
+	CollectTimeStr,CollectSite,CollectPic from t_pp_faceinfo where facecode = #{faceCode} and collectsite like '%'||#{collectSite}||'%'and rownum = 1 
+	</select>
+</mapper>

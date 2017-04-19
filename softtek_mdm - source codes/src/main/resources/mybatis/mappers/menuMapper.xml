@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.MenuDao">
+	
+	<resultMap type="Menu" id="MenuMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="address" column="address"/>
+		<result property="weight" column="weight"/>
+		<result property="isshow" column="isshow"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id"/>
+		</association>
+		<association property="parent" javaType="Menu">
+			<id property="id" column="parent_id"/>
+		</association>
+	</resultMap>
+	
+	<select id="findAllByOrgId" parameterType="java.lang.Integer" resultMap="MenuMap">
+		SELECT id,parent_id,org_id,name,address,weight,create_time,update_time,isshow
+		FROM menu
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+		AND isshow=1
+		ORDER BY weight
+	</select>
+	
+	<select id="findAllShowMenu" resultMap="MenuMap">
+		SELECT id,parent_id,org_id,name,address,weight,create_time,update_time,isshow
+		FROM menu
+		WHERE delete_time is null
+		AND isshow=1
+		ORDER BY weight
+	</select>
+	
+	<select id="getChildren" parameterType="string" resultMap="MenuMap">
+		SELECT id,parent_id,org_id,name,address,weight,create_time,update_time,isshow
+		FROM menu
+		WHERE parent_id=#{parentId}
+		ORDER BY weight
+	</select>
+	
+	<select id="findAllMenus" resultMap="MenuMap">
+		SELECT id,parent_id,org_id,name,address,weight,create_time,update_time,isshow
+		FROM menu
+		WHERE delete_time is null
+		ORDER BY weight
+	</select>
+	
+	<select id="findAllMenusByOrgId" parameterType="java.lang.Integer" resultMap="MenuMap">
+		SELECT id,parent_id,org_id,name,address,weight,create_time,update_time,isshow
+		FROM menu
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+		ORDER BY weight
+	</select>
+	
+	<select id="findAllMenusByOrgIdCount" parameterType="java.lang.Integer" resultType="int">
+		SELECT count(0)
+		FROM menu
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+		ORDER BY weight
+	</select>
+</mapper>

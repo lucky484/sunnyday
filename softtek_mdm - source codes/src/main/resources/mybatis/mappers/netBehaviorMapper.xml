@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.NetBehaviorDao">
+	
+	<resultMap type="NetBehaviorBlackWhiteList" id="NetBehaviorBlackWhiteListMap">
+		<id property="id" column="id"/>
+		<result property="blackWhiteName" column="blackwhite_name"/>
+		<result property="type" column="type"/>
+		<result property="createUserId" column="create_user"/>
+		<result property="createUserName" column="create_realname"/>
+		<result property="createDate" column="create_time"/>
+		<result property="updateUserfId" column="update_user"/>
+		<result property="updateUserName" column="update_realname"/>
+		<result property="updateDate" column="update_time"/>
+		<result property="delDate" column="delete_date"/>
+		<result property="organizationId" column="organization_id"/>
+		<result property="remark" column="remark"/>
+		<result property="netCount" column="netCount"/>
+		<collection property="bWUrlList" resultMap="BlackWhiteListUrlMap" />
+	</resultMap>
+	<resultMap type="BlackWhiteListUrl" id="BlackWhiteListUrlMap">
+		<id property="bwUrlId" column="bwUrlId"/>
+		<result property="blackWhiteListId" column="blackwhitelistid"/>
+		<result property="url" column="url"/>
+		<result property="urlName" column="url_name"/>
+	</resultMap>
+	<resultMap type="DeptNetBwListRelation" id="netbwListdeptRelationMap">
+		<id property="id" column="id"/>
+		<result property="orgManagerId" column="orgmanagerid"/>
+		<result property="netbehavioirBwListId" column="netbalckwhitelistid"/>
+	</resultMap>
+	
+	<select id="queryNetBehaviorBlackWhiteList" parameterType="java.lang.String" resultMap="NetBehaviorBlackWhiteListMap">
+		  select 
+    		nw.id, 
+   			nw.blackwhite_name, 
+    		nw.type, 
+    		nw.create_user,
+    		nw.create_realname,     
+    		nw.create_time, 
+    		nw.update_user,
+    		nw.update_realname, 
+    		nw.update_time,
+    		nw.remark,
+	      nw.delete_date,
+				nu.id as bwUrlId,
+    		nu.blackwhitelistid,
+    		nu.url_name,
+    		nu.url
+				from netbehavior_whiteblacklist nw 
+			left join netbehavior_urllimit nu 
+    		on nw.id=nu.blackwhitelistid where nw.id=#{bwListId} and nw.delete_date is null
+	</select>
+	
+	<select id="queryAllCountByParams" resultType="java.lang.Integer">
+		select count(0) from netbehavior_whiteblacklist
+		where organization_id = #{organizationId} and delete_date is null
+         	and blackwhite_name like CONCAT('%',#{blackWhiteListName} ,'%') 
+    	 <if test="blackWhiteListType != null">  
+         	and type = #{blackWhiteListType}  
+    	 </if>
+<!--     	 <if test="deptIdList != null and  deptIdList.size() != 0">
+    	 	and id in (select netbalckwhitelistid from departmet_netblackwhitelist_relation where orgManagerId in 
+    	 	<foreach item="item" collection="deptIdList" separator="," open="(" close=")" index="">    
+	        	#{item}  
+	       </foreach> )
+    	 </if> -->
+    	
+	</select>
+	
+	<delete id="delBlackWhiteListUrlsById">
+		delete from netbehavior_urllimit where blackwhitelistid=#{blackWhiteListId}
+	</delete>
+	
+	<select id="queryBlackWhiteListByPageParams" resultMap="NetBehaviorBlackWhiteListMap">
+		  select 
+    		nw.id, 
+   			nw.blackwhite_name, 
+    		nw.type, 
+    		nw.remark,
+    		nw.create_user,
+    		nw.create_realname,     
+    		nw.create_time, 
+    		nw.update_user,
+    		nw.update_realname, 
+    		nw.update_time,
+	      	nw.delete_date,
+	      	(select count(url.id) from netbehavior_urllimit url where url.blackwhitelistid = nw.id) as netCount 
+				from netbehavior_whiteblacklist nw 
+			where nw.organization_id = #{organizationId} and nw.delete_date is null
+         	and nw.blackwhite_name like CONCAT('%',#{blackWhiteListName} ,'%') 
+    	 	<if test="blackWhiteListType != null">  
+         		and nw.type = #{blackWhiteListType}  
+    		</if>
+<!--     		<if test="deptIdList != null and  deptIdList.size() != 0">
+    	 		and nw.id in (select netbalckwhitelistid from departmet_netblackwhitelist_relation where orgManagerId in 
+    	 		<foreach item="item" collection="deptIdList" separator="," open="(" close=")" index="">    
+	        		#{item}  
+	      		</foreach> )
+    	 	</if>  -->
+    		order by nw.update_time desc 
+    		limit #{start},#{offset}  
+	</select>
+
+	<select id="queryBwListWithCondition" resultMap="NetBehaviorBlackWhiteListMap">
+ 		select 
+    		nw.id, 
+   			nw.blackwhite_name, 
+    		nw.type, 
+    		nw.create_user,
+    		nw.create_realname,       
+    		nw.create_time, 
+    		nw.update_user,
+    		nw.update_realname,  
+    		nw.update_time,
+	      nw.delete_date,
+				nu.id as bwUrlId,
+    		nu.blackwhitelistid,
+    		nu.url_name,
+    		nu.url
+				from netbehavior_whiteblacklist nw 
+			left join netbehavior_urllimit nu 
+    		on nw.id=nu.blackwhitelistid where organization_id = #{organizationId} and nw.delete_date is null
+    		and type = #{type}  
+    		order by update_time desc
+	</select>
+	
+	<insert id="addNetBehaviorBlackWhiteList" parameterType="NetBehaviorBlackWhiteList">
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		insert into netbehavior_whiteblacklist
+			(
+			 blackwhite_name,
+			 create_user,
+			 create_realname,
+			 create_time,
+			 type,
+			 update_user,
+			 update_realname,
+			 update_time,
+			 organization_id,
+			 remark)
+		values
+			(
+			 #{blackWhiteName},
+			 #{createUserId},
+			 #{createUserName},
+			 #{createDate},
+			 #{type},
+			 #{updateUserId},
+			 #{updateUserName},
+			 #{updateDate},
+			 #{organizationId},
+			 #{remark})
+	</insert>
+	
+	<insert id="addBlackWhiteListUrls" parameterType="java.util.List">
+		insert into netbehavior_urllimit    
+   			 (blackwhitelistid,url,url_name)  
+    	values 
+    	<foreach collection="list" item="item" index="index" separator=","> 
+    	 (#{item.blackWhiteListId},#{item.url},#{item.urlName})  
+    	</foreach>
+	</insert>
+	
+	<update id="updateBlackWhiteListUrls" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open="begin" close="end;" separator=";">
+                update netbehavior_urllimit 
+                <set>
+                  test=${item.url}
+                </set>
+                where id = ${item.bwUrlId}
+       </foreach>
+	</update>
+	
+	<update id="delNetBehaviorBlackWhiteList" parameterType="java.lang.String">
+		update netbehavior_whiteblacklist set 
+		update_user = #{updateUserId},
+		update_realname = #{updateUserName},
+		update_time = sysdate(),
+		delete_date = sysdate()
+		where id=#{id}
+	</update>
+	
+	<update id="updateNetBehaviorBlackWhiteList" parameterType="NetBehaviorBlackWhiteList">
+		update netbehavior_whiteblacklist set 
+		blackwhite_name = #{blackWhiteName},
+		type= #{type},
+		remark = #{remark},
+		update_user = #{updateUserId},
+		update_realname = #{updateUserName},
+		update_time = sysdate()
+		where id=#{id}
+	</update>
+	<!-- 根据名单id获取url -->
+	<select id="selectBWUrlListByIdList" parameterType="com.softtek.mdm.util.DataGridModel" resultType="com.softtek.mdm.model.BlackWhiteListUrl">
+	   select 
+	     t1.id,
+	     t1.url_name as urlName,
+	     t1.url 
+	   from netbehavior_urllimit t1 
+	   <where>
+		 <if test="params.bwId !=null and params.bwId !=''">
+		   and t1.blackwhitelistid = #{params.bwId} 
+	     </if>
+		 <if test="params.policyId !=null and params.policyId !=''">
+		  	and t1.blackwhitelistid in (select t2.name_list_id from android_policy_list t2 where t2.android_device_policy_id = #{params.policyId} and t2.delete_time is null) 
+		 </if> 
+		 <if test="params.list!=null and params.list!=''"> 
+		    and t1.blackwhitelistid in 
+		   <foreach item="item" collection="params.list" separator="," open="(" close=")" index="">    
+	        #{item}  
+	       </foreach> 
+	     </if>
+	   </where>
+	</select>
+	
+	<!-- 根据ios设备策略Id获取url列表 -->
+	<select id="selectBWUrlListByPolicyId" parameterType="java.lang.Integer" resultType="com.softtek.mdm.model.BlackWhiteListUrl">
+	   select 
+	     t1.id,
+	     t1.url_name as urlName,
+	     t1.url 
+	   from netbehavior_urllimit t1 
+	   where t1.blackwhitelistid in (select t2.name_list_id from ios_policy_list t2 where t2.ios_device_policy_id = #{policyId} and t2.delete_time is null) 
+	</select>
+	
+	<select id="queryBwListByName" parameterType="java.lang.String" resultType="NetBehaviorBlackWhiteList">
+		select * from netbehavior_whiteblacklist where blackwhite_name=#{blackWhiteName} and delete_date is null
+	</select>
+	
+	<select id="queryBwListByNameAndOrgId"  resultType="NetBehaviorBlackWhiteList">
+		select * from netbehavior_whiteblacklist where blackwhite_name=#{0} and delete_date is null
+		AND organization_id=#{1}
+	</select>
+	
+	<insert id="addDeptBwListRelation" parameterType="java.util.List">
+		insert into departmet_netblackwhitelist_relation (orgmanagerid, netbalckwhitelistid) values
+		<foreach collection="list" item="item" index="index" separator=","> 
+    	 (#{item.orgManagerId},#{item.netbehavioirBwListId})  
+    	</foreach>
+	</insert>
+	
+	<delete id="deleteDeptBwListRelation">
+		delete from departmet_netblackwhitelist_relation where netbalckwhitelistid=#{blackWhiteListId}
+	</delete>
+	
+	
+	<select id="queryDeptBwListRelation" parameterType="list" resultMap="netbwListdeptRelationMap">
+		select id,orgmanagerid,netbalckwhitelistid from departmet_netblackwhitelist_relation where orgmanagerid
+		<foreach item="item" collection="list" separator="," open="(" close=")" index="">    
+	        		#{item}  
+	    </foreach> )
+	</select>
+</mapper>

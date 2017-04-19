@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.OutsourcingManageDao">
+    <resultMap type="com.softtek.pst.model.OutsourcingManageModel" id="outsourcingManageMap">
+		<id column="outsourcing_manage_id" property="outsourcingManageId" />
+		<result column="name" property="name" />
+		<result column="email" property="email" />
+		<result column="phone" property="phone" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator_id" property="creatorId" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	<sql id="outsourcingManageColumn">
+	    select outsourcing_manage_id,name,phone,email,create_time,update_time,creator_id,update_by from outsourcing_manage
+	</sql>
+	<select id="getOutsourcingManageLists" resultMap="outsourcingManageMap">
+	    <include refid="outsourcingManageColumn" />
+	    where delete_time is null
+		and (name LIKE #{sch}
+		or email LIKE #{sch}
+		or phone LIKE #{sch})
+	    order by ${col} ${dir}
+	    <if test="start != null">
+	      limit #{start},#{length}
+	    </if>
+	</select>
+	<select id="getOutsourcingManageCount" resultType="int" parameterType="String">
+	   select count(1) from outsourcing_manage where delete_time is null and (name LIKE #{sch} or email LIKE #{sch} or phone LIKE #{sch})
+	</select>
+	<insert id="addOutsourcingManage" parameterType="OutsourcingManageModel" keyProperty="outsourcingManageId" useGeneratedKeys="true">
+	    insert into outsourcing_manage
+	    (
+	     name,
+	     email,
+	     phone,
+	     create_time,
+	     update_time,
+	     creator_id,
+	     update_by
+	    )values(
+	     #{name},
+	     #{email},
+	     #{phone},
+	     CURRENT_TIMESTAMP,
+	     CURRENT_TIMESTAMP,
+	     #{creatorId},
+	     #{updateBy}
+	    )
+	</insert>
+	<select id="queryDetailById" resultMap="outsourcingManageMap" parameterType="long">
+	     <include refid="outsourcingManageColumn" />
+	      where outsourcing_manage_id = #{id}
+	</select>
+	<update id="updateOutsourcingManage" parameterType="OutsourcingManageModel">
+	    update outsourcing_manage set name = #{name},email = #{email},phone = #{phone},update_time = CURRENT_TIMESTAMP,update_by = #{updateBy} where outsourcing_manage_id = #{outsourcingManageId}
+	</update>
+	<update id="deleteOutsourcingManage" parameterType="long">
+	    update outsourcing_manage set delete_time = CURRENT_TIMESTAMP,update_by = #{updateBy} where outsourcing_manage_id = #{outsourcingManageId}
+	</update>
+</mapper>

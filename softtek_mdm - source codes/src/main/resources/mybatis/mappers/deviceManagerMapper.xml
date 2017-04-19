@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceManagerDao">
+    <resultMap id="deviceInfoMap" type="deviceManager">
+         <id column="id" property="id" />
+         <result column="user_name" property="userName" />
+         <result column="user_id" property="userId" />
+         <result column="udid" property="udid" />
+         <result column="real_name" property="realName" />
+         <result column="device_name" property="device_name" />
+         <result column="device_type" property="device_type" /> 
+         <result column="sn" property="sn" /> 
+         <result column="esnorimei" property="esnoOrImei" /> 
+         <result column="belong" property="belong" /> 
+         <result column="device_status" property="device_status" /> 
+         <result column="irr_status" property="irr_status" />
+         <result column="lost_status" property="lost_status" />
+         <result column="break_status" property="break_status" />
+         <result column="visit_status" property="visit_status" />
+         <result column="is_active" property="isActive" />
+         <result column="device_token" property="deviceToken" />
+         <result column="terminal_unbund_enable" property="enableUnbund" />
+    </resultMap>
+    <resultMap id="deviceInfo" type="deviceManager">
+         <id column="id" property="id" />
+         <result column="real_name" property="realName" />
+         <result column="user_type" property="userType" />
+         <result column="esnorimei" property="esnoOrImei" />
+         <result column="device_name" property="device_name" />
+         <result column="device_type" property="device_type" />
+         <result column="udid" property="udid" />
+         <result column="device_token" property="deviceToken" />
+    </resultMap>
+    <resultMap id="deviceAndUserInfoMap" type="deviceManager">
+         <id column="id" property="id" />
+         <result column="esnorimei" property="esnoOrImei" />
+         <result column="device_name" property="device_name" />
+         <result column="user_name" property="userName" />
+         <result column="name" property="name" />
+         <result column="real_name" property="realName" />
+         <result column="user_type" property="userType" />
+         <result column="device_type" property="device_type" />
+         <result column="device_token" property="deviceToken" />
+    </resultMap>
+    <resultMap id="deviceStatusMap" type="deviceManager">
+        <id column="id" property="id" />
+        <result column="org_id" property="orgId" />
+        <result column="user_id" property="userId"/>
+        <result column="device_name" property="device_name" />
+        <result column="last_collection_time" property="last_collection_time" />
+        <result column="user_type" property="userType" />
+        <result column="real_name" property="realName" />
+    </resultMap>
+    <resultMap id="deviceAllInfoMap" type="deviceManager">
+        <id column="id" property="id" />
+        <result column="org_id" property="orgId" />
+        <result column="device_name" property="device_name" />
+        <result column="device_type" property="device_type" />
+        <result column="sn" property="sn" /> 
+        <result column="esnorimei" property="esnoOrImei" />
+        <result column="udid" property="udid" />
+        <result column="belong" property="belong" /> 
+        <result column="device_status" property="device_status" /> 
+        <result column="user_id" property="userId" />
+        <result column="os_version" property="osVersion" />
+        <result column="phone_number" property="phoneNumber" />
+        <result column="app_versoin" property="appVersion" />
+        <result column="ip" property="ip" />
+        <result column="power" property="power" />
+        <result column="resolution" property="resolution" />
+        <result column="capacity" property="capacity" />
+        <result column="last_login_time" property="lastLoginTime" />
+        <result column="last_collection_time" property="last_collection_time" />
+        <result column="irr_status" property="irr_status" />
+        <result column="lost_status" property="lost_status" />
+        <result column="break_status" property="break_status" />
+        <result column="visit_status" property="visit_status" />
+        <result column="is_active" property="isActive" />
+        <result column="sd_card" property="sdCard" />
+        <result column="device_unique_id" property="deviceUniqueId" />
+        <result column="longitude" property="longitude" />
+        <result column="latitude" property="latitude" />
+        <result column="flux" property="flux" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="device_token" property="deviceToken" />
+    </resultMap>
+    <resultMap id="iosDeviceBasicInfoMap" type="DeviceIosBasicInfo">
+        <result column="name" property="devicePolicyName" />
+        <result column="device_status" property="deviceStatus" />
+        <result column="last_collection_time" property="collectTime" />
+        <result column="device_name" property="deviceName" />
+        <result column="os_version" property="osVersion" />  
+        <result column="sn" property="sn" />
+        <result column="udid" property="udid" />
+        <result column="esnorimei" property="esnorimei" />
+        <result column="belong" property="belong" />
+        <result column="capacity" property="capacity" />
+        <result column="vendor" property="vendor" />
+        <result column="data_roam" property="dataRoam" />
+        <result column="voice_roam" property="voiceRoam" />
+        <result column="wifi_mac" property="wifiMac" />
+        <result column="blue_tooth_mac" property="blueToothMac" />
+    </resultMap>
+       <select id="queryDeviceInfo" resultMap="deviceInfoMap">
+       select * from (select d.id,
+        (select user_name from users where id = d.user_id) as user_name,
+        (select real_name from users where id = d.user_id) as real_name,
+        d.device_name,
+        d.device_type,
+        d.sn,
+        d.udid,
+        d.user_id,
+        d.esnorimei,
+        d.belong,
+        d.device_status,
+        d.irr_status,
+        d.lost_status,
+        d.break_status,
+        d.visit_status,
+        d.last_collection_time,
+        d.is_active,
+        d.device_token,
+        d.terminal_unbund_enable
+        from device_basic_info d,
+        (select id,group_id,org_id from users where delete_time is null) u,
+        (select id from org_structure where delete_time is null) s
+        where d.user_id = u.id and u.group_id = s.id
+        <if test="idList != null">  
+        and s.id in
+        <foreach collection="idList" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 0">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) < #{outtime}]]> 
+			and d.is_active != 0
+			and d.device_status != 1
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 1">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) < #{outtime}]]> 
+			and d.is_active = 0
+			and d.device_status != 1
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 2">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) > #{outtime}]]> 
+			and device_type = 'android'
+		</if>
+		
+		<if test="iosStatus != null and iosStatus == 1">
+			and device_type='Ios'
+		</if>
+		
+		<if test="iosStatus != null and iosStatus == 2">
+			and device_type='android'
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 3">
+			and d.lost_status = 0
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 4">
+			and d.device_status != 1
+			and d.lost_status !=0
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 5">
+			and d.device_status = 1
+		</if>
+		<if test="deviceType != null and deviceType != ''">
+		and d.device_name  like concat('%',upper(#{deviceType}),'%')
+		</if>
+		<if test="esnorimei != null and esnorimei != ''">
+		and d.esnorimei like concat('%',upper(#{esnorimei}),'%') 
+		</if>
+		<if test="sequenceNumber != null and sequenceNumber != ''">
+		and d.sn like concat('%',upper(#{sequenceNumber}),'%') 
+		</if>
+		and d.delete_time is null
+		and u.org_id = #{orgId}
+		and d.org_id = #{orgId}
+		) tmp 
+		<if test="searchUserName != null and searchUserName != ''">
+		where tmp.user_name like concat('%',upper(#{searchUserName}),'%')
+		</if>
+        order by tmp.last_collection_time desc
+        limit #{begin},#{num}
+    </select>
+     <select id="queryDeviceInfoCount" resultType="int" parameterType="int">
+        select count(1) from ( select d.id,
+        (select user_name from users where id = d.user_id) as user_name,
+        (select real_name from users where id = d.user_id) as real_name,
+        d.device_name,
+        d.device_type,
+        d.sn,
+        d.udid,
+        d.user_id,
+        d.esnorimei,
+        d.belong,
+        d.device_status,
+        d.irr_status,
+        d.lost_status,
+        d.break_status,
+        d.visit_status,
+        d.last_collection_time,
+        d.is_active
+       from device_basic_info d,
+        (select id,group_id,org_id from users where delete_time is null) u,
+        (select id from org_structure where delete_time is null) s
+        where d.user_id = u.id and u.group_id = s.id
+        <if test="idList != null">  
+        and s.id in
+        <foreach collection="idList" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+		<if test="seletedStatus != null and seletedStatus ==0">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) < #{outtime}]]> 
+			and d.is_active != 0
+			and d.device_status != 1
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 1">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) < #{outtime}]]> 
+			and d.is_active = 0
+			and d.device_status != 1
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 2">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) > #{outtime}]]> 
+			and device_type = 'android'
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 3">
+			and d.lost_status = 0
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 4">
+			and d.device_status != 1
+			and d.lost_status !=0
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 5">
+			and d.device_status = 1
+		</if>
+		<if test="iosStatus != null and iosStatus == 1">
+			and device_type='Ios'
+		</if>
+		<if test="iosStatus != null and iosStatus == 2">
+			and device_type='android'
+		</if>
+		<if test="deviceType != null and deviceType != ''">
+		and d.device_name  like concat('%',upper(#{deviceType}),'%')
+		</if>
+		<if test="esnorimei != null and esnorimei != ''">
+		and d.esnorimei like concat('%',upper(#{esnorimei}),'%') 
+		</if>
+		<if test="sequenceNumber != null and sequenceNumber != ''">
+		and d.sn like concat('%',upper(#{sequenceNumber}),'%') 
+		</if>
+		and d.delete_time is null
+		and u.org_id = #{orgId}
+		and d.org_id = #{orgId}
+		) tmp 
+		<if test="searchUserName != null and searchUserName != ''">
+		where tmp.user_name like concat('%',upper(#{searchUserName}),'%')
+		</if>
+    </select>
+    <update id="updateVisitStatus" parameterType="deviceManager">
+        update device_basic_info set visit_status = #{visit_status} where id = #{id}
+    </update>
+    <update id="updateVisitStatusAll" parameterType="deviceManager">
+        update device_basic_info set visit_status = #{visit_status} where org_id = #{orgId}
+         <if test="visit_status == null">
+            and Lost_status is null
+        </if>
+    </update>
+    <update id="updateLostStatus" parameterType="deviceManager">
+        update device_basic_info set lost_status = #{lost_status} where id = #{id}
+    </update>
+    <update id="updateLostStatusAll" parameterType="deviceManager">
+        update device_basic_info set lost_status = #{lost_status} where  org_id = #{orgId}
+    </update>
+    <update id="updateDeviceStatus" parameterType="deviceManager">
+        update device_basic_info set device_status = #{device_status} where id = #{id}
+    </update>
+    <update id="updateDeviceStatusAll" parameterType="deviceManager">
+        update device_basic_info set device_status = #{device_status} where org_id = #{orgId}
+    </update>
+    <update id="updateIsActive" parameterType="deviceManager">
+        update device_basic_info set is_active = #{isActive} where id = #{id}
+    </update>
+    <update id="updateIsActiveAll" parameterType="deviceManager">
+        update device_basic_info set is_active = #{isActive} where org_id = #{orgId}
+    </update>
+    <update id="updateEnableUnbund" parameterType="deviceManager">
+        update device_basic_info set terminal_unbund_enable = #{enableUnbund} where sn = #{sn}
+    </update>
+    <update id="updateEnableUnbundAll" parameterType="deviceManager">
+        update device_basic_info set terminal_unbund_enable = #{enableUnbund} where org_id = #{orgId}
+    </update>
+    <update id="deleteDevice" parameterType="deviceManager">
+        delete from device_basic_info where id = #{id}
+    </update>
+     <!-- 破解总计 Start-->
+    <select id="findBreakStatusCount" resultType="int">
+        select count(1) 
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+         	 d.break_status=1
+         AND
+             d.delete_time is  null
+         AND
+             u.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select>
+    <!-- 破解总计 End-->
+   
+    <select id="findIrrCount" resultType="int">
+        select count(1) 
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+         	 d.irr_status=1
+         AND
+             d.delete_time is  null
+         AND
+             u.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select>
+    
+     <select id="findNotMonitoredCount" resultType="int">
+        select count(1) 
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+         	 d.device_status=2
+         AND
+             d.delete_time is  null
+         AND
+             u.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select> 
+
+     <select id="findTrusteeshipCount" resultType="int">
+        select count(1) 
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+         	 d.device_status=4
+         AND
+             d.delete_time is  null
+         AND
+             u.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select>
+    
+     <select id="findDeviceLostCount" resultType="int">
+        select count(1) 
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+         	 d.lost_status=0
+         AND
+             d.delete_time is  null
+         AND
+             u.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select>
+    <!-- 注销中 -->
+      <select id="findCancellationCount" resultType="int">
+        select count(1) 
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+         	 d.device_status=3
+         AND
+             d.delete_time is  null
+         AND
+             u.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select>
+    <select id="findMonitoredCount" resultType="int">
+        select count(1) 
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+         	 d.device_status=1
+         AND
+             d.delete_time is  null
+         AND
+             u.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select>
+    <select id="queryDevice" resultMap="deviceInfo" parameterType="map">
+        select d.id,u.real_name,u.user_type,d.device_name,d.device_type,d.udid,d.esnorimei,d.device_token from device_basic_info d,users u  where d.user_id = u.id and d.sn = #{sn} and d.user_id = #{userId} and d.delete_time is null
+    </select>
+    <select id="queryDeviceAndUserInfo" resultMap="deviceAndUserInfoMap" parameterType="int">
+         select
+                device.id,
+				device.device_name,
+				device.esnorimei,
+				device.device_type,
+				device.device_token,
+				u.user_type,
+				u.user_name,
+				u.real_name,
+				s. name
+			from
+				device_basic_info device,
+				users u,
+				org_structure s
+			where
+				device.user_id = u.id
+			and u.group_id = s.id
+			and device.id = #{id}
+    </select>
+    
+      <select id="findAllByOrgID"  resultMap="deviceInfoMap">
+      	select 
+      	  d.last_collection_time,
+      	  d.is_active,
+      	  d.device_status
+         FROM 
+        	device_basic_info d,
+        	users u
+         WHERE
+             d.delete_time is  null
+         AND
+             d.org_id=#{orgId}
+         AND d.user_id=u.id
+         AND u.delete_time is null
+       <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+       </select>
+       <!-- 查询出设备状态 -->
+      <select id="queryIsTakeOff" resultMap="deviceStatusMap" >
+           select d.id,d.org_id,d.user_id,d.device_name,d.last_collection_time,u.user_type,u.real_name from device_basic_info d,users u where d.user_id = u.id and d.delete_time is null
+      </select>
+      
+       <select id="findUdidById" resultType="String" >
+           SELECT
+				sn
+			FROM
+				`device_basic_info`
+			WHERE
+				id = #{uid}
+      </select>
+      
+<!--       	由于彻底删除设备是删掉了整条数据，所以彻底删除设备的日志要特殊处理
+	<select id="queryDeleteDevice" parameterType="map" resultMap="deviceInfo">
+	     select d.id,u.real_name,u.user_type,d.device_name,d.esnorimei from device_basic_info d,users u  where d.user_id = u.id and d.udid = #{udid} and d.user_id = #{userId} and d.delete_time is not null order by d.update_time desc limit 1
+	</select> -->
+    <!-- 根据sn号解绑设备 -->
+      <delete id="deleteDeviceBySn" parameterType="String">
+          delete from device_basic_info where sn = #{sn}
+      </delete>
+      <delete id="deleteAllDevice" parameterType="Integer">
+          delete from device_basic_info where org_id = #{orgId} and device_type = #{device_type}
+      </delete>
+      <select id="queryDeviceAllInfo" resultMap="deviceAllInfoMap" parameterType="int">
+          select id,org_id,device_name,device_type,sn,esnorimei,belong,device_status,user_id,os_version,phone_number,app_versoin,ip,power,resolution,udid,capacity,last_login_time,last_collection_time,create_by,update_time,update_by,delete_time,irr_status,
+          lost_status,break_status,visit_status,is_active,sd_card,device_unique_id,longitude,latitude,flux from device_basic_info where id = #{id}
+      </select>
+      
+      <!-- 根据设备ID查询用户ID -->
+     <select id="queryUserId" parameterType="int" resultMap="deviceStatusMap">
+          select user_id from device_basic_info where id = #{deviceId}
+     </select>
+     <select id="queryAllDeviceList" resultMap="deviceAllInfoMap">
+         select * from (select d.id,
+        (select user_name from users where id = d.user_id) as user_name,
+        d.org_id,
+        d.device_name,
+        d.device_type,
+        d.sn,
+        d.udid,
+        d.user_id,
+        d.esnorimei,
+        d.belong,
+        d.device_status,
+        d.os_version,
+        d.phone_number,
+        d.app_versoin,
+        d.ip,
+        d.power,
+        d.resolution,
+        d.capacity,
+        d.last_login_time,
+        d.last_collection_time,
+        d.create_by,
+        d.update_time,
+        d.update_by,
+        d.delete_time,
+        d.irr_status,
+        d.lost_status,
+        d.break_status,
+        d.visit_status,
+        d.is_active,
+        d.sd_card,
+        d.device_unique_id,
+        d.longitude,
+        d.latitude,
+        d.flux,
+        d.device_token
+        from device_basic_info d,
+        (select id,group_id,org_id from users where delete_time is null) u,
+        (select id from org_structure where delete_time is null) s
+        where d.user_id = u.id and u.group_id = s.id
+        <if test="idList != null">  
+        and s.id in
+        <foreach collection="idList" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+		and d.delete_time is null
+		and u.org_id = #{orgId}
+		and d.org_id = #{orgId}
+		) tmp 
+        order by tmp.last_collection_time desc
+     </select>
+     <select id="queryAllDeviceById" parameterType="int" resultMap="deviceAllInfoMap" >
+       select id,device_name,device_type,udid,device_token from device_basic_info where delete_time is null and user_id = #{userId}
+     </select>
+     <select id="queryDeviceInfoBySn" resultMap="deviceInfo" parameterType="String">
+        select id from device_basic_info where sn = #{sn} and delete_time is null
+    </select>
+    <!-- 设备信息导出 -->
+    <select id="queryDeviceExport" resultMap="deviceInfoMap">
+       select * from (select d.id,
+        (select user_name from users where id = d.user_id) as user_name,
+        (select real_name from users where id = d.user_id) as real_name,
+        d.device_name,
+        d.device_type,
+        d.sn,
+        d.udid,
+        d.user_id,
+        d.device_status,
+        d.irr_status,
+        d.lost_status,
+        d.break_status,
+        d.visit_status,
+        d.last_collection_time,
+        d.is_active
+        from device_basic_info d,
+        (select id,group_id,org_id from users where delete_time is null) u,
+        (select id from org_structure where delete_time is null) s
+        where d.user_id = u.id and u.group_id = s.id
+        <if test="idList != null">  
+        and s.id in
+        <foreach collection="idList" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+		<if test="seletedStatus != null and seletedStatus ==0">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) < #{outtime}]]> 
+			and d.is_active != 0
+			and d.device_status != 1
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 1">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) < #{outtime}]]> 
+			and d.is_active = 0
+			and d.device_status != 1
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 2">
+			and <![CDATA[unix_timestamp(sysdate())-unix_timestamp(d.last_collection_time) > #{outtime}]]> 
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 3">
+			and d.lost_status = 0
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 4">
+			and d.device_status != 1
+			and d.lost_status !=0
+		</if>
+		<if test="seletedStatus != null and seletedStatus == 5">
+			and d.device_status = 1
+		</if>
+		<if test="deviceType != null and deviceType != ''">
+		and d.device_name  like concat('%',upper(#{deviceType}),'%')
+		</if>
+		<if test="esnorimei != null and esnorimei != ''">
+		and d.esnorimei like concat('%',upper(#{esnorimei}),'%') 
+		</if>
+		<if test="sequenceNumber != null and sequenceNumber != ''">
+		and d.sn like concat('%',upper(#{sequenceNumber}),'%') 
+		</if>
+		and d.delete_time is null
+		and u.org_id = #{orgId}
+		and d.org_id = #{orgId}
+		) tmp 
+		<if test="searchUserName != null and searchUserName != ''">
+		where tmp.user_name like concat('%',upper(#{searchUserName}),'%')
+		</if>
+        order by tmp.last_collection_time desc
+    </select>
+    <select id="queryIosIsExists" resultMap="deviceAllInfoMap" parameterType="String">
+        select id,device_type,device_name,sn,udid,user_id,device_status,irr_status,lost_status,break_status,visit_status,is_active,device_token from device_basic_info where delete_time is null and ios_uuid = #{iosUuid}
+    </select>
+    <select id="queryDeviceInfoById" resultMap="deviceAllInfoMap" parameterType="int">
+        select id,device_name,device_type,udid,replace(device_token,' ','') AS device_token,sn from device_basic_info where delete_time is null and id = #{id}
+    </select>
+    <select id="queryDeviceInfoByUdid" parameterType="String" resultMap="deviceAllInfoMap">
+       select
+			id,
+			org_id,
+			device_name,
+			device_type,
+		sn,	
+		udid,
+			replace (device_token, ' ', '') AS device_token,
+		  esnorimei,
+		device_status,
+		user_id,
+		os_version,
+		phone_number,
+		app_versoin,
+		ip,
+		power,
+		resolution,
+		udid,
+		capacity,
+		last_login_time,
+		last_collection_time,
+		create_time,
+		create_by,
+		update_time,
+		update_by,
+		delete_time,
+		irr_status,
+		lost_status,
+		break_status,
+		visit_status,
+		is_active,
+		sd_card,
+		device_unique_id,
+		longitude,
+		latitude,
+		flux
+		from
+			device_basic_info
+		where
+			delete_time is null
+		and udid = #{udid}
+    </select>
+    
+    <select id="queryIosDeviceBasicInfo" resultMap="iosDeviceBasicInfoMap" parameterType="String">
+        SELECT
+			p. name,
+			d.device_status,
+			d.last_collection_time,
+			d.device_name,
+			d.os_version,
+			d.sn,
+			d.udid,
+			d.esnorimei,
+			d.belong,
+			d.capacity,
+			n.vendor,
+			n.data_roam,
+			n.voice_roam,
+			n.wifi_mac,
+			n.blue_tooth_mac
+		FROM
+			device_basic_info d,
+			device_safty s,
+			device_network_status n,
+			(
+				SELECT
+					id,
+					ios_device_policy_id,
+					user_id
+				FROM
+					ios_policy_user
+				WHERE
+					user_id = (
+						SELECT
+							user_id
+						FROM
+							device_basic_info
+						WHERE
+							ios_uuid = #{iosUuid}
+						LIMIT 1
+					)
+				AND ISNULL(delete_time)
+				ORDER BY
+					update_date DESC
+				LIMIT 1
+			) u,
+			ios_device_policy p
+		WHERE
+			d.id = s.device_id
+		AND d.id = n.device_id
+		AND d.user_id = u.user_id
+		AND u.ios_device_policy_id = p.id
+		AND d.ios_uuid = #{iosUuid}
+        
+    </select>
+    <delete id="deleteDeviceByUdid" parameterType="String">
+         delete from device_basic_info where udid = #{udid}
+    </delete>
+    
+    <select id="findAllDeviceCount" resultType="int">
+     select count(1) from ( select d.id,
+        (select user_name from users where id = d.user_id) as user_name,
+        (select real_name from users where id = d.user_id) as real_name,
+        d.device_name,
+        d.device_type,
+        d.sn,
+        d.udid,
+        d.user_id,
+        d.esnorimei,
+        d.belong,
+        d.device_status,
+        d.irr_status,
+        d.lost_status,
+        d.break_status,
+        d.visit_status,
+        d.last_collection_time,
+        d.is_active
+       from device_basic_info d,
+        (select id,group_id,org_id from users where delete_time is null) u,
+        (select id from org_structure where delete_time is null) s
+        where d.user_id = u.id and u.group_id = s.id
+        <if test="idlist != null">  
+        and s.id in
+        <foreach collection="idlist" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+		</if>
+		and d.delete_time is null
+		and u.org_id = #{orgId}
+		and d.org_id = #{orgId}
+		) tmp 
+    </select>
+</mapper>

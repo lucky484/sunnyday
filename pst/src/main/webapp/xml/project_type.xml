@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project_type>
+	<type>
+		<name>视频制作</name>
+		<value>1</value>
+	</type>
+	<type>
+		<name>平面设计</name>
+		<value>2</value>
+	</type>
+	<type>
+		<name>活动会务</name>
+		<value>3</value>
+	</type>
+	<type>
+		<name>环境布置</name>
+		<value>4</value>
+	</type>
+	<type>
+		<name>多媒体布展</name>
+		<value>5</value>
+	</type>
+	<type>
+		<name>新媒体开发</name>
+		<value>6</value>
+	</type>
+	<type>
+		<name>云发布</name>
+		<value>7</value>
+	</type>
+</project_type>

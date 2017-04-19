@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ImplementManagerCommentDao">
+      <resultMap type="com.softtek.pst.model.ImplementManagerCommentModel" id="ImplementManagerCommentMap">
+		<id column="implement_manager_com_id" property="implementManagerComId" />
+		<result column="implement_manager_id" property="implementManagerId" />
+		<result column="critic" property="critic" />
+		<result column="comment" property="comment" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	  </resultMap>
+    <select id="queryCommentByImplementManagerId" resultMap="ImplementManagerCommentMap" parameterType="long">
+        select implement_manager_com_id,critic,comment,create_time from implement_manager_comment where implement_manager_id = #{implementManagerId} order by create_time desc
+    </select>
+    
+    <insert id="addImplementManagerComment" parameterType="ImplementManagerCommentModel" keyProperty="implementManagerComId"
+		useGeneratedKeys="true">
+		insert into implement_manager_comment
+		(implement_manager_id,critic,comment,create_time,update_time)
+		values(#{implementManagerId},#{critic},#{comment},CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	</insert>
+</mapper>

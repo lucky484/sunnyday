@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.FaceCompDao">
+	<resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="IdCardInfoResultMap">
+		<id column="CardID" property="cardId" />
+		<result column="CardCode" property="cardCode" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="CollectTimeStamp" property="collectTimeStamp" />
+		<result column="FrontSaveTime" property="frontSaveTime" />
+		<result column="FrontSaveTimeStamp" property="frontSaveTimeStamp" />
+		<result column="FrontRelayTime" property="frontRelayTime" />
+		<result column="FrontRelayTimeStamp" property="frontRelayTimeStamp" />
+		<result column="TogthSaveTime" property="togthSaveTime" />
+		<result column="TogthSaveTimeStamp" property="togthSaveTimeStamp" />
+		<result column="RelayTime" property="relayTime" />
+		<result column="RelayTimeStamp" property="relayTimeStamp" />
+		<result column="RelayFlag" property="relayFlag" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="RegionCode" property="regionCode" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="IDCardPic" property="idCardPic" />
+		<result column="IDCardName" property="idCardName" />
+		<result column="IDCardNo" property="idCardNo" />
+		<result column="IDCardSex" property="idCardSex" />
+		<result column="IDCardNation" property="idCardNation" />
+		<result column="IDCardBirth" property="idCardBirth" />
+		<result column="IDCardAddress" property="idCardAddress" />
+		<result column="CardUnit" property="cardUnit" />
+		<result column="CardIssueDate" property="cardIssueDate" />
+		<result column="CardExpiryDate" property="cardExpiryDate" />
+		<result column="CardID16" property="cardID16" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />
+		<result column="UpdateTime" property="updateTime" />
+	</resultMap>
+	<!-- 需要根据groupcode来查找身份证信息 -->
+	<!-- <select id="getIdCardInfo" resultMap="IdCardInfoResultMap">
+		SELECT
+		IDCARDINFO.IDCARDPIC,
+		IDCARDINFO.CREATETIME
+		FROM T_PP_IDCARDINFO IDCARDINFO,
+		T_PP_FACEANDCARDRESULT FACEANDCARDRESULT
+		WHERE
+		 IDCARDINFO.CARDCODE = FACEANDCARDRESULT.CARDCODE
+		AND FACEANDCARDRESULT.facecode = #{faceCode} 
+		and rownum = 1 
+		order by FACEANDCARDRESULT.receiveTimeStamp desc 
+	</select> -->
+	
+	
+	<select id="getIdCardInfo" resultMap="IdCardInfoResultMap">
+		<!-- SELECT
+		IDCARDINFO.IDCARDPIC,
+		IDCARDINFO.CREATETIME
+		FROM T_PP_IDCARDINFO IDCARDINFO,
+		T_PP_FACEANDCARDRESULT FACEANDCARDRESULT,
+    	t_pp_faceinfo faceinfo
+		WHERE
+		 IDCARDINFO.CARDCODE = FACEANDCARDRESULT.CARDCODE
+     	 and faceinfo.facecode = faceandcardresult.facecode
+    	 and faceinfo.GROUPCODE = #{group}
+		 and rownum = 1 
+		order by FACEANDCARDRESULT.receiveTimeStamp desc  -->
+		SELECT
+		IDCARDPIC,
+		CREATETIME,
+		IDCardNo
+    	from (select IDCARDINFO.IDCARDPIC,
+		IDCARDINFO.CREATETIME,
+		IDCARDINFO.IDCardNo
+		FROM T_PP_IDCARDINFO IDCARDINFO,
+		T_PP_FACEANDCARDRESULT FACEANDCARDRESULT,
+    	t_pp_faceinfo faceinfo
+		WHERE
+		 IDCARDINFO.CARDCODE = FACEANDCARDRESULT.CARDCODE
+		 and FACEANDCARDRESULT.similarity > (select FACECARDCOMPALARMVAL from T_SS_PARAMSET)
+     	 and faceinfo.facecode = faceandcardresult.facecode
+    	 and faceinfo.GROUPCODE = #{groupcode}
+		order by FACEANDCARDRESULT.receiveTimeStamp desc) where rownum = 1 
+	</select>
+</mapper>

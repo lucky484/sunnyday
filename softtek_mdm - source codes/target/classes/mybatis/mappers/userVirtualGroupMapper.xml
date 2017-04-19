@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.UserVirtualGroupDao">
+    
+    <resultMap type="UserVirtualGroup" id="UserVirtualGroupMap">
+    	<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id"/>
+		</association>
+		<association property="virtualGroup" javaType="VirtualGroup">
+			<id property="id" column="virtual_id"/>
+		</association>
+		<association property="user" javaType="User">
+			<id property="id" column="user_id"/>
+			<result property="user_name" column="user_name"/>
+		</association>
+    </resultMap>
+    
+    
+    <insert id="save" parameterType="UserVirtualGroup" useGeneratedKeys="true" keyProperty="id">
+    	INSERT INTO users_virtual_group(org_id,virtual_id,collection_id,user_id,create_time,update_time,create_by,update_by,delete_time)
+    	VALUES(#{organization.id},#{virtualGroup.id},#{virtualCollection.id},#{user.id},NOW(),NOW(),#{createBy},#{updateBy},null)
+    </insert>
+    
+    <!-- 批量保存 -->
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO users_virtual_group(org_id,virtual_id,collection_id,user_id,create_time,update_time,create_by,update_by,delete_time)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.organization.id},#{item.virtualGroup.id},#{item.virtualCollection.id},#{item.user.id},NOW(),NOW(),#{item.createBy},#{item.updateBy},null)
+		</foreach>
+	</insert>
+    
+    <select id="findByUser" resultMap="UserVirtualGroupMap">
+    	SELECT id,org_id,virtual_id,user_id
+    	FROM users_virtual_group
+    	WHERE delete_time is null
+    	AND org_id=#{0}
+    	AND user_id=#{1}
+    </select>
+    
+    <update id="deleteByIds">
+    	UPDATE users_virtual_group
+    	SET delete_time = NOW()
+    	WHERE delete_time is null
+    	AND id in
+    	<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+    </update>
+    
+    <insert id="insertMember" parameterType="VirtualGroup">
+    	INSERT INTO users_virtual_group (
+				collection_id,
+ 			    org_id,
+ 			    virtual_id,
+				user_id,
+			    update_time,
+				create_time
+							)
+		VALUES
+					(#{virtualCollection.id},
+ 				     #{organization.id},
+  					 #{virtualGroup.id},
+ 				     #{user.id},
+						NOW(),
+						NOW() )
+    </insert>
+    
+    <insert id="insertMembers" parameterType="java.util.List">
+    	INSERT INTO users_virtual_group (
+				collection_id,
+ 			    org_id,
+ 			    virtual_id,
+				user_id,
+			    update_time,
+				create_time
+							)
+		VALUES
+		
+		<foreach collection="list" item="item" index="index" separator=","> 
+    	 ( #{item.virtualCollection.id},
+ 		   #{item.organization.id},
+		   #{item.virtualGroup.id},
+ 		   #{item.user.id},
+		   NOW(),
+		   NOW())
+    	</foreach>
+					
+    </insert>
+   <delete id="deleteByid" parameterType="java.lang.Integer">  
+   DELETE from users_virtual_group where user_id= #{0} AND virtual_id=#{1} AND collection_id=#{2}
+   </delete>
+   
+   <delete id="truncateWithUserId" parameterType="java.lang.Integer">
+   	DELETE FROM users_virtual_group
+   	WHERE user_id=#{userId}
+   </delete>
+   
+   <delete id="truncateWithUserIds">
+   	DELETE FROM users_virtual_group
+   	WHERE user_id in
+   	<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+	</foreach>
+   </delete>
+   
+   <select id="findVirExistMember" resultType="String">
+    	SELECT
+			u.user_name
+		FROM
+			virtual_group g,
+			users_virtual_group vg,
+			users u
+		WHERE
+			g.id = vg.virtual_id
+		AND 
+			vg.user_id = u.id
+		AND 
+			g.id = #{groupid}
+		AND 
+		    g.collection_id=#{colId}
+		AND 
+			g.org_id =#{orgid}
+		AND 
+			vg.delete_time IS NULL
+		<if test="idlist != null">
+		AND u.group_id in  
+		<foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+    </select>
+    
+    <select id="findAllMember" resultType="String">
+    	SELECT
+			user_name
+		FROM
+			users
+		WHERE
+			delete_time is null
+		AND org_id = #{orgid}
+		<if test = "idlist != null" >
+		AND group_id in 
+		<foreach item = "item" index = "index" collection = "idlist" open = "(" separator = "," close = ")" > #{item}
+		</foreach>
+		</if>
+    </select>
+    
+     <select id="findAllColMember" resultType="String">
+    	select
+			u.user_name
+		from
+			users u,
+			users_virtual_group uvg
+		where
+			u.id = uvg.user_id
+			and
+			uvg.delete_time is null
+			and
+			u.org_id=#{orgid}
+			and 
+			uvg.collection_id=#{colId}
+    </select>
+    
+     <insert id="insertMembersByIdList" parameterType="java.util.List" >
+    	INSERT INTO users_virtual_group (
+				collection_id,
+ 			    org_id,
+ 			    virtual_id,
+				user_id,
+			    update_time,
+				create_time
+							)
+		VALUES
+		
+		<foreach collection="list" item="item" index="index" separator=","> 
+    	 ( #{item.colid},
+ 		   #{item.orgid},
+		   #{item.virid},
+ 		   #{item.userid},
+		   NOW(),
+		   NOW())
+    	</foreach>
+					
+    </insert>
+    
+    
+    <select id="getUserIdsByVirtualIdList" parameterType="map" resultType="java.lang.Integer">
+    	select t.user_id from users_virtual_group t
+    	where t.virtual_id in 
+    	<foreach item="item" collection="virtualIdList" separator="," open="(" close=")" index="">    
+     		 #{item}  
+    	 </foreach>
+    </select>
+</mapper>

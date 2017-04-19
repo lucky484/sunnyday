@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.StructureDao">
+    <sql id="filterRecordSql">
+		(
+		SELECT id FROM org_managers
+		WHERE id=#{mid}
+		UNION ALL
+		SELECT r.manager_id AS id FROM organization_manager_relation r
+		WHERE r.org_id = #{orgId}
+		)
+	</sql>
+	
+    <resultMap type="Structure" id="StructureMap">
+    	<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="mark" column="mark"/>
+		<result property="email" column="email"/>
+		<result property="createType" column="create_type"/>
+		<result property="weight" column="weight"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="createBy" column="create_by"/>
+		<association property="policy" javaType="Policy">
+			<id property="id" column="policy_id"/>
+		</association>
+		<association property="parent" javaType="Structure">
+			<id property="id" column="parentid"/>
+			<result property="name" column="parent_name"/>
+		<association property="policy" javaType="Policy">
+			<id property="id" column="parent_policy_id"/>
+		</association>
+		</association>
+    </resultMap>
+    
+    <select id="getChildren" parameterType="string" resultMap="StructureMap">
+    	SELECT id,org_id,parentid,name,mark,weight,policy_id,create_time
+    	FROM org_structure
+    	WHERE id=#{parentId}
+    </select>
+    
+    <select id="getRoot" parameterType="string" resultMap="StructureMap">
+    	SELECT id,org_id,parentid,name,mark,weight,policy_id,create_time
+    	FROM org_structure
+    	WHERE org_id=#{orgId} AND ISNULL(parentid) LIMIT 1
+    </select>
+    
+    <select id="findAllByOrgID" parameterType="java.lang.Integer" resultMap="StructureMap">
+	    SELECT a.id,a.parentid,b.name as parent_name,a.name,a.email,a.mark,a.create_type,a.weight,a.policy_id,a.create_time,a.create_by,a.update_by,a.update_time,b.policy_id as parent_policy_id
+	    FROM org_structure a
+	    LEFT JOIN (select id,policy_id,name from org_structure order by update_time desc) b
+	    ON a.parentid=b.id
+	    WHERE a.delete_time is NULL 
+	    AND a.org_id=#{id}
+	    order by a.update_time desc
+    </select>
+    
+    <select id="findAllByMap" resultMap="StructureMap">
+    SELECT a.id,a.parentid,b.name as parent_name,a.name,a.email,a.mark,a.create_type,a.weight,a.policy_id,a.create_time,a.update_time,b.policy_id as parent_policy_id
+	    FROM org_structure a
+	    LEFT JOIN (select id,policy_id,name from org_structure order by update_time desc) b
+	    ON a.parentid=b.id
+	    WHERE a.delete_time is NULL 
+	    AND a.org_id=#{orgId}
+<!-- 	    AND a.create_by in
+	    <include refid="filterRecordSql" /> -->
+	    order by a.update_time desc
+    </select>
+    
+    <select id="findByIds" resultMap="StructureMap">
+	    SELECT a.id,a.parentid,b.name as parent_name,a.name,a.email,a.mark,a.create_type,a.weight,a.policy_id,a.create_time,a.create_by,a.update_by,b.policy_id as parent_policy_id
+	    FROM org_structure AS a
+	    LEFT JOIN org_structure AS b
+	    ON a.parentid=b.id
+	    WHERE a.delete_time is NULL 
+	    AND a.id in
+	    <foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+    </select>
+    
+    <insert id="save" parameterType="Structure" useGeneratedKeys="true" keyProperty="id">
+    	INSERT INTO org_structure(org_id,parentid,name,mark,create_type,weight,email,create_time,update_time,create_by,update_by,policy_id,delete_time)
+    	VALUES(#{organization.id},#{parent.id},#{name},#{mark},#{createType},#{weight},#{email},NOW(),NOW(),#{createBy},#{updateBy},#{policy.id},null)
+    </insert>
+    
+    <select id="findSubsBysId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    	SELECT id
+    	FROM org_structure
+    	WHERE delete_time is null
+    	AND (id=#{structureId}
+    	OR parentid=#{structureId})
+    </select>
+    
+    <select id="findOne" parameterType="java.lang.Integer" resultMap="StructureMap">
+    	SELECT id,parentid,name,mark,weight,policy_id
+    	FROM org_structure
+    	WHERE delete_time is NULL
+    	AND id=#{id}
+    </select>
+    
+    <update id="update" parameterType="Structure">
+        update org_structure set name = #{name},mark = #{mark},email = #{email},weight = #{weight},update_by = #{updateBy},update_time =#{updateTime} where id = #{id}
+    </update>
+    
+    <select id="queryParentById" parameterType="int" resultMap="StructureMap">
+        select parentid from org_structure where id = #{id}
+    </select>
+    
+    <update id="updateParentIdById">
+        update org_structure set parentId = #{0} where id = #{1}
+    </update>
+    
+    <delete id="deleteStructureById" parameterType="list">
+        update org_structure set delete_time = now() where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+    </delete>
+    
+    <update id="updatePolicyByList" parameterType="map">
+       update org_structure set policy_id = #{policyId} where id in
+       <foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+    </update>
+    
+      <update id="updatePolicyById" parameterType="Structure">
+       update org_structure set policy_id = #{policy.id} where id = #{id}
+    </update>
+    
+    <select id="queryPolicyById" resultType="int">
+        select policy_id from org_structure where id = (select parentId from org_structure where id= #{id})
+    </select>
+    <select id="queryParentNameById" resultMap="StructureMap" parameterType="int">
+        select id,parentId,name from org_structure where id = #{parentId} and delete_time is null
+    </select>
+    <select id="queryCountByName" resultType="int" parameterType="map">
+         select count(1) from org_structure where name = #{name} and parentId = #{id} and delete_time is null
+    </select>
+    <select id="queryUserById" resultType="int" parameterType="list">
+         select count(1) from users where group_id in
+         <foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+          and delete_time is null
+    </select>
+    <!-- 根据部门的id查询出上级部门的策略 -->
+    <select id="queryParentPolicyById" resultType="int" parameterType="int">
+	     select policy_id from org_structure where id = (select parentId from org_structure where id = #{id}) 
+    </select>
+      <!-- 根据策略的id查询所有应用这条策略的部门 -->
+    <select id="quertAllDepartmentByPolicyId" resultMap="StructureMap">
+         select id,parentid from org_structure where policy_id = #{policyId} and parentId is not null and delete_time is null
+    </select>
+    <!-- 根据上级部门的id查询所有的下一级的部门id -->
+    <select id="queryAllchildren" resultMap="StructureMap" parameterType="int">
+        select id from org_structure where parentId = #{id}
+    </select>
+    <!-- 根据部门的id查询出策略的id -->
+    <select id="queryPolicyIdById" resultType="int" parameterType="int">
+        select policy_id from org_structure where id = #{id}
+    </select>
+    <!-- 根据部门id查询部门名称 -->
+    <select id="queryNameById" resultType="String" parameterType="int"> 
+        select name from org_structure where id = #{id}
+    </select>
+    <select id="queryOrgId" resultType="int" parameterType="int">
+        select parentId from org_structure where id = #{id}
+    </select>
+    <!-- 根据默认策略的id查询出所有应用默认策略的部门 -->
+    <select id="queryDepartmentByDefaultPolicy" parameterType="map" resultType="int">
+       select id from org_structure where delete_time is null and parentId in (select id from org_structure where parentId is null and delete_time is null) and policy_id = #{policyId} and org_id = #{orgId}
+    </select>
+    <!-- 查询当前部门的父部门的父id -->
+    <select id="queryParentByparentId" parameterType="int" resultType="String">
+        select parentId from org_structure where id = (select parentId from org_structure where id = #{id})
+    </select>
+    <select id="queryTopDepartmentId" resultType="int" parameterType="int">
+        select id from org_structure where parentId is null and org_id = #{orgId}
+    </select>
+    <!-- 根据选中节点的id查询所有子部门的名称 -->
+    <select id="queryChildName" resultType="String" parameterType="int">
+        select name from org_structure where parentId = #{id} and delete_time is null
+    </select>
+    <update id="updateUserDepartment" parameterType="map">
+        update user_department set delete_time = now() where user_role_department_id = #{id} and depart_id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+    </update>
+    
+    <select id="findOneByOrgId" parameterType="java.lang.Integer" resultMap="StructureMap">
+        select id,parentid,name,mark,weight,policy_id from org_structure where org_id = #{id} and parentid is null and delete_time is null
+    </select>
+    
+    <select id="getStructureListById" parameterType="java.lang.Integer" resultMap="StructureMap">
+        SELECT T2.id as id, T2.name as name 
+			FROM ( 
+			    SELECT 
+			        @r AS _id, 
+			        (SELECT @r := parentid FROM org_structure WHERE id = _id) AS parent_id, 
+			        @l := @l + 1 AS lvl 
+			    FROM 
+			        (SELECT @r := #{id}, @l := 0) vars, 
+			        org_structure h 
+			    WHERE @r != 0) T1 
+			JOIN org_structure T2 
+			ON T1._id = T2.id 
+			ORDER BY T1.lvl DESC 
+    </select>
+    
+</mapper>

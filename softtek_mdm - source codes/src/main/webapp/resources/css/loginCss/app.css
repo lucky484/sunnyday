@@ -1,0 +1,136 @@
+.container.aside-xl.aside-xl-top{
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+.list-group-item{    background-color: rgba(255,255,255,0);    border: 0px;}
+.user_name, .user_password{border: 1px solid #00457c; border-radius: 4px;height: 40px;}
+.code_inline {width:100%;}
+#index_code{
+    width: 48%;
+    float: left;
+    margin-right: 27px;
+    border: 1px solid #00457c; 
+    border-radius: 4px;
+    height: 40px;
+}
+#imgObj{margin-top: 4px;    border-radius: 4px;}
+.btn.btn-lg.btn-primary{background:#00457c; border-radius: 4px;}
+#parsley-id-8 .parsley-required{
+    text-align: left;
+    width: 90px;
+}
+#parsley-id-8 .parsley-length{
+    text-align: left;
+    width: 150px;
+}
+/***new css for login qrcode 4/14********/
+.qr_code.col-sm-5{
+    border-left: 1px solid #eaeef1;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+.org_qr_code.col-sm-5{
+    border-left: 1px solid #eaeef1;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+#codeimg{
+    margin-top: 116px;
+    margin-left: 40px;
+    margin-bottom: 12px;
+}
+.code_des{font-size:16px;
+margin-left: 30px;}
+ #footer .padder small  {
+    color: #333;
+}
+/*******427**********/
+.j_org{
+	border: 1px solid #00457c;
+    border-radius: 4px;
+    height: 40px;	
+}
+.login_content,
+.part1
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -200px;
+    width: 600px;
+    height: 400px;
+	background-color: rgba(255,255,255,0);
+	border-radius: 6px;	
+}
+#content.wrapper-md .row {
+}
+.bg-signin #content.wrapper-md {
+    margin-top: 0px;
+}
+.login_part{
+    position: absolute;
+    margin-top: 0%;
+    margin-left: 0%;
+    width: 340px!important;
+    height: 400px;
+	background-color: rgba(255,255,255,1);
+    border-top: 2px solid #999;
+    border-left: 2px solid #999;
+    border-bottom: 3px solid #999;	
+    padding-left: 40px!important;
+    padding-right: 40px!important;
+    padding-top: 20px!important;      
+	
+}
+.qrcode_part{
+	position: absolute;
+    margin-top: 0%!important;
+    margin-left: 56.5%;
+    width: 260px!important;
+    height: 400px;
+	background-color: rgba(255,255,255,1);
+	border-top: 2px solid #999;
+    border-right: 2px solid #999;
+    border-bottom: 3px solid #999;
+    border-left: 1px solid #ccc;
+  	
+}
+.wrapper-md {
+    padding: 0px;
+}
+#content .row {
+    margin-right: 0px; 
+    margin-left: 0px; 
+}
+.part2{
+    position: absolute;
+    bottom: -10%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -200px;
+    width: 600px;
+    height: 20px;
+}
+#logoUrl{
+    margin-top: 32px;
+    margin-left: 40px;
+    margin-bottom: -107px;
+	
+}
+.login_button.btn.btn-lg.btn-primary{
+	    background: #00467A!important;
+	
+}
+.form-control.no-border.user_name.parsley-success,
+.form-control.no-border.user_password.parsley-success{
+    border: 1px solid #00457c;
+}
+.form-group.form-inline.code_inline{
+    margin-bottom: 0px;
+}
+.parsley-errors-list{margin:0px!important;}
+#parsley-id-6 .parsley-custom-error-message, 
+#parsley-id-8 .parsley-custom-error-message
+{margin-bottom:-15px;}
+.org_manager_login{padding: 18px;}

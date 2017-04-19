@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.RegionDao">
+	<resultMap type="com.hd.pfirs.model.RegionModel" id="RegionMap">
+		<id column="RegionID" property="regionId" />
+		<result column="RegionCode" property="regionCode" />
+		<result column="RegionName" property="regionName" />
+		<result column="regionLevel" property="regionLevel" />
+		<result column="PreRegionCode" property="preRegionCode" />
+		<result column="Description" property="description" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />
+		<result column="UpdateTime" property="updateTime" />
+	</resultMap>
+
+	<delete id="deleteRegion" parameterType="RegionModel">
+		delete from
+		T_SS_REGION
+		where regionId = #{regionId}
+	</delete>
+
+	<insert id="addRegion" parameterType="RegionModel">
+		insert into
+		T_SS_REGION(
+		RegionId,
+		RegionCode,
+		RegionName,
+		regionLevel,
+		PreRegionCode,
+		Description,
+		RemarkDesc,
+		DeleteStatus,
+		CreateName,
+		CreateTime,
+		UpdateName,
+		UpdateTime)
+		values(
+		T_SS_REGION_SEQUENCE.NEXTVAL,
+		#{regionCode,jdbcType=VARCHAR},
+		#{regionName,jdbcType=VARCHAR},
+		#{regionLevel,jdbcType=VARCHAR},
+		#{preRegionCode,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{remarkDesc,jdbcType=VARCHAR},
+		#{deleteStatus,jdbcType=VARCHAR},
+		#{createName,jdbcType=VARCHAR},
+		sysdate,
+		'system',
+		sysdate
+		)
+	</insert>
+
+	<select id="getRegion" resultMap="RegionMap">
+		select * from (select a.*,rownum rn from (
+		select regionId,
+		RegionCode,
+		RegionName,
+		regionLevel,
+		PreRegionCode,
+		Description,
+		RemarkDesc,
+		DeleteStatus,
+		CreateName,
+		CreateTime,
+		UpdateName,
+		UpdateTime
+		from
+		t_ss_region
+		<where>
+			<if test="regionCode != '' and regionCode != null">
+				and RegionCode like #{regionCode}
+			</if>
+			<if test="regionName != '' and regionName != null">
+				and RegionName like #{regionName}
+			</if>
+		</where>
+		order by regionId desc
+		) a)
+		where rn <![CDATA[<]]>
+		(10*#{page}+1) and rn <![CDATA[>]]>
+		10*(#{page}-1)
+	</select>
+
+	<select id="getRegionCount" resultType="Integer">
+		select count(1) from
+		(
+		select regionId,
+		RegionCode,
+		RegionName,
+		REGIONLEVEL,
+		PreRegionCode,
+		Description,
+		RemarkDesc,
+		DeleteStatus,
+		CreateName,
+		CreateTime,
+		UpdateName,
+		UpdateTime
+		from t_ss_region
+		<where>
+			<if test="regionCode != '' and regionCode != null">
+				and RegionCode like #{regionCode}
+			</if>
+			<if test="regionName != '' and regionName != null">
+				and RegionName like #{regionName}
+			</if>
+		</where>
+		)
+	</select>
+
+	<update id="editRegion" parameterType="regionModel">
+		update
+		t_ss_region
+		set
+		regionName =
+		#{regionName},
+		regionCode =
+		#{regionCode},
+		regionLevel =
+		#{regionLevel},
+		preRegionCode =
+		#{preRegionCode},
+		description =
+		#{description},
+		remarkDesc =
+		#{remarkDesc},
+		updateTime = sysdate
+		where
+		regionId = #{regionId}
+	</update>
+
+	<select id="getRegionInfo" resultMap="RegionMap">
+		select
+		RegionId,
+		RegionCode,
+		RegionName,
+		regionLevel,
+		PreRegionCode,
+		Description,
+		RemarkDesc,
+		DeleteStatus,
+		CreateName,
+		CreateTime,
+		UpdateName,
+		UpdateTime
+		from
+		t_ss_region
+		where regionId = #{regionid}
+	</select>
+	
+	<select id="getReg" resultMap="RegionMap">
+		select
+		RegionName
+		from
+		t_ss_region
+	</select>
+
+</mapper>

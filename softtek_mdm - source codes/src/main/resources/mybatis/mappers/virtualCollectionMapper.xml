@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.VirtualCollectionDao">
+
+	<resultMap type="VirtualCollection" id="VirtualGroupMap">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="multiple" column="multiple" />
+		<result property="mark" column="mark" />
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id" />
+		</association>
+	</resultMap>
+
+	<insert id="save" parameterType="VirtualCollection">
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		INSERT INTO
+		virtual_collection
+			(org_id,name,multiple,create_time,update_time,create_by,update_by,delete_time)
+		VALUES
+			(#{organization.id},#{name},#{multiple},NOW(),NOW(),#{createBy},#{createBy},null)
+	</insert>
+	<update id="update" parameterType="VirtualCollection">
+		update virtual_collection set
+		name = #{name},multiple =
+		#{multiple},update_time =NOW() where id=
+		#{id}
+	</update>
+
+	<select id="existsEditName" parameterType="VirtualCollection"
+		resultType="int">
+		SELECT count(1)
+		FROM virtual_collection
+		WHERE delete_time is
+		null
+		AND name = #{name}
+		AND org_id = #{organization.id}
+		AND id!=#{id}
+	</select>
+	<select id="isExists" parameterType="VirtualCollection"
+		resultType="boolean">
+		SELECT count(1)
+		FROM virtual_collection
+		WHERE delete_time is
+		null
+		AND name = #{name}
+		AND org_id = #{organization.id}
+	</select>
+
+	<update id="deleteCollection" parameterType="int">
+		update
+		virtual_collection set delete_time = NOW() where id= #{id}
+	</update>
+
+	<update id="deleteVirtualGroup" parameterType="int">
+		update
+		virtual_group set delete_time = NOW() where collection_id= #{id}
+	</update>
+	<delete id="deleteMember" parameterType="java.lang.Integer">
+		DELETE from users_virtual_group where collection_id= #{id}
+	</delete>
+
+	<select id="findAllByOrgID" parameterType="java.lang.Integer"
+		resultType="VirtualCollection">
+		SELECT id,
+		org_id,
+		name,
+		multiple,
+		mark,
+		create_by as createBy
+		FROM
+		virtual_collection
+		WHERE
+		delete_time is null
+		AND
+		org_id= #{id}
+		ORDER BY create_time desc
+	</select>
+
+</mapper>

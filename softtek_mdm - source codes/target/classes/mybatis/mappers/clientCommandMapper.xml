@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.ClientCommandDao">
+    <resultMap id="ClientCommandMap" type="ClientCommand">
+        <id property="id" column="id" />
+        <result column="sn" property="sn" />
+        <result column="remove_device" property="removeDevice" />
+    </resultMap>
+    <insert id="insertRemoveDevice" parameterType="ClientCommand" useGeneratedKeys="true" keyProperty="id">
+        insert into client_command (
+          sn,
+          remove_device,
+          create_time,
+          update_time
+        )values(
+          #{sn},
+          #{removeDevice},
+          now(),
+          now()
+        )
+    </insert>
+    <delete id="deleteDevice" parameterType="String">
+        update client_command set delete_time = now() where sn = #{sn}
+    </delete>
+    <select id="queryDeviceDelInfo" resultMap="ClientCommandMap" parameterType="String">
+        select sn,remove_device from client_command where sn = #{sn} and delete_time is null
+    </select>
+    <select id="queryDeviceIsExits" parameterType="String" resultType="int">
+        select count(1) from client_command where sn = #{sn}
+    </select>
+    <update id="updateRemoveDevice" parameterType="String">
+        update client_command set create_time = now(),update_time = now(),delete_time = null where sn = #{sn}
+    </update>
+</mapper>

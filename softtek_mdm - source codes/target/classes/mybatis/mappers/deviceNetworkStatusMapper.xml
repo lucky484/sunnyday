@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceNetworkStatusDao">
+	
+	<insert id="save" parameterType="DeviceNetworkStatus">
+		INSERT INTO device_network_status(id,device_id,vendor,phone,net_type_id,sim_number,wifi_mac,blue_tooth_mac,hot_point,voice_roam,data_roam)
+		VALUES(#{id},#{device_id},#{vendor},#{phone},#{net_type_id},#{sim_number},#{wifi_mac},#{blue_tooth_mac},#{hot_point},#{voice_roam},#{data_roam})
+	</insert>
+	
+	<select id="findOne" resultType="DeviceNetworkStatus">
+		SELECT id,device_id,vendor,phone,net_type_id,sim_number,wifi_mac,blue_tooth_mac,hot_point,voice_roam,data_roam
+		FROM device_network_status
+		WHERE device_id=#{id}
+	</select>
+	
+	<delete id="truncateWithDeviceId" parameterType="java.lang.Integer">
+		DELETE FROM device_network_status
+		WHERE device_id=#{did}
+	</delete>
+	
+	<update id="update" parameterType="DeviceNetworkStatus">
+		update device_network_status set 
+		vendor = #{vendor},
+		phone = #{phone},
+		net_type_id = #{net_type_id},
+		sim_number = #{sim_number},
+		wifi_mac = #{wifi_mac},
+		blue_tooth_mac = #{blue_tooth_mac},
+		hot_point = #{hot_point},
+		voice_roam = #{voice_roam},
+		data_roam = #{data_roam}
+		where device_id = #{device_id}
+	</update>
+</mapper>

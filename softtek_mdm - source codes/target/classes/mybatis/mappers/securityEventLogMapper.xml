@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.softtek.mdm.dao.SecurityEventLogDao">
+	    <resultMap id="securityLogMap" type="SecurityEventLog">
+	        <id column="id" property="id" />
+	        <result column="event_type" property="eventType" />
+	        <result column="level" property="level" />
+	        <result column="operate_content" property="operateContent" />
+	        <result column="create_time" property="createTime" />
+	    </resultMap>
+	    <insert id="insertSecurityEventLog" parameterType="SecurityEventLog" useGeneratedKeys="true" keyProperty="id">
+	        insert into security_event_log (
+	           event_type,
+	           level,
+	           operate_content,
+	           create_time,
+	           create_by,
+	           update_time,
+	           update_by
+	        )values(
+	           #{eventType},
+	           #{level},
+	           #{operateContent},
+	           now(),
+	           #{createBy},
+	           now(),
+	           #{updateBy}
+	        )
+	    </insert>
+	    <select id="querySecurityLog" resultMap="securityLogMap" parameterType="map">
+	        select id,event_type,level,operate_content,create_time from security_event_log 
+	        <if test="eventType != null and eventType != ''">
+	           where event_type = #{eventType}
+	        </if> 
+	        order by update_time desc
+	        limit #{start},#{pageSize}
+	    </select>
+	    <select id="querySecurityLogCount" resultType="int" parameterType="map">
+	        select count(1) from security_event_log
+	         <if test="eventType != null and eventType != ''">
+	           where event_type = #{eventType}
+	        </if> 
+	    </select>
+	     <select id="querySecurityLogExport" resultMap="securityLogMap" parameterType="map">
+	        select id,event_type,level,operate_content,create_time from security_event_log 
+	        <if test="eventType != null and eventType != ''">
+	           where event_type = #{eventType}
+	        </if> 
+	    </select>
+	</mapper>

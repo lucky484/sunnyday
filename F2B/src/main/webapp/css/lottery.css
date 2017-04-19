@@ -1,0 +1,26 @@
+﻿.drawDiv {
+    top: 54%;
+    height: 20%;
+    text-shadow: none;
+    position: absolute;
+    z-index: 9;
+    text-align: center;
+    width: 100%;
+    display: block;
+}
+*{margin:0;padding:0;font-size:3vw;}
+body{ background:none;}
+input,button,select,textarea{outline:none;}
+ul,li,dl,ol{list-style:none;}
+a{color:#666; text-decoration:none;}
+
+.box{ width:980px; position: absolute;z-index: 10;}
+.bcon{ width:270px; border:1px solid #eee; margin:30px auto;}
+.bcon h1{ border-bottom:1px solid #eee; padding:0 10px;}
+.bcon h1 b{ font:bold 14px/40px '宋体'; border-top:2px solid #3492D1; padding:0 8px; margin-top:-1px; display:inline-block;}
+
+.list_lh{ max-height:150px; overflow:hidden; z-index:20;min-height: 50px;}
+.list_lh li{ padding:10px; }
+.list_lh li p{ height:10%; line-height:30px;}
+.btn_lh:hover{ color:#fff; text-decoration:none;}
+

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.IosPolicyListDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.IosPolicyList" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ios_device_policy_id" property="iosDevicePolicyId" jdbcType="INTEGER" />
+    <result column="name_list_id" property="nameListId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, ios_device_policy_id, name_list_id, create_date, create_user, update_date, update_user, 
+    delete_time
+  </sql>
+  
+  <!-- 根据主键查询ios设备策略外键与名单外键的关联表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ios_policy_list
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 删除ios设备策略外键与名单外键的关联表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ios_policy_list
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入ios设备策略外键与名单外键的关联表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.IosPolicyList" >
+    insert into ios_policy_list (id, ios_device_policy_id, name_list_id, 
+      create_date, create_user, update_date, 
+      update_user, delete_time)
+    values (#{id,jdbcType=INTEGER}, #{iosDevicePolicyId,jdbcType=INTEGER}, #{nameListId,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 插入可选字段的ios设备策略外键与名单外键的关联表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.IosPolicyList" >
+    insert into ios_policy_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="iosDevicePolicyId != null" >
+        ios_device_policy_id,
+      </if>
+      <if test="nameListId != null" >
+        name_list_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="iosDevicePolicyId != null" >
+        #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="nameListId != null" >
+        #{nameListId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选字段的ios设备策略 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.IosPolicyList" >
+    update ios_policy_list
+    <set >
+      <if test="iosDevicePolicyId != null" >
+        ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="nameListId != null" >
+        name_list_id = #{nameListId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新ios设备策略id与名单id的关联表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.IosPolicyList" >
+    update ios_policy_list
+    set ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      name_list_id = #{nameListId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 批量插入IOS设备策略外键与名单外键关联表  start-->
+  <insert id="insertBatchPolicyList" parameterType="java.util.List"  useGeneratedKeys="true">
+    insert into ios_policy_list  
+    (ios_device_policy_id,name_list_id,create_date,create_user,update_date,update_user) 
+    values 
+    <foreach collection="list" item="item" index="index" separator=","> 
+     (#{item.iosDevicePolicyId},#{item.nameListId},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser})  
+    </foreach>
+  </insert>
+  
+  <!-- 根据策略id删除关联的名单id start-->
+  <update id="updateByNamelistId" parameterType="java.lang.Integer" >
+    update ios_policy_list  
+    set delete_time = now() 
+    where ios_device_policy_id = #{id} 
+    and delete_time is null 
+  </update>
+  
+  <!-- 根据策略id获取关联的黑白名单 start-->
+  <select id="selectNameListByPolicyId" parameterType="java.lang.Integer" resultType="com.softtek.mdm.model.NetBehaviorBlackWhiteList">
+     select 
+       t1.id,
+       t1.blackwhite_name as blackWhiteName 
+     from 
+       netbehavior_whiteblacklist t1 
+     inner join ios_policy_list t2 on t2.name_list_id = t1.id and t2.delete_time is null 
+     where t1.delete_date is null 
+     and t2.ios_device_policy_id = #{id} 
+  </select>
+  <!-- 根据策略id获取关联的黑白名单 end-->
+</mapper>

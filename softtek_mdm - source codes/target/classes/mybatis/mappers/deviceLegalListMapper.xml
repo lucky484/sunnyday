@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceLegalListDao">
+	
+	<resultMap type="DeviceLegalList" id="DeviceLegalListMap">
+		<id property="id" column="id"/>
+		<result property="violate_time" column="violate_time"/>
+		<result property="status" column="status"/>
+		<result property="delete_time" column="delete_time"/>
+		<association property="deviceRule" javaType="DeviceRule">
+			<id property="id" column="device_rule_id"/>
+			<result property="next_check_time" column="next_check_time"/>
+			<result property="name" column="name"/>
+		</association>
+		<association property="deviceBasicInfo" javaType="DeviceBasicInfo">
+			<id property="id" column="device_id"/>
+			<result property="device_name" column="device_name"/>
+			<association property="user" javaType="User">
+				<id property="id" column="uid"/>
+				<result property="username" column="user_name"/>
+				<result property="realname" column="real_name"/>
+			</association>
+		</association>
+	</resultMap>
+	
+	<select id="findByRuleId" parameterType="java.lang.Integer" resultMap="DeviceLegalListMap">
+		SELECT id,device_id,device_rule_id,violate_time,status
+		FROM device_legal_list
+		WHERE device_rule_id=#{id}
+	</select>
+	
+	<select id="findList" resultMap="DeviceLegalListMap">
+		SELECT id,device_id,device_rule_id,violate_time,status
+		FROM device_legal_list
+		WHERE device_id=#{deviceId}
+		<if test="lastDate != null">
+			AND violate_time > DATE_FORMAT(#{lastDate},'%Y/%m/%d %H:%i:%s')
+		</if>
+		ORDER BY violate_time ASC
+	</select>
+	
+	<select id="findByRuleIdWithOutDelete" parameterType="java.lang.Integer" resultMap="DeviceLegalListMap">
+		SELECT id,device_id,device_rule_id,violate_time,status
+		FROM device_legal_list
+		WHERE device_rule_id=#{id}
+		AND delete_time is null
+	</select>
+	
+	<select id="findByRuleIdWithRuleIdAndDeviceIds" resultMap="DeviceLegalListMap">
+	SELECT id,device_id,device_rule_id,violate_time,status
+		FROM device_legal_list
+		WHERE device_rule_id=#{rid}
+		AND device_id in
+		<foreach item="item" index="index" collection="dids" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND delete_time is null
+	</select>
+	
+	<select id="findCountByRuleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_legal_list
+		WHERE device_rule_id=#{id}
+	</select>
+	
+	<select id="findCountByRuleIdWithOutDelete" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_legal_list
+		WHERE device_rule_id=#{id}
+		AND delete_time is null
+	</select>
+	
+	
+	
+	<select id="findWithMap" resultMap="DeviceLegalListMap">
+		SELECT device_legal_list.id,
+		users.id as uid,
+		users.real_name,
+		users.user_name,
+		device_name,
+		status,
+		violate_time,
+		device_id,
+		device_rule_id
+		FROM device_legal_list
+		LEFT JOIN device_basic_info
+		ON device_legal_list.device_id=device_basic_info.id
+		LEFT JOIN users
+		ON device_basic_info.user_id=users.id
+		WHERE device_rule_id=#{rid}
+		ORDER BY violate_time DESC
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findOneWithMap" resultMap="DeviceLegalListMap">
+		SELECT device_legal_list.id,
+		name,
+		users.id as uid,
+		users.real_name,
+		users.user_name,
+		device_name,
+		status,
+		violate_time,
+		device_id,
+		device_rule_id
+		FROM device_legal_list
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_list.device_rule_id
+		LEFT JOIN device_basic_info
+		ON device_legal_list.device_id=device_basic_info.id
+		LEFT JOIN users
+		ON device_basic_info.user_id=users.id
+		WHERE device_rule_id in
+		<foreach item="item" index="index" collection="rids" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND device_id=#{did}
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findOneCountWithMap" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM device_legal_list
+		LEFT JOIN device_rule
+		ON device_rule.id=device_legal_list.device_rule_id
+		LEFT JOIN device_basic_info
+		ON device_legal_list.device_id=device_basic_info.id
+		LEFT JOIN users
+		ON device_basic_info.user_id=users.id
+		WHERE device_rule_id in
+		<foreach item="item" index="index" collection="rids" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND device_id=#{did}
+	</select>
+	
+	<insert id="save" parameterType="DeviceLegalList">
+		INSERT INTO device_legal_list(id,device_id,device_rule_id,violate_time,status)
+		VALUES(#{id},#{deviceBasicInfo.id},#{deviceRule.id},NOW(),#{status})
+	</insert>
+	
+	<select id="findCompliantListWithDeviceId" resultMap="DeviceLegalListMap">
+		SELECT dll.id as id,device_rule_id,status,violate_time,next_check_time,name from device_legal_list dll LEFT JOIN device_rule dr ON dll.device_rule_id = dr.id
+		WHERE dll.device_id = #{did} ORDER BY violate_time DESC LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findCompliantCountByDeviceId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1) from device_legal_list dll LEFT JOIN device_rule dr ON dll.device_rule_id = dr.id
+		WHERE dll.device_id = #{did} 
+	</select>
+	
+	<update id="deleteRecordsByRuleIdAndDeviceId">
+		UPDATE device_legal_list
+		SET delete_time=NOW()
+		WHERE device_id = #{1}
+		AND device_rule_id=#{0}
+	</update>
+	
+	<select id="getDeviceLegalListById" resultMap="DeviceLegalListMap" parameterType="java.lang.Integer">
+		select id,device_id,device_rule_id,violate_time,status,delete_time from device_legal_list
+		where delete_time is null and device_id = #{id} limit 1
+	</select>
+	
+	
+</mapper>

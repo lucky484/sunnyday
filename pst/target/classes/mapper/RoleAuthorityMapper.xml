@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.RoleAuthorityDao">
+	<resultMap type="roleAuthority" id="roleAuthorityMap">
+		<id column="role_authority_id" property="roleAuthorityId" />
+		<result column="role_id" property="roleId" />
+		<result column="authority_id" property="authorityId" />
+		<association column="role_id" property="role"
+			select="com.softtek.pst.dao.RoleDao.getRoleById" />
+		<association column="authority_id" property="authority"
+			select="com.softtek.pst.dao.AuthorityDao.getAuthorityById" />
+	</resultMap>
+
+	<sql id="roleAuthoritySql">
+		select
+		role_authority_id,role_id,authority_id from
+		role_authority
+	</sql>
+
+	<select id="getAuthoritiesByRole" parameterType="long"
+		resultMap="roleAuthorityMap">
+		<include refid="roleAuthoritySql" />
+		where
+		role_id = #{roleId}
+	</select>
+	<select id="getRolesByAuthority" parameterType="long"
+		resultMap="roleAuthorityMap">
+		<include refid="roleAuthoritySql" />
+		where
+		authority_id = #{authorityId}
+	</select>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.TempCtrlDao">
+	
+	<resultMap type="com.hd.pfirs.model.TempCtrl" id="TempCtrlMap">
+		<result column="tempCompID" property="tempCompID" />
+		<result column="idCardNo" property="idCardNo" />
+		<result column="name" property="name" />
+		<result column="sex" property="sex" />
+		<result column="pic" property="pic" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="createTime" property="createTime" />
+		<result column="createTimeStr" property="createTimeStr" />
+		<result column="CreateName" property="createName" />
+		<result column="status" property="status" />
+		<result column="statusStr" property="statusStr" />
+	</resultMap>
+	
+	<insert id="insertTempCtrl">
+	insert into T_PP_TEMPCOMPAREINF(
+		tempCompID,
+		idCardNo,
+		name,
+		sex,
+		pic,
+		RemarkDesc,
+		status,
+		CreateName,
+		createTime)
+ 		values(
+ 			#{tempCompID, jdbcType=BIGINT},
+	 		#{idCardNo, jdbcType=VARCHAR},
+			#{name, jdbcType=VARCHAR},
+			#{sex, jdbcType=VARCHAR},
+			#{pic, jdbcType=BLOB},
+			#{remarkDesc, jdbcType=VARCHAR},
+			'1',
+			'admin',
+	 		sysdate
+ 		)
+ 		</insert>
+	
+	<select id="queryTempCtrl" resultMap="TempCtrlMap">
+		select tempCompID,
+		idCardNo,
+		name,
+		decode(sex,'1','男','2','女','男') sex,
+		pic,
+		RemarkDesc,
+		decode(status,'1','未激活','2','激活成功','-1','激活失败','激活失败') statusStr,
+		status,
+		to_char(createTime,'yyyy-mm-dd HH24:mi:ss') createTimeStr,
+		CreateName,
+		createTime from (
+	select rownum rn ,c.* from (
+	select
+	tempCompID,
+		idCardNo,
+		name,
+		sex,
+		pic,
+		RemarkDesc,
+		status,
+		CreateName,
+		createTime
+	from T_PP_TEMPCOMPAREINF A where  a.name like '%'||#{name}||'%' 
+	<if test="sex != '' ">
+	and a.sex = #{sex}
+	</if> 
+  	and a.idCardNo like '%'||#{idCardNo}||'%' order
+	by a.createTime desc ) c  where rownum <![CDATA[<]]> #{fys}*#{page} +1) d where d.rn <![CDATA[>]]> #{fys}*(#{page}-1)		
+	</select>
+	
+	<select id="getCountTepCtrl" resultType="int">
+	select
+	count(1)
+	from T_PP_TEMPCOMPAREINF A where a.name like '%'||#{name}||'%'
+	<if test="sex != '' ">
+	and a.sex = #{sex}
+	</if>
+	and a.idCardNo like '%'||#{idCardNo}||'%' 		
+	</select>
+	
+	<update id="updateStatus">
+		update T_PP_TEMPCOMPAREINF set status = #{status} where tempCompID = #{tempCompID}
+	</update>
+	
+	<delete id="delTempCtrl">
+		delete from T_PP_TEMPCOMPAREINF where tempCompID = #{tempCompID}
+	</delete>
+	
+	<select id="getTempCompID" resultType="long">
+		select seq_t_pp_tempcompareinf.nextval from dual
+	</select>
+	
+</mapper>

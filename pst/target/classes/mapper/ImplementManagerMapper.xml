@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ImplementManagerDao">
+    <resultMap type="com.softtek.pst.model.ImplementManagerModel" id="ImplementManagerMap">
+		<id column="implement_manager_id" property="implementManagerId" />
+		<result column="name" property="name" />
+		<result column="email" property="email" />
+		<result column="phone" property="phone" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator_id" property="creatorId" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+	<sql id="implementManagerColumn">
+	    select implement_manager_id,name,phone,email,create_time,update_time,creator_id,update_by from implement_manager
+	</sql>
+	<select id="getImplementManagerLists" resultMap="ImplementManagerMap">
+	    <include refid="implementManagerColumn" />
+	    where delete_time is null
+		and (name LIKE #{sch}
+		or email LIKE #{sch}
+		or phone LIKE #{sch})
+	    order by ${col} ${dir}
+	  <if test="start != null">
+	    limit #{start},#{length}
+	  </if>
+	</select>
+	<select id="getImplementManagerCount" resultType="int" parameterType="String">
+	   select count(1) from implement_manager where delete_time is null and (name LIKE #{sch} or email LIKE #{sch} or phone LIKE #{sch})
+	</select>
+	
+	<insert id="addImplementManager" parameterType="ImplementManagerModel" keyProperty="implementManagerId" useGeneratedKeys="true">
+	    insert into implement_manager
+	    (
+	     name,
+	     email,
+	     phone,
+	     create_time,
+	     update_time,
+	     creator_id,
+	     update_by
+	    )values(
+	     #{name},
+	     #{email},
+	     #{phone},
+	     CURRENT_TIMESTAMP,
+	     CURRENT_TIMESTAMP,
+	     #{creatorId},
+	     #{updateBy}
+	    )
+	</insert>
+	<select id="queryDetailById" resultMap="ImplementManagerMap" parameterType="long">
+	     <include refid="implementManagerColumn" />
+	      where implement_manager_id = #{id}
+	</select>
+	<update id="updateImplementManager" parameterType="ImplementManagerModel">
+	    update implement_manager set name = #{name},email = #{email},phone = #{phone},update_time = CURRENT_TIMESTAMP,update_by = #{updateBy} where implement_manager_id = #{implementManagerId}
+	</update>
+	<update id="deleteImplementManager" parameterType="long">
+	    update implement_manager set delete_time = CURRENT_TIMESTAMP,update_by = #{updateBy} where implement_manager_id = #{implementManagerId}
+	</update>
+	<select id="queryAllImplementManager" resultMap="ImplementManagerMap">
+	    select implement_manager_id,name from implement_manager where delete_time is null order by create_time desc
+	</select>
+</mapper>

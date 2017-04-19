@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.CollectCountLocalDao">	
+	<resultMap type="com.hd.pfirs.model.CollectCountModel" id="CollectCountMap">
+		<result column="cardCode" property="cardCode" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="CollectTimeStr" property="collectTimeStr" />
+		<result column="Collectsite" property="collectsite" />
+		<result column="IdCardPic" property="idCardPic" />
+		<result column="IdCardName" property="idCardName" />
+		<result column="IdCardNo" property="idCardNo" />
+		<result column="IdCardSex" property="idCardSex" />
+		<result column="CardUnit" property="cardUnit" />
+		<result column="CardIssueDate" property="cardIssueDate" />
+		<result column="CardExpiryDate" property="cardExpiryDate" />
+		<result column="CollectCount" property="collectCount" />
+		<result column="StartDate" property="startDate" />
+		<result column="EndDate" property="endDate" />
+		<result column="IdCardNation" property="idCardNation" />
+		<result column="IdCardBirth" property="idCardBirth" />
+		<result column="IdCardAddress" property="idCardAddress" />
+		<result column="CompareBaseID" property="compareBaseID" />
+		<result column="CtrlBaseID" property="ctrlBaseID" />
+	</resultMap>
+	
+	
+	<select id="getCollectCountModelCount" resultType="int">
+	select count(1) count from (
+	select
+	collectsite,idCardName,idCardNo,idCardSex,count(1)
+	collectCount
+	from t_pp_idcardinfo
+	where 
+	<if test="startDate != '' ">
+	collecttime <![CDATA[>]]> to_date(#{startDate},'yyyy/mm/dd') and 
+	</if>
+	<if test="endDate != '' ">
+	collecttime <![CDATA[<]]> to_date(#{endDate},'yyyy/mm/dd') + 1 and 
+	</if>
+	collectsite like '%'||#{collectSite}||'%' 
+	group by
+	idCardNo,collectsite,idCardName,idCardSex
+	order by idCardNo ) a 
+	</select>
+	
+	<select id="getCollectCountModellList"  resultMap="CollectCountMap">
+	select #{startDate} StartDate,
+	#{endDate} EndDate,
+	collectsite,idCardName,idCardNo,idCardSex,
+	collectCount,CompareBaseID,(select c.idcardpic from t_pp_idcardinfo c where
+	c.idCardNo = t.idCardNo and rownum=1) IdCardPic from (
+	select * from (
+	select a.*,rownum rn from (
+	select
+	x.collectsite,x.idCardName,x.idCardNo,x.idCardSex,count(1)
+	collectCount,CompareBaseID
+	from t_pp_idcardinfo x,t_pp_idcardcompresult y
+	where x.CARDID = y.CARDCOMPRLTID
+  	and <if test="startDate != '' ">
+	collecttime <![CDATA[>]]> to_date(#{startDate},'yyyy/mm/dd') and 
+	</if>
+	<if test="endDate != '' ">
+	collecttime <![CDATA[<]]> to_date(#{endDate},'yyyy/mm/dd') + 1 and 
+	</if>
+    collectsite like '%'||#{collectSite}||'%' 
+	group by
+	 x.idCardNo,x.collectsite,x.idCardName,x.idCardSex,y.CompareBaseID
+	order by collectCount desc) a where rownum <![CDATA[<]]>
+	#{fys}*#{page}+1) b where b.rn <![CDATA[>]]>
+	#{fys}*(#{page}-1) ) t
+	</select>
+	
+	<select id="getCollectCountModelCountByidCardNo" resultType="int">
+	select count(1) count from (
+	select
+	collectsite,idCardName,idCardNo,idCardSex,count(1)
+	collectCount
+	from t_pp_idcardinfo
+	where 
+	<if test="startDate != '' ">
+	collecttime <![CDATA[>]]> to_date(#{startDate},'yyyy/mm/dd') and 
+	</if>
+	<if test="endDate != '' ">
+	collecttime <![CDATA[<]]> to_date(#{endDate},'yyyy/mm/dd') + 1 and 
+	</if>
+	idCardNo like '%'||#{idCardNo}||'%'
+	and collectsite like '%'||#{collectSite}||'%' 
+	group by
+	idCardNo,collectsite,idCardName,idCardSex
+	order by idCardNo ) a 
+	</select>
+	
+	<select id="getCollectCountModelListByidCardNo"  resultMap="CollectCountMap">
+	
+	select #{startDate} StartDate,
+	#{endDate} EndDate,
+	collectsite,idCardName,idCardNo,idCardSex,
+	collectCount,CompareBaseID,(select c.idcardpic from t_pp_idcardinfo c where
+	c.idCardNo = t.idCardNo and rownum=1) IdCardPic from (
+	select * from (
+	select a.*,rownum rn from (
+	select
+	x.collectsite,x.idCardName,x.idCardNo,x.idCardSex,count(1)
+	collectCount,CompareBaseID
+	from t_pp_idcardinfo x,t_pp_idcardcompresult y
+	where x.CARDID = y.CARDCOMPRLTID
+  	and x.idCardNo like '%'||#{idCardNo}||'%' and
+  	<if test="startDate != '' ">
+	collecttime <![CDATA[>]]> to_date(#{startDate},'yyyy/mm/dd') and 
+	</if>
+	<if test="endDate != '' ">
+	collecttime <![CDATA[<]]> to_date(#{endDate},'yyyy/mm/dd') + 1 and 
+	</if>
+   collectsite like '%'||#{collectSite}||'%' 
+	group by
+	 x.idCardNo,x.collectsite,x.idCardName,x.idCardSex,y.CompareBaseID
+	order by collectCount desc ) a where rownum <![CDATA[<]]>
+	#{fys}*#{page}+1) b where b.rn <![CDATA[>]]>
+	#{fys}*(#{page}-1) ) t
+	
+	</select>
+	
+	<!-- 详情信息 -->
+	<select id="getCollectCountModelListByidCardNoDetails"  resultMap="CollectCountMap">
+		select cardCode,collecttime,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss') collectTimeStr, 
+		collectsite,idCardName,idCardNo,idCardSex,cardUnit,to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd') cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd') CardExpiryDate,idcardpic IdCardPic
+		from t_pp_idcardinfo a
+		where 
+		exists  (select 1 from t_pp_idcardcompresult b where a.cardcode =b.cardcode 
+		<if test="compareBaseID != '' and compareBaseID!= 'null' ">
+		and b.compareBaseID = #{compareBaseID} 
+		</if>) and
+		<if test="startDate != '' ">
+		collecttime <![CDATA[>]]> to_date(#{startDate},'yyyy/mm/dd') and 
+		</if>
+		<if test="endDate != '' ">
+		collecttime <![CDATA[<]]> to_date(#{endDate},'yyyy/mm/dd') + 1 and 
+		</if> 
+		idCardNo = #{idCardNo} 
+		and collectsite = #{collectSite} order by collecttime desc
+	</select>
+	
+	<!-- 综合查询 -->
+	<select id="getCollectCountModel"  resultMap="CollectCountMap">
+	select cardCode,collecttime,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss')
+	collectTimeStr,IdCardNation,IdCardBirth,IdCardAddress,
+	collectsite,idCardName,idCardNo,idCardSex,cardUnit,to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	CardExpiryDate,idcardpic IdCardPic from t_pp_idcardinfo
+	where to_char(collecttime,'yyyy-mm-dd HH24:mi:ss') = #{collectTime}
+	and idCardNo = #{idCardNo}
+	and collectsite = #{collectSite} and rownum=1
+	</select>
+	
+	<!-- 根据身份证号码得到身份信息 -->
+	<select id="getCollectCountModelByIdCardNo"  resultMap="CollectCountMap">
+	select cardCode,idCardName,idCardNo,idCardSex,cardUnit,to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	CardExpiryDate,idcardpic IdCardPic from t_pp_idcardinfo
+	where idCardNo = #{idCardNo}
+ 	and rownum=1
+	</select>
+	
+	<!--根据cardcode获得身份信息-->
+	<select id="getCollectCountModelByCardCode"  resultMap="CollectCountMap">
+	select cardCode,collecttime,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss')
+	collectTimeStr,IdCardNation,IdCardBirth,IdCardAddress,
+	collectsite,idCardName,idCardNo,idCardSex,cardUnit,to_char(to_date(cardIssueDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	cardIssueDate,to_char(to_date(CardExpiryDate,'yyyy/mm/dd'),'yyyy/mm/dd')
+	CardExpiryDate,idcardpic IdCardPic from t_pp_idcardinfo
+	where cardCode = #{cardCode}
+	and  rownum=1
+	</select>
+	
+</mapper>

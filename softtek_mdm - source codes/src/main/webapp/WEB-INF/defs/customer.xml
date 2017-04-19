@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<!-- 普通用户成功登录时显示的页面 -->	
+	<definition name="customer/index/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/index/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/index/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/index/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/index/index_script.jsp" />
+	</definition>
+	<!-- 应用清单显示页面 -->
+	<definition name="customer/appList/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/appList/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/appList/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/appList/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/appList/index_script.jsp" />
+	</definition>
+	<!-- 设备位置显示页面 -->
+	<definition name="customer/position/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/position/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/position/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/position/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/position/index_script.jsp" />
+	</definition>
+	<!-- 合规性显示页面 -->
+	<definition name="customer/compliant/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/compliant/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/compliant/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/compliant/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/compliant/index_script.jsp" />
+	</definition>
+	<!-- 配置文件显示页面 -->
+	<definition name="customer/config/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/config/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/config/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/config/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/config/index_script.jsp" />
+	</definition>
+	<!-- 显示个人信息页面 -->
+	<definition name="customer/personal/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/personal/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/personal/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/personal/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/personal/index_script.jsp" />
+	</definition>
+	<!-- 显示密码变更页面 -->
+	<definition name="customer/password/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/password/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/password/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/password/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/password/index_script.jsp" />
+	</definition>
+	<!-- 设备日志页面 -->
+	<definition name="customer/device/index" extends="customer_layout">
+		<put-attribute name="title" value="consumer.index.title"/>
+		<put-attribute name="content" value="/WEB-INF/tiles/views/customer/device/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/customer/device/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/customer/device/index_style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/customer/device/index_script.jsp" />
+	</definition>
+</tiles-definitions>

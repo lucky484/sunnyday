@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.CustomerDao">
+	<resultMap type="com.softtek.pst.model.CustomerModel" id="CustomerModelMap">
+		<id column="customer_id" property="customerId" />
+		<result column="company_name" property="companyName" />
+		<result column="customer_title" property="customerTitle" />
+		<result column="customer_name" property="customerName" />
+		<result column="customer_name_short" property="customerNameShort" />
+		<result column="customer_phone" property="customerPhone" />
+		<result column="company_address" property="companyAddress" />
+		<result column="company_phone" property="companyPhone" />
+		<result column="bank" property="bank" />
+		<result column="payment_account" property="paymentAccount" />
+		<result column="company_id_number" property="companyIdNumber" />
+		<result column="add_time" property="addTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="creator_id" property="creatorId" />
+		<result column="update_by" property="updateBy" />
+	</resultMap>
+
+	<sql id="CustomerModelColumns">
+		select
+		customer_id,company_name,customer_title,customer_name,customer_name_short,
+		customer_phone,company_address,company_phone,
+		bank,payment_account,company_id_number,add_time,update_time,creator_id,update_by
+		from
+		customer
+	</sql>
+
+	<select id="getCustomerById" parameterType="long" resultMap="CustomerModelMap">
+		<include refid="CustomerModelColumns" />
+		where customer_id=#{customerId} and delete_time is null
+	</select>
+
+	<update id="deleteCustomer" parameterType="long">
+		update customer set delete_time = CURRENT_TIMESTAMP
+ 		where customer_id=#{customerId}
+	</update>
+
+	<update id="editCustomer" parameterType="CustomerModel">
+		update customer set
+		company_name = (#{companyName}),
+		customer_title = (#{customerTitle}),
+		customer_name = (#{customerName}),
+		customer_name_short = (#{customerNameShort}),
+		customer_phone = (#{customerPhone}),
+		company_address = (#{companyAddress}),
+		company_phone = (#{companyPhone}),
+		bank = (#{bank}),
+		payment_account = (#{paymentAccount}),
+		company_id_number = (#{companyIdNumber}),
+		update_time = CURRENT_TIMESTAMP,
+		update_by = #{updateBy}
+		where customer_id = #{customerId}
+	</update>
+
+	<insert id="addCustomer" parameterType="CustomerModel"
+		keyProperty="customerId" useGeneratedKeys="true">
+		insert into customer
+		(company_name,customer_title,customer_name,customer_name_short,
+		customer_phone,company_address,company_phone,
+		bank,payment_account,company_id_number,add_time,creator_id,update_by)
+		values
+		(#{companyName},#{customerTitle},#{customerName},#{customerNameShort},
+		#{customerPhone},#{companyAddress},#{companyPhone},
+		#{bank},#{paymentAccount},#{companyIdNumber},CURRENT_TIMESTAMP,#{creatorId},#{updateBy})
+	</insert>
+
+	<select id="getCustomer" resultMap="CustomerModelMap">
+		<include refid="CustomerModelColumns" />
+		where delete_time is null
+		<if test="search != null and search != ''">
+			and company_name LIKE #{search} or customer_title LIKE
+			#{search} or customer_name LIKE #{search} or customer_phone LIKE #{search} 
+		</if>
+		order by
+		${col} ${dir}
+		<if test="start != null">
+			limit #{start},#{length}
+		</if>
+	</select>
+
+	<select id="getCustomerNum" resultType="int">
+		select count(1) from customer where delete_time is null 
+		<if test="search != null and search != ''">
+			and company_name LIKE #{search} or customer_title
+			LIKE
+			#{search}
+			or customer_name LIKE #{search} or customer_phone LIKE #{search} 
+		</if>
+	</select>
+	
+	<select id="getAllCustomer" resultMap="CustomerModelMap">
+		<include refid="CustomerModelColumns" />
+		where delete_time is null
+	</select>
+</mapper>

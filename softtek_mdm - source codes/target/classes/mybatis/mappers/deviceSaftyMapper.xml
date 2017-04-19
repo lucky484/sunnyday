@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceSaftyDao">
+	
+	<insert id="save" parameterType="DeviceSafty">
+		INSERT INTO device_safty(device_id,root,mdm,pass,data_safe,violate,voice_roam,data_roam)
+		VALUES(#{device_id},#{root},#{mdm},#{pass},#{data_safe},#{violate},#{voice_roam},#{data_roam})
+	</insert>
+	
+	<delete id="truncateWithDeviceId" parameterType="java.lang.Integer">
+		DELETE FROM device_safty
+		WHERE device_id=#{did}
+	</delete>
+	
+	<select id="findOneWithDeviceId" parameterType="java.lang.Integer" resultType="DeviceSafty">
+		SELECT id,device_id,root,mdm,pass,data_safe,violate,voice_roam,data_roam
+		FROM device_safty
+		WHERE device_id=#{did}
+		LIMIT 1
+	</select>
+	
+	<update id="update" parameterType="DeviceSafty">
+		UPDATE device_safty
+		SET 
+		<if test="violate!=null">
+			violate=#{violate},
+		</if>
+		<if test="device_id!=null">
+			device_id=#{device_id},
+		</if>
+		<if test="root!=null">
+			root=#{root},
+		</if>
+		<if test="mdm!=null">
+			mdm=#{mdm},
+		</if>
+		<if test="pass!=null">
+			pass=#{pass},
+		</if>
+		<if test="data_safe!=null">
+			data_safe=#{data_safe},
+		</if>
+		<if test="data_roam!=null">
+			data_roam=#{data_roam},
+		</if>
+		id=#{id}
+		WHERE id=#{id}
+	</update>
+	
+    <update id="updateSaftyByDeviceId" parameterType="DeviceSafty">
+         	UPDATE device_safty
+		SET 
+		<if test="violate!=null">
+			violate=#{violate},
+		</if>
+		<if test="root!=null">
+			root=#{root},
+		</if>
+		<if test="mdm!=null">
+			mdm=#{mdm},
+		</if>
+		<if test="pass!=null">
+			pass=#{pass},
+		</if>
+		<if test="data_safe!=null">
+			data_safe=#{data_safe},
+		</if>
+		<if test="voice_roam">
+			voice_roam=#{voice_roam},
+		</if>
+		<if test="data_roam!=null">
+			data_roam=#{data_roam},
+		</if>
+		device_id = #{device_id}
+		WHERE device_id=#{device_id}
+    </update>
+    <update id="updateAll" parameterType="DeviceSafty">
+        UPDATE device_safty set  mdm = #{mdm}
+    </update>
+</mapper>

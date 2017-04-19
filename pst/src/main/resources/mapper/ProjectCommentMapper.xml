@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.pst.dao.ProjectCommentDao">
+	<resultMap type="ProjectComment" id="projectcommentResultMap">
+		<id column="projectcom_id" property="projectcomId" />
+		<result column="project_id" property="projectId" />
+		<result column="critic" property="critic" />
+		<result column="comment" property="comment" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+	</resultMap>
+
+	<insert id="addProjectComment" parameterType="ProjectComment" keyProperty="projectcomId"
+		useGeneratedKeys="true">
+		insert into project_comment
+		(project_id,critic,comment,create_time)
+		values(#{projectId},#{critic},#{comment},CURRENT_TIMESTAMP)
+	</insert>
+	
+	<select id="getProjectCommentByProjectId" parameterType="long" resultMap="projectcommentResultMap">
+		select
+		critic,comment,create_time,update_time
+		from project_comment
+		where project_id=#{projectId}
+		order by create_time desc
+	</select>
+	
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.JobModelDao">
+	<resultMap type="com.hd.pfirs.model.JobModel" id="JobModelMap">
+		<result column="flag" property="flag" />
+		<result column="tabId" property="tabId" />
+		<result column="photo" property="photo" />
+		<result column="code" property="code" />
+		<result column="deviceCode" property="deviceCode" />
+		<result column="groupCode" property="groupCode" />
+		<result column="collectTimeStamp" property="collectTimeStamp" />
+		<result column="isLast" property="isLast" />
+		<result column="picType" property="picType" />
+		<result column="direction" property="direction" />
+	</resultMap>
+
+	<select id="getJobModel" resultMap="JobModelMap">
+	<!-- select flag,tabId, photo,code,DeviceCode,collectTimeStamp,groupCode,isLast,picType,direction from
+	(select '1' as flag,FaceId as tabId,CollectPic photo,FaceCode
+	code,DeviceCode DeviceCode,groupCode groupCode,collecttimestamp collectTimeStamp,islast
+	islast,picType picType,direction direction  from t_pp_faceinfo where relayflag='0'
+	union all
+	select '2' as flag,CardID as tabId,IDCardPic photo,CardCode code,DeviceCode
+	DeviceCode,'' groupCode,collecttimestamp collectTimeStamp,'' islast,'' picType,'' direction from
+	t_pp_idcardinfo where relayflag='0'
+	order by collecttimestamp ) where rownum=1 -->
+	select flag,tabId, photo,code,DeviceCode,collectTimeStamp,groupCode,isLast,picType,direction from (
+  select * from (
+  select '1' rn,flag,tabId, photo,code,DeviceCode,collectTimeStamp,groupCode,isLast,picType,direction from
+	( select * from (select '1' as flag,FaceId as tabId,CollectPic photo,FaceCode
+	code,DeviceCode DeviceCode,groupCode groupCode,collecttimestamp collectTimeStamp,islast
+	islast,picType picType,direction direction  from t_pp_faceinfo where relayflag='0' and direction <![CDATA[<>]]>'0' and pictype = '0'
+	union all
+	select '2' as flag,CardID as tabId,IDCardPic photo,CardCode code,DeviceCode
+	DeviceCode,'' groupCode,collecttimestamp collectTimeStamp,'' islast,'' picType,'' direction from
+	t_pp_idcardinfo where relayflag='0' )
+	order by collecttimestamp ) where rownum=1
+  union all
+   select '2' rn, flag,tabId, photo,code,DeviceCode,collectTimeStamp,groupCode,isLast,picType,direction from
+	( select * from (select '1' as flag,FaceId as tabId,CollectPic photo,FaceCode
+	code,DeviceCode DeviceCode,groupCode groupCode,collecttimestamp collectTimeStamp,islast
+	islast,picType picType,direction direction  from t_pp_faceinfo where relayflag='9' and direction<![CDATA[<>]]>'0' and pictype = '0'
+	union all
+	select '2' as flag,CardID as tabId,IDCardPic photo,CardCode code,DeviceCode
+	DeviceCode,'' groupCode,collecttimestamp collectTimeStamp,'' islast,'' picType,'' direction from
+	t_pp_idcardinfo where relayflag='9' )
+	order by collecttimestamp ) where rownum=1) order by rn ) where rownum=1
+	</select>
+	
+	
+</mapper>

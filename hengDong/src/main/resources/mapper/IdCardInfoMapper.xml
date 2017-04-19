@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.IdCardInfoDao">
+	<resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="IdCardInfoResultMap">
+		<id column="CardID" property="cardId" />
+		<result column="CardCode" property="cardCode" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="CollectTimeStamp" property="collectTimeStamp" />
+		<result column="FrontSaveTime" property="frontSaveTime" />
+		<result column="FrontSaveTimeStamp" property="frontSaveTimeStamp" />
+		<result column="FrontRelayTime" property="frontRelayTime" />
+		<result column="FrontRelayTimeStamp" property="frontRelayTimeStamp" />
+		<result column="TogthSaveTime" property="togthSaveTime" />
+		<result column="TogthSaveTimeStamp" property="togthSaveTimeStamp" />
+		<result column="RelayTime" property="relayTime" />
+		<result column="RelayTimeStamp" property="relayTimeStamp" />
+		<result column="RelayFlag" property="relayFlag" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="RegionCode" property="regionCode" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="IDCardPic" property="idCardPic" />
+		<result column="IDCardName" property="idCardName" />
+		<result column="IDCardNo" property="idCardNo" />
+		<result column="IDCardSex" property="idCardSex" />
+		<result column="IDCardNation" property="idCardNation" />
+		<result column="IDCardBirth" property="idCardBirth" />
+		<result column="IDCardAddress" property="idCardAddress" />
+		<result column="CardUnit" property="cardUnit" />
+		<result column="CardIssueDate" property="cardIssueDate" />
+		<result column="CardExpiryDate" property="cardExpiryDate" />
+		<result column="CardID16" property="cardID16" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />
+		<result column="UpdateTime" property="updateTime" />
+	</resultMap>
+	<resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="sendCardInfoResultMap">
+		<id column="CardID" property="cardId" />
+		<result column="IDCardPic" property="idCardPic" />
+		<result column="CardCode" property="cardCode" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="CollectTime" property="collectTime" />
+	</resultMap>
+	
+	<!-- <resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="getInquiryIdCardInfoMap">
+		<result column="IDCardPic" property="idCardPic" />
+		<result column="IDCardSex" property="idCardSex" />
+		<result column="IDCardNo" property="idCardNo" />
+		<result column="IDCardName" property="idCardName" />
+		<result column="CollectTime" property="collectTime" />
+	</resultMap> -->
+
+	<resultMap type="com.hd.pfirs.model.IdCardInfoStrModel" id="idCardInfoByCollectTimeMap">
+		<id column="cardId" property="cardId" />
+		<result column="idCardPic" property="idCardPic" />
+		<result column="idCardName" property="idCardName" />
+		<result column="idCardNo" property="idCardNo" />
+		<result column="idCardSex" property="idCardSex" />
+		<result column="idCardNation" property="idCardNation" />
+		<result column="idCardBirth" property="idCardBirth" />
+		<result column="idCardAddress" property="idCardAddress" />
+		<result column="cardUnit" property="cardUnit" />
+		<result column="collectTime" property="collectTime" />
+		<result column="cardID16" property="cardID16" />
+	</resultMap>
+
+	<resultMap type="com.hd.pfirs.model.IdCardCompWarn" id="idCardInfoCompResultMap">
+		<result column="CARDCOMPRLTID" property="cardComprltid" />
+	    <result column="cardCode" property="cardCode" />
+		<result column="collectIdCardNo" property="collectIdCardNo" />
+		<result column="compareBaseId" property="compareBaseId" />
+		<result column="photo" property="photo" />
+		<result column="collectPic" property="collectPic" />
+		<result column="collectTime" property="collectTime" />
+		<result column="similarity" property="similarity" />
+		<result column="xm" property="xm" />
+		<result column="xb" property="xb" />
+		<result column="ysfzh" property="ysfzh" />
+		<result column="context" property="context" />
+		<result column="bbkrxm" property="bbkrxm" />
+		<result column="bbkrxb" property="bbkrxb" />
+		<result column="bbkrzjhm" property="bbkrzjhm" />
+		<result column="lkzllx" property="lkzllx" />
+		<result column="T_QB_RY_CKRYJBXXxm" property="T_QB_RY_CKRYJBXXxm" />
+		<result column="T_QB_RY_CKRYJBXXxb" property="T_QB_RY_CKRYJBXXxb" />
+		<result column="T_QB_RY_CKRYJBXXsfzh" property="T_QB_RY_CKRYJBXXsfzh" />
+		<result column="zdrylbbj" property="zdrylbbj" />
+		<result column="IdCardNo" property="idCardNo" />
+		<result column="ajlx" property="ajlx" />
+		<result column="tableName" property="tableName" />
+		<result column="idCollectTimeStr" property="idCollectTimeStr" />
+		<result column="idcardpic" property="idcardpic" />
+		<result column="receiveTimeStr" property="receiveTimeStr" />
+		<result column="devicecode" property="deviceCode" />
+	</resultMap>
+	
+	<insert id="saveIdCardInfo">
+		insert into
+		T_PP_IDCARDINFO
+		(CardID,CardCode,CollectTimeStamp,FrontSaveTime,FrontSaveTimeStamp,FrontRelayTime,FrontRelayTimeStamp,
+		TogthSaveTime,TogthSaveTimeStamp,RelayTime,RelayTimeStamp,RelayFlag,DeviceCode,RegionCode,CollectSite,
+		CollectTime,IDCardPic,IDCardName,IDCardNo,IDCardSex,IDCardNation,IDCardBirth,IDCardAddress,CardUnit,
+		CardIssueDate,CardExpiryDate,CardID16,DeleteStatus,CreateName,CreateTime,UpdateName,UpdateTime)
+		values(
+		#{cardId, jdbcType=BIGINT},
+		#{cardCode, jdbcType=VARCHAR},
+		#{collectTimeStamp, jdbcType=VARCHAR},
+		#{frontSaveTime, jdbcType=DATE},
+		#{frontSaveTimeStamp, jdbcType=VARCHAR},
+		#{frontRelayTime,
+		jdbcType=DATE},
+		#{frontRelayTimeStamp, jdbcType=VARCHAR},
+		#{togthSaveTime, jdbcType=DATE},
+		#{togthSaveTimeStamp,
+		jdbcType=VARCHAR},
+		#{relayTime, jdbcType=DATE},
+		#{relayTimeStamp,
+		jdbcType=VARCHAR},
+		'0',
+		#{deviceCode,
+		jdbcType=VARCHAR},
+		#{regionCode, jdbcType=VARCHAR},
+		#{collectSite,
+		jdbcType=VARCHAR},
+		#{collectTime, jdbcType=DATE},
+		#{idCardPic,
+		jdbcType=BLOB},
+		#{idCardName, jdbcType=VARCHAR},
+		#{idCardNo,
+		jdbcType=VARCHAR},
+		#{idCardSex, jdbcType=VARCHAR},
+		#{idCardNation,
+		jdbcType=VARCHAR},
+		#{idCardBirth, jdbcType=VARCHAR},
+		#{idCardAddress,
+		jdbcType=VARCHAR},
+		#{cardUnit, jdbcType=VARCHAR},
+		#{cardIssueDate,
+		jdbcType=VARCHAR},
+		#{cardExpiryDate, jdbcType=VARCHAR},
+		#{cardID16,
+		jdbcType=VARCHAR},
+		#{deleteStatus, jdbcType=VARCHAR},
+		'system',
+		sysdate,
+		'system',
+		sysdate
+		)
+	</insert>
+
+	<select id="getIdCardInfoModel" resultMap="sendCardInfoResultMap">
+		select
+		CardID,IDCardPic,CardCode,DeviceCode,CollectTimeStamp from (select
+		CardID,IDCardPic,CardCode,DeviceCode,CollectTimeStamp from
+		t_pp_idcardinfo
+		where RelayFlag='0' order by CreateTime) b where
+		rownum=1
+	</select>
+
+	<select id="getIdCardInfoByCollectTimeList" resultMap="idCardInfoByCollectTimeMap">
+		select cardId,idCardPic,idCardName,idCardNo,idCardSex,idCardNation,
+		idCardBirth,idCardAddress,cardUnit,collectTime,cardID16 from ( select *
+		from
+		T_PP_IDCARDINFO where deviceCode = trim(#{deviceCode}) order by collectTimeStamp desc) where rownum <![CDATA[<]]>
+		5
+	</select>
+
+	<update id="updateIdCardInfo">
+		update t_pp_idcardinfo
+		set RelayFlag = #{relayFlag}
+		<if test="relayTime!=null">
+		 	,RelayTime = sysdate
+		</if>
+		<if test="updateTime!=null">
+		 	,UpdateTime = sysdate
+		</if>
+		where CardID = #{cardId}
+	</update>
+
+	<select id="getIdCardInfoCompResult" resultMap="idCardInfoCompResultMap">
+	select * from (select * from (select * from (
+    select 
+    cardCompResult.CARDCOMPRLTID,
+    cardCompResult.cardCode,
+    cardCompResult.collectIdCardNo,
+    cardCompResult.compareBaseId,
+     to_char(idcardinfo.collecttime,'yyyy-mm-dd HH24:mi:ss') idCollectTimeStr,
+    '' photo,
+    idcardinfo.idcardpic idcardpic,
+    a.collectPic,
+    a.collectTime,
+    a.similarity,
+    T_QB_RY_ZTRYJBXX.xm XM,
+    decode(T_QB_RY_ZTRYJBXX.xb,'1','男','2','女','男') Xb,
+    T_QB_RY_ZTRYJBXX.ysfzh IdCardNo,
+    ajlx.context Ajlx,
+    'T_QB_RY_ZTRYJBXX' tableName,
+    cardCompResult.receiveTimeStamp
+		from
+		t_pp_idcardcompresult cardCompResult left join 
+    (select  faceAndCardResult.cardcode,faceinfo.collectpic,faceinfo.collecttime,faceandcardresult.similarity from t_pp_faceAndCardResult faceAndCardResult,t_pp_faceInfo faceInfo where faceandcardresult.facecode = faceinfo.facecode) a on a.cardcode = cardCompResult.cardCode,T_QB_RY_ZTRYJBXX@db_link T_QB_RY_ZTRYJBXX,ZaiTaoAJLX@db_link ajlx,t_pp_idcardInfo IdCardInfo
+		where cardCompResult.iscontrolled = '1'
+		and cardCompResult.comparebaseid = '1'
+		and cardCompResult.deviceCode= trim(#{deviceCode})
+    and cardCompResult.ctrlBaseID = T_QB_RY_ZTRYJBXX.id
+    and T_QB_RY_ZTRYJBXX.ajlbdm = ajlx.code
+    and idcardinfo.cardcode = cardCompResult.cardcode
+    and to_char(cardCompResult.receiveTime,'yyyymmdd hh24:mi:ss') <![CDATA[>=]]> #{warningTime}
+		order by
+		cardCompResult.receiveTimeStamp asc)where rownum = 1
+    union all 
+    select * from (
+    select 
+     cardCompResult.CARDCOMPRLTID,
+    cardCompResult.cardCode,
+    cardCompResult.collectIdCardNo,
+    cardCompResult.compareBaseId,
+    to_char(idcardinfo.collecttime,'yyyy-mm-dd HH24:mi:ss') idCollectTimeStr,
+    '' photo,
+    idcardinfo.idcardpic idcardpic,
+    a.collectPic,
+    a.collectTime,
+    a.similarity,
+    T_QB_LK_LKBK.BBKRXM XM,
+    decode(T_QB_LK_LKBK.BBKRXB,'1','男','2','女','男') Xb,
+    T_QB_LK_LKBK.BBKRZJHM IdCardNo,
+    T_QB_LK_LKBK.LKZLJB Ajlx,
+    'T_QB_LK_LKBK' tableName,
+    cardCompResult.receiveTimeStamp
+		from
+		t_pp_idcardcompresult cardCompResult left join 
+    (select  faceAndCardResult.cardcode,faceinfo.collectpic,faceinfo.collecttime,faceandcardresult.similarity from t_pp_faceAndCardResult faceAndCardResult,t_pp_faceInfo faceInfo where faceandcardresult.facecode = faceinfo.facecode ) a on a.cardcode = cardCompResult.cardCode,T_QB_LK_LKBK@db_link T_QB_LK_LKBK,t_pp_idcardInfo IdCardInfo  
+		where cardCompResult.iscontrolled = '1'
+		and cardCompResult.comparebaseid = '0'
+		 and cardCompResult.deviceCode=trim(#{deviceCode})
+    and cardCompResult.ctrlBaseID = T_QB_LK_LKBK.id
+    and idcardinfo.cardcode = cardCompResult.cardcode
+    and to_char(cardCompResult.receiveTime,'yyyymmdd hh24:mi:ss') <![CDATA[>=]]> #{warningTime}
+		order by
+		cardCompResult.receiveTimeStamp asc)where rownum = 1
+    union all
+    select * from (
+    select 
+     cardCompResult.CARDCOMPRLTID,
+    cardCompResult.cardCode,
+    cardCompResult.collectIdCardNo,
+    cardCompResult.compareBaseId,
+    to_char(idcardinfo.collecttime,'yyyy-mm-dd HH24:mi:ss') idCollectTimeStr,
+    '' photo,
+    idcardinfo.idcardpic idcardpic,
+    a.collectPic,
+    a.collectTime,
+    a.similarity,
+    T_QB_RY_CKRYJBXX.xm XM,
+    decode(T_QB_RY_CKRYJBXX.xb,'1','男','2','女','男') Xb,
+    T_QB_RY_CKRYJBXX.sfzh IdCardNo,
+    T_QB_RY_CKRYJBXX.ZDRYLBBJ Ajlx,
+    'T_QB_RY_CKRYJBXX' tableName,
+    cardCompResult.receiveTimeStamp 
+		from
+		t_pp_idcardcompresult cardCompResult left join 
+    (select faceAndCardResult.cardcode,faceinfo.collectpic,faceinfo.collecttime,faceandcardresult.similarity from t_pp_faceAndCardResult faceAndCardResult,t_pp_faceInfo faceInfo where faceandcardresult.facecode = faceinfo.facecode ) a on a.cardcode = cardCompResult.cardCode,T_QB_RY_CKRYJBXX@db_link T_QB_RY_CKRYJBXX,t_pp_idcardInfo IdCardInfo
+		where cardCompResult.iscontrolled = '1'
+		and cardCompResult.comparebaseid = '2'
+		 and cardCompResult.deviceCode=trim(#{deviceCode})
+    and cardCompResult.ctrlBaseID = T_QB_RY_CKRYJBXX.id
+    and idcardinfo.cardcode = cardCompResult.cardcode
+    and to_char(cardCompResult.receiveTime,'yyyymmdd hh24:mi:ss') <![CDATA[>=]]> #{warningTime}
+		order by
+		cardCompResult.receiveTimeStamp asc)where rownum = 1) a order by  a.receiveTimeStamp asc )where rownum =1
+		
+	</select>
+	
+	<select id="getLastIdCardInfoCompResult" resultMap="idCardInfoCompResultMap">
+	 select * from (select * from (select * from (
+    select 
+    cardCompResult.cardCode,
+    cardCompResult.collectIdCardNo,
+    cardCompResult.compareBaseId,
+     to_char(idcardinfo.collecttime,'yyyy-mm-dd HH24:mi:ss') idCollectTimeStr,
+   '' photo,
+    idcardinfo.idcardpic idcardpic,
+    a.collectPic,
+    a.collectTime,
+    a.similarity,
+    T_QB_RY_ZTRYJBXX.xm XM,
+    decode(T_QB_RY_ZTRYJBXX.xb,'1','男','2','女','男') Xb,
+    T_QB_RY_ZTRYJBXX.ysfzh IdCardNo,
+    ajlx.context Ajlx,
+    'T_QB_RY_ZTRYJBXX' tableName,
+    cardCompResult.receiveTimeStamp
+		from
+		t_pp_idcardcompresult cardCompResult left join 
+    (select  faceAndCardResult.cardcode,faceinfo.collectpic,faceinfo.collecttime,faceandcardresult.similarity from t_pp_faceAndCardResult faceAndCardResult,t_pp_faceInfo faceInfo where faceandcardresult.facecode = faceinfo.facecode ) a on a.cardcode = cardCompResult.cardCode,T_QB_RY_ZTRYJBXX@db_link T_QB_RY_ZTRYJBXX,ZaiTaoAJLX@db_link ajlx,t_pp_idcardInfo IdCardInfo
+		where cardCompResult.iscontrolled = '1'
+		 and cardCompResult.deviceCode=trim(#{deviceCode})
+    and cardCompResult.ctrlBaseID = T_QB_RY_ZTRYJBXX.id
+    and T_QB_RY_ZTRYJBXX.ajlbdm = ajlx.code
+    and idcardinfo.cardcode = cardCompResult.cardcode
+   and cardCompResult.receiveTime <![CDATA[>=]]> to_date(to_char(sysdate,'yyyymmdd'),'yyyymmdd' )
+		order by
+		cardCompResult.receiveTimeStamp desc)where rownum = 1
+    union all 
+    select * from (
+    select 
+    cardCompResult.cardCode,
+    cardCompResult.collectIdCardNo,
+    cardCompResult.compareBaseId,
+    to_char(idcardinfo.collecttime,'yyyy-mm-dd HH24:mi:ss') idCollectTimeStr,
+    '' photo,
+    idcardinfo.idcardpic idcardpic,
+    a.collectPic,
+    a.collectTime,
+    a.similarity,
+    T_QB_LK_LKBK.BBKRXM XM,
+    decode(T_QB_LK_LKBK.BBKRXB,'1','男','2','女','男') Xb,
+    T_QB_LK_LKBK.BBKRZJHM IdCardNo,
+    T_QB_LK_LKBK.LKZLJB Ajlx,
+    'T_QB_LK_LKBK' tableName,
+    cardCompResult.receiveTimeStamp
+		from
+		t_pp_idcardcompresult cardCompResult left join 
+    (select  faceAndCardResult.cardcode,faceinfo.collectpic,faceinfo.collecttime,faceandcardresult.similarity from t_pp_faceAndCardResult faceAndCardResult,t_pp_faceInfo faceInfo where faceandcardresult.facecode = faceinfo.facecode ) a on a.cardcode = cardCompResult.cardCode,T_QB_LK_LKBK@db_link T_QB_LK_LKBK,t_pp_idcardInfo IdCardInfo  
+		where cardCompResult.iscontrolled = '1'
+		 and cardCompResult.deviceCode=trim(#{deviceCode})
+    and cardCompResult.ctrlBaseID = T_QB_LK_LKBK.id
+    and idcardinfo.cardcode = cardCompResult.cardcode
+    and cardCompResult.receiveTime <![CDATA[>=]]> to_date(to_char(sysdate,'yyyymmdd'),'yyyymmdd' )
+		order by
+		cardCompResult.receiveTimeStamp desc)where rownum = 1
+    union all
+    select * from (
+    select 
+    cardCompResult.cardCode,
+    cardCompResult.collectIdCardNo,
+    cardCompResult.compareBaseId,
+    to_char(idcardinfo.collecttime,'yyyy-mm-dd HH24:mi:ss') idCollectTimeStr,
+    '' photo,
+    idcardinfo.idcardpic idcardpic,
+    a.collectPic,
+    a.collectTime,
+    a.similarity,
+    T_QB_RY_CKRYJBXX.xm XM,
+    decode(T_QB_RY_CKRYJBXX.xb,'1','男','2','女','男') Xb,
+    T_QB_RY_CKRYJBXX.sfzh IdCardNo,
+    T_QB_RY_CKRYJBXX.ZDRYLBBJ Ajlx,
+    'T_QB_RY_CKRYJBXX' tableName,
+    cardCompResult.receiveTimeStamp
+		from
+		t_pp_idcardcompresult cardCompResult left join 
+    (select faceAndCardResult.cardcode,faceinfo.collectpic,faceinfo.collecttime,faceandcardresult.similarity from t_pp_faceAndCardResult faceAndCardResult,t_pp_faceInfo faceInfo where faceandcardresult.facecode = faceinfo.facecode) a on a.cardcode = cardCompResult.cardCode,T_QB_RY_CKRYJBXX@db_link T_QB_RY_CKRYJBXX,t_pp_idcardInfo IdCardInfo
+		where cardCompResult.iscontrolled = '1'
+		 and cardCompResult.deviceCode=trim(#{deviceCode})
+    and cardCompResult.ctrlBaseID = T_QB_RY_CKRYJBXX.id
+    and idcardinfo.cardcode = cardCompResult.cardcode
+    and cardCompResult.receiveTime <![CDATA[>=]]> to_date(to_char(sysdate,'yyyymmdd'),'yyyymmdd' )
+		order by
+		cardCompResult.receiveTimeStamp desc)where rownum = 1) a order by  a.receiveTimeStamp desc )where rownum =1
+		
+	</select>
+	
+	<select id = "getIdCardInfoCountByTime" parameterType="string" resultType="int">
+		select count(0) as idCardInfoNum 
+		from T_PP_IDCARDINFO 
+		where to_char(CreateTime, 'yyyy-mm-dd')=#{time}
+		and deviceCode=trim(#{deviceCode})
+	</select>
+	
+	<!-- sql-cliff-->
+	<select id = "queryIdCardWarnNum" resultType="int">
+		Select count(0)  idCardComWarnNum
+		From T_Pp_Idcardcompresult 
+		WHERE TO_CHAR(receivetime, 'yyyy-mm-dd') = TO_CHAR(sysdate, 'yyyy-mm-dd') and  iscontrolled = '1'
+		and deviceCode = trim(#{deviceCode})
+	</select>
+	
+	<update id="updateFlag">
+		update t_pp_idcardcompresult set flag='1' where cardComprltid = #{cardComprltid}
+	</update>
+	
+	
+	<select id="queryCardIdInfoByCard16" resultMap="IdCardInfoResultMap">
+		select * from t_pp_idcardrelation where CardID16 = #{cardID16}
+	</select>
+	<select id="indexIdcardWarningInfo" resultMap="idCardInfoCompResultMap">
+	 select to_char(receivetime,'yyyymmdd hh24:mi:ss') receiveTimeStr,devicecode ,collectidcardname,collectidcardno from (
+    select receivetime,devicecode ,collectidcardname,collectidcardno from t_pp_idcardcompresult 
+    where comparebaseid is not null 
+      and ReceiveTime<![CDATA[>=]]>to_date(#{warningTime},'yyyymmdd hh24:mi:ss') order by receivetime desc) where rownum <![CDATA[<=]]>5
+	</select>
+</mapper>

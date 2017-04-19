@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.FilterUrlDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.FilterUrl" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="is_allow" property="isAllow" jdbcType="CHAR" />
+    <result column="ios_device_policy_id" property="iosDevicePolicyId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="DATE" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="DATE" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, url, is_allow, ios_device_policy_id, create_date, create_user, update_date, update_user, 
+    delete_time
+  </sql>
+  
+  <!-- 根据主键查询表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from filter_url
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from filter_url
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.FilterUrl" >
+    insert into filter_url (id, url, is_allow, 
+      ios_device_policy_id, create_date, create_user, 
+      update_date, update_user, delete_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{isAllow,jdbcType=CHAR}, 
+      #{iosDevicePolicyId,jdbcType=INTEGER}, #{createDate,jdbcType=DATE}, #{createUser,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=DATE}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=CHAR}
+      )
+  </insert>
+  
+  <!-- 插入可选的字段表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.FilterUrl" >
+    insert into filter_url
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="isAllow != null" >
+        is_allow,
+      </if>
+      <if test="iosDevicePolicyId != null" >
+        ios_device_policy_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="isAllow != null" >
+        #{isAllow,jdbcType=CHAR},
+      </if>
+      <if test="iosDevicePolicyId != null" >
+        #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.FilterUrl" >
+    update filter_url
+    <set >
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="isAllow != null" >
+        is_allow = #{isAllow,jdbcType=CHAR},
+      </if>
+      <if test="iosDevicePolicyId != null" >
+        ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.FilterUrl" >
+    update filter_url
+    set url = #{url,jdbcType=VARCHAR},
+      is_allow = #{isAllow,jdbcType=CHAR},
+      ios_device_policy_id = #{iosDevicePolicyId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=DATE},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 批量插入FilterUrl配置 -->
+  <insert id="insertBatchFilterUrl" parameterType="java.util.List" useGeneratedKeys="true">
+     insert into filter_url (url,is_allow,ios_device_policy_id,create_date,create_user,update_date,update_user) 
+     values 
+     <foreach collection="list" item="item" index="index" separator=",">
+       (#{item.url},#{item.isAllow},#{item.iosDevicePolicyId},#{item.createDate},#{item.createUser},#{item.updateDate},#{item.updateUser}) 
+     </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.FaceInfoDao">	
+	<resultMap type="com.hd.pfirs.model.FaceInfo" id="webFaceInfoModelMap">
+		<id column="FaceId" property="faceId" />
+		<result column="FaceCode" property="faceCode" />
+		<result column="CollectTimeStamp" property="collectTimeStamp" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="GroupCode" property="groupCode" />
+		<result column="PicType" property="picType" />
+		<result column="PicNo" property="picNo" />
+		<result column="isLast" property="isLast" />
+		<result column="Speed" property="speed" />
+		<result column="Direction" property="direction" />
+		<result column="RelayFlag" property="relayFlag" />	
+		<result column="CollectPic" property="collectPic" />
+		<result column="CollectTime" property="collectTime" />
+	</resultMap>
+	
+	
+	<select id="getFaceInfoListWeb" resultMap="webFaceInfoModelMap">
+	select c.faceId FaceId,c.faceCode FaceCode,c.CollectTimeStamp
+	CollectTimeStamp,c.DeviceCode	DeviceCode,c.CollectSite CollectSite,c.GroupCode GroupCode,c.PicType
+	PicType,c.PicNo PicNo,c.isLast isLast,c.speed	Speed,c.direction	Direction,c.RelayFlag RelayFlag,c.CollectPic CollectPic,c.collecttime CollectTime from(
+select	a.*
+	from	t_pp_faceInfo a , (select groupCode from (select * from	t_pp_faceInfo where isLast = '1' and PicType='0' order by
+	CollectTimeStamp desc )	where rownum = 1) b where a.groupCode =	b.groupCode and a.pictype='1' and a.deviceCode=trim(#{deviceCode}) )  c where rownum = 1
+	union all
+	(select faceId FaceId,faceCode FaceCode,CollectTimeStamp
+	CollectTimeStamp,DeviceCode	DeviceCode,CollectSite CollectSite,GroupCode GroupCode,PicType
+	PicType,PicNo PicNo,isLast isLast,speed	Speed,direction	Direction,RelayFlag RelayFlag,CollectPic CollectPic,collecttime CollectTime
+	from (select * from	t_pp_faceInfo where deviceCode=trim(#{deviceCode}) and isLast = '1' and PicType='0' order by CollectTimestamp desc ) where rownum <![CDATA[<]]> 6)
+	<!-- select	a.faceId FaceId,a.faceCode	FaceCode,a.collecttimestamp	CollectTimeStamp,a.devicecode
+	DeviceCode,a.collectsite CollectSite,a.groupcode GroupCode,a.pictype PicType,a.picno
+	PicNo,a.islast isLast,a.speed Speed,a.direction	Direction,a.relayflag RelayFlag,a.collectpic CollectPic
+	from	t_pp_faceInfo a , (select groupCode from (select * from	t_pp_faceInfo where isLast = '1' and PicType='0' order by
+	union all
+	(select faceId FaceId,faceCode FaceCode,CollectTimeStamp
+	CollectTimeStamp,DeviceCode	DeviceCode,CollectSite CollectSite,GroupCode GroupCode,PicType
+	PicType,PicNo PicNo,isLast isLast,speed	Speed,direction	Direction,RelayFlag RelayFlag,CollectPic CollectPic
+	from (select * from	t_pp_faceInfo where isLast = '1' and PicType='0' order by CollectTimestamp desc ) where rownum <![CDATA[<]]> 6) -->
+		
+	</select>
+	
+</mapper>

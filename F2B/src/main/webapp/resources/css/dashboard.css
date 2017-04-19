@@ -1,0 +1,159 @@
+/*
+ * 基础结构
+ */
+
+/* 将内容模块下移，因为 fixed navbar 高度50px */
+body {
+    padding-top: 50px;
+}
+
+/*
+ * 附加属性
+ */
+
+.sub-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/*
+ * 边栏
+ */
+
+/* 移动设备隐藏 */
+.sidebar {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 51px;
+        bottom: 0;
+        left: 0;
+        width: 220px;
+        z-index: 1000;
+        display: block;
+        padding: 6px 1px 0;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        background-color: #393939;
+        border-right: 1px solid #565656;
+    }
+}
+
+.navbar-inverse {
+    background: #313131;
+}
+
+#accordion .panel {
+    margin-top: 0;
+    border-radius: 0;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+#accordion .panel:hover {
+    /*background: rgba(255, 255, 255, 0.05);*/
+}
+
+#accordion .panel+.panel {
+    border-top: none;
+}
+
+#accordion .panel>.panel-heading {
+    border-radius: 0;
+    color: #cccccc;
+    background: none;
+}
+
+#accordion .panel>.panel-heading:hover {
+    color: #D84C31;
+}
+
+#accordion .panel-title {
+    margin-left: 24px;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+#accordion .panel>.panel-collapse {
+    background: #282823;
+}
+
+#accordion .panel .panel-heading+.panel-collapse .panel-body {
+    border-top: 1px solid #565656;
+    padding: 0;
+}
+
+/*#accordion .panel-default{border-color:#bbb;}
+#accordion .panel-default>.panel-heading{color:#FFF; background-color:#428bca;}*/
+
+/* 边栏导航 */
+.nav-sidebar {
+    /*margin-right: -21px; *//* 20px padding + 1px border *//*
+    margin-bottom: 20px;
+    margin-left: -20px;*/
+}
+
+.nav-sidebar > li > a {
+    padding: 8px 0 8px 42px ;
+    color: #aeb2b7;
+    font-size: 12px;
+}
+
+.nav-sidebar > li > a:hover, .nav-sidebar > li > a:focus, .nav-sidebar > li > a:active {
+    color: #D84C31;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-sidebar > .active > a {
+    color: #D84C31;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/*
+ * 主页面
+ */
+
+.main {
+    padding: 20px;
+}
+
+@media (min-width: 768px) {
+    .main {
+        position: fixed;
+        top: 51px;
+        bottom: 0;
+        left: 220px;
+        right: 0;
+        padding: 0;
+    }
+}
+
+.main .page-header {
+    margin-top: 0;
+}
+
+/*
+ * 占位符样式
+ */
+
+.placeholders {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.placeholders h4 {
+    margin-bottom: 0;
+}
+
+.placeholder {
+    margin-bottom: 20px;
+}
+
+.placeholder img {
+    display: inline-block;
+    border-radius: 50%;
+}

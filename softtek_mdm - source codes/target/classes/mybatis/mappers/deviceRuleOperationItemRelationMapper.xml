@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.DeviceRuleOperationItemRelationDao">
+	<resultMap type="DeviceRuleOperationItemRelation" id="DeviceRuleOperationItemRelationMap">
+		<id property="id" column="id"/>
+		<association property="deviceRule" javaType="DeviceRule">
+			<id property="id" column="device_rule_id"/>
+		</association>
+		<association property="deviceRuleOperationRecord" javaType="DeviceRuleOperationItemRecord">
+			<id property="id" column="device_rule_operation_item_record_id"/>
+			<result property="type" column="type"/>
+			<result property="condition" column="condition"/>
+			<result property="value" column="value"/>
+		</association>
+	</resultMap>
+	
+	
+	<insert id="save" parameterType="DeviceRuleOperationItemRelation">
+		INSERT INTO device_rule_operation_item_relation(device_rule_id,device_rule_operation_item_record_id)
+		VALUES(#{deviceRule.id},#{deviceRuleOperationRecord.id})
+	</insert>
+	
+	<insert id="saveRecordsBatch" useGeneratedKeys="true" parameterType="java.util.List">
+    	INSERT INTO device_rule_operation_item_relation(device_rule_id,device_rule_operation_item_record_id)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+		(#{item.deviceRule.id},#{item.deviceRuleOperationRecord.id})
+		</foreach>
+	</insert>
+	
+	<select id="findAllByRuleId" parameterType="java.lang.Integer" resultMap="DeviceRuleOperationItemRelationMap">
+		SELECT device_rule_operation_item_relation.id,
+		device_rule_id,
+		device_rule_operation_item_record_id,
+		device_rule_operation_item_record.type,
+		device_rule_operation_item_record.condition,
+		device_rule_operation_item_record.value
+		FROM device_rule_operation_item_relation
+		LEFT JOIN device_rule_operation_item_record
+		ON device_rule_operation_item_relation.device_rule_operation_item_record_id=device_rule_operation_item_record.id
+		WHERE device_rule_operation_item_relation.device_rule_id=#{rid}
+	</select>
+	
+	<delete id="truncateWithRuleId" parameterType="java.lang.Integer">
+		DELETE FROM device_rule_operation_item_relation
+		WHERE device_rule_id=#{rid}
+	</delete>
+</mapper>

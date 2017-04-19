@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.pfirs.dao.FaceAndCardResultDao">
+    <resultMap id="faceAndCardResultMap" type="com.hd.pfirs.model.FaceAndCardResult">
+           <id column="CIID" property="ciID" />
+           <result column="ReceiveTime" property="receiveTime" jdbcType="DATE" javaType="java.util.Date"/>
+           <result column="ReceiveTimeStamp" property="receiveTimeStamp" jdbcType="VARCHAR" javaType="String" />
+           <result column="CardCode" property="cardCode" jdbcType="VARCHAR" javaType="String" />
+           <result column="FaceCode" property="faceCode" jdbcType="VARCHAR" javaType="String" />
+           <result column="Similarity" property="similarity" jdbcType="REAL" javaType="float" />
+           <result column="RemarkDesc" property="remarkDesc" jdbcType="VARCHAR" javaType="String" />
+           <result column="DeleteStatus" property="deleteStatus" jdbcType="VARCHAR" javaType="String" />
+           <result column="CreateName" property="createName" jdbcType="VARCHAR" javaType="String" />
+           <result column="CreateTime" property="createTime" jdbcType="DATE" javaType="java.util.Date" />
+           <result column="UpdateName" property="updateName" jdbcType="VARCHAR" javaType="String" />
+           <result column="UpdateTime" property="updateTime" jdbcType="DATE" javaType="java.util.Date" />
+    </resultMap>
+    
+    <resultMap id="FCResultMap" type="com.hd.pfirs.model.FCResultModel">
+        <result column="FaceCode" property="faceCode" jdbcType="VARCHAR" javaType="String" />
+        <result column="Similarity" property="similarity" jdbcType="REAL" javaType="float" />
+        <result column="RemarkDesc" property="remarkDesc" jdbcType="VARCHAR" javaType="String" />
+    	<result column="IdCardNo" property="idCardNo" jdbcType="VARCHAR" javaType="String" />
+    	<result column="CardDateStr" property="cardDateStr" jdbcType="VARCHAR" javaType="String" />
+        <result column="IdCardPic" property="idCardPic" jdbcType="BLOB" />
+        <result column="IdCardName" property="idCardName" jdbcType="VARCHAR" javaType="String" />
+        <result column="IdCardSex" property="idCardSex" jdbcType="VARCHAR" javaType="String" />
+        <result column="IdCardNation" property="idCardNation" jdbcType="VARCHAR" javaType="String" />
+        <result column="IdCardBirth" property="idCardBirth" jdbcType="VARCHAR" javaType="String" />
+        
+        <result column="FaceDateStr" property="faceDateStr" jdbcType="VARCHAR" javaType="String" />
+        <result column="RECEIVETIMESTAMP" property="FCtimeStamp" jdbcType="VARCHAR" javaType="String" />
+        <result column="FacePic" property="facePic" jdbcType="BLOB" />
+        <result column="devicecode" property="deviceCode" jdbcType="VARCHAR" />
+         <result column="receivetimeStr" property="receiveTimeStr" jdbcType="VARCHAR" />
+    </resultMap>
+    
+     <insert id="insertFaceAndCardResult" parameterType="FaceAndCardResult">
+        
+ 	   insert into t_pp_faceAndCardResult(
+ 	   CIID,
+ 	   ReceiveTime,
+ 	   ReceiveTimeStamp,
+ 	   CardCode,
+ 	   FaceCode,
+ 	   Similarity,
+ 	   DeleteStatus,
+ 	   DeviceCode,
+ 	   CreateTime,
+ 	   UpdateTime
+ 	   )values(
+ 	    #{ciID},
+ 	    #{receiveTime},
+ 	    #{receiveTimeStamp},
+ 	    #{cardCode},
+ 	    #{faceCode},
+ 	    #{similarity},
+ 	    #{deleteStatus},
+ 	    #{deviceCode},
+ 	     sysdate,
+ 	     sysdate
+ 	   )
+     </insert>
+     
+    <!--  <select id="queryFCResult" resultMap="FCResultMap">
+  	 select * from(
+      select r.FaceCode,r.Similarity,r.RemarkDesc,r.RECEIVETIMESTAMP RECEIVETIMESTAMP,
+        i.COLLECTTIMESTAMP CardDateStr, i.IDCARDPIC IdCardPic,i.IDCARDNAME IdCardName, i.IDCARDNO IdCardNo, i.IDCARDSEX IdCardSex, i.IDCARDNATION IdCardNation,
+            i.IDCARDBIRTH IdCardBirth,f.COLLECTTIMESTAMP FaceDateStr, f.COLLECTPIC FacePic
+            from T_PP_FaceAndCardResult r, T_PP_FACEINFO f,  T_PP_IDCARDINFO i where r.CardCode=i.CardCode and r.FaceCode = f.FaceCode order by RECEIVETIMESTAMP) r1
+       where r1.RECEIVETIMESTAMP >#{timestamp} and rownum&lt;=1
+     </select> -->
+     
+     <select id="queryFCResult" resultMap="FCResultMap">
+  	 <!-- select * from(
+      select r.FaceCode,r.Similarity,r.RemarkDesc,r.RECEIVETIMESTAMP RECEIVETIMESTAMP,
+        i.COLLECTTIMESTAMP CardDateStr, i.IDCARDPIC IdCardPic,i.IDCARDNAME IdCardName, i.IDCARDNO IdCardNo, i.IDCARDSEX IdCardSex, i.IDCARDNATION IdCardNation,
+            i.IDCARDBIRTH IdCardBirth,f.COLLECTTIMESTAMP FaceDateStr, f.COLLECTPIC FacePic
+            from T_PP_FaceAndCardResult r, T_PP_FACEINFO f,  T_PP_IDCARDINFO i where r.CardCode=i.CardCode and r.FaceCode = f.FaceCode  and r.deviceCode=trim(#{deviceCode}) order by RECEIVETIMESTAMP desc) r1
+       where  rownum&lt;=1 -->
+       select * from(
+      select r.FaceCode,r.Similarity,r.RemarkDesc,r.RECEIVETIMESTAMP RECEIVETIMESTAMP,
+        i.COLLECTTIMESTAMP CardDateStr, i.IDCARDPIC IdCardPic,i.IDCARDNAME IdCardName, i.IDCARDNO IdCardNo, i.IDCARDSEX IdCardSex, i.IDCARDNATION IdCardNation,
+            i.IDCARDBIRTH IdCardBirth,f.COLLECTTIMESTAMP FaceDateStr, f.COLLECTPIC FacePic
+            from T_PP_FaceAndCardResult r, T_PP_FACEINFO f,  T_PP_IDCARDINFO i 
+            where r.CardCode=i.CardCode and r.FaceCode = f.FaceCode  
+            and r.deviceCode=trim(#{deviceCode}) 
+            and to_char(r.RECEIVETIME,'yyyymmdd hh24:mi:ss') <![CDATA[>=]]> #{warningTime} order by RECEIVETIMESTAMP asc) r1
+       where  rownum=1
+     </select>
+     <!--  -->
+     <select id="indexFaceCardWarningInfo" resultMap="FCResultMap">
+     select * from(
+      select r.FaceCode,r.Similarity,r.RemarkDesc,r.RECEIVETIMESTAMP RECEIVETIMESTAMP,to_char(r.receivetime,'yyyymmdd hh24:mi:ss') receiveTimeStr,r.devicecode,
+        i.COLLECTTIMESTAMP CardDateStr, i.IDCARDPIC IdCardPic,i.IDCARDNAME IdCardName, i.IDCARDNO IdCardNo, i.IDCARDSEX IdCardSex, i.IDCARDNATION IdCardNation,
+            i.IDCARDBIRTH IdCardBirth,f.COLLECTTIMESTAMP FaceDateStr, f.COLLECTPIC FacePic
+            from T_PP_FaceAndCardResult r, T_PP_FACEINFO f,  T_PP_IDCARDINFO i 
+              where r.CardCode=i.CardCode 
+              and r.FaceCode = f.FaceCode 
+              and r.Similarity > (select FACECARDCOMPALARMVAL from t_ss_paramset)
+              and r.receivetime <![CDATA[>=]]> to_date(#{warningTime},'yyyymmdd hh24:mi:ss') 
+              order by RECEIVETIMESTAMP desc) r1
+       where  rownum <![CDATA[<=]]>5
+     </select>
+     
+     <select id="queryFCWarning" resultType="int">
+     	 select count(0) fcwarn 
+     	 	from T_PP_FACEANDCARDRESULT 
+     	 where to_char(receivetime, 'yyyy-mm-dd') = to_char(sysdate, 'yyyy-mm-dd') 
+     	 and SIMILARITY &lt; (SELECT facecardcompalarmval FROM T_SS_PARAMSET) 
+     	 and deviceCode = trim(#{deviceCode} )
+     	 and SIMILARITY <![CDATA[>]]> '0'
+     </select>
+</mapper>

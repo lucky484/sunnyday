@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+	<import resource="mvc-view-config.xml" />
+	<context:property-placeholder location="classpath:app.properties" ignore-unresolvable="true"  />
+	<!-- - POJOs labeled with the @Controller and @Service annotations are auto-detected. -->
+	<context:component-scan base-package="com.softtek.mdm.web">
+     <context:include-filter type="annotation"
+       expression="org.springframework.stereotype.Controller" />
+       <!-- 只扫存放controller的包，如果扫到service包，会影响到事务管理 -->
+	</context:component-scan>
+	<!-- <context:component-scan base-package="com.softtek.mdm.aop" />
+    <context:component-scan base-package="com.softtek.mdm.util" /> -->
+    
+    <!-- Simple strategy: only path extension is taken into account -->
+	<bean id="cnManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="favorParameter" value="false" />
+		<property name="favorPathExtension" value="true" />
+		<property name="ignoreAcceptHeader" value="true" />
+		<property name="defaultContentType" value="text/html" />
+		<property name="mediaTypes">
+			<map>
+				<entry key="html" value="text/html" />
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+			</map>
+		</property>
+	</bean>
+	
+	<!-- define validator bean -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
+	
+	<!-- - Message source for this context, loaded from localized "messages_xx" 
+		files. - Files are stored inside src/main/resources -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>message/messages</value>
+				<!-- <value>message/validations</value> -->
+				<value>message/logs</value>
+			</list>
+		</property>
+	</bean>
+	
+    <mvc:annotation-driven content-negotiation-manager="cnManager" validator="validator">
+    	<mvc:message-converters>
+    		<bean id="jacksonMessageConverter"
+			class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+						<value>application/octet-stream;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+    	</mvc:message-converters>
+    	
+    	<mvc:argument-resolvers>
+	    	<bean class="com.softtek.mdm.resolver.LocaleResolver"/>
+	    	
+			 <bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver">
+			 	<property name="maxPageSize" value="5"></property>
+	            <property name="pageParameterName" value="page"></property>
+	            <property name="sizeParameterName" value="size"></property>
+			 </bean>
+			 <bean class="org.springframework.mobile.device.DeviceWebArgumentResolver" />
+			 
+		</mvc:argument-resolvers>
+    </mvc:annotation-driven>
+    
+    <!-- all resources inside folder src/main/webapp/resources are mapped so 
+		they can be refered to inside JSP files -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+	<!-- uses WebJars so Javascript and CSS libs can be declared as Maven dependencies 
+		(Bootstrap, jQuery...) -->
+	<!-- <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" /> -->
+
+	<!-- serve static resources (*.html, ...) from src/main/webapp/ -->
+	<mvc:default-servlet-handler />
+	
+	<!--  -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/terminal/**"/>
+			<!-- <mvc:exclude-mapping path="/webjars/**"/> -->
+			<bean class="com.softtek.mdm.interceptor.UrlAccessInterceptor"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/terminal/**"/>
+			<!-- <mvc:exclude-mapping path="/webjars/**"/> -->
+			<bean class="com.softtek.mdm.interceptor.LogInterceptor"></bean>
+		</mvc:interceptor>
+		
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/terminal/**"/>
+			<!-- <mvc:exclude-mapping path="/webjars/**"/> -->
+			<bean class="com.softtek.mdm.interceptor.DeviceLogInterceptor"></bean>
+		</mvc:interceptor>
+		
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/terminal/**"/>
+			<bean class="com.softtek.mdm.interceptor.ViewNameInModelInterceptor"></bean>
+		</mvc:interceptor>
+		
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/terminal/**"/>
+			<bean class="com.softtek.mdm.interceptor.BreadCrumbInterceptor"></bean>
+		</mvc:interceptor>
+		
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/terminal/**"/>
+			<bean class="com.softtek.mdm.interceptor.DeviceInterceptor"></bean>
+		</mvc:interceptor>	
+		
+		<!-- <mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/webjars/**"/>
+			<bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor"></bean>
+		</mvc:interceptor> -->
+		
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/terminal/**"/>
+			<!-- <mvc:exclude-mapping path="/webjars/**"/> -->
+			<bean class="com.softtek.mdm.interceptor.TokenInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- 利用SpringContextUtils 可以在源码中直接拿到bean，而不用注入 -->
+	<bean id="SpringContextUtils" class="com.softtek.mdm.util.SpringContextUtils" lazy-init="false" />
+	
+	<!-- - This bean resolves specific types of exceptions to corresponding 
+		logical - view names for error views. -->
+ 	<bean class="com.softtek.mdm.exception.resolver.LogAndDispatchExceptionHandlerExceptionResolver">
+		<!-- view name resolved using bean of type InternalResourceViewResolver 
+			(declared in mvc-view-config.xml) -->
+		<property name="defaultErrorView" value="exception" /> 
+		<!-- results into 'WEB-INF/jsp/exception.jsp' -->
+		<property name="warnLogCategory" value="warn" />
+		
+		<property name="exceptionMappings"> 
+		<map> 
+		<entry key="org.apache.commons.fileupload.FileUploadBase$SizeLimitExceededException" value="1000"/>
+		<entry key="org.springframework.web.multipart.MaxUploadSizeExceededException" value="1000"/> 
+		</map> 
+		</property>
+	</bean>
+	
+	<!-- multipartResolver for file uploading -->
+	<bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="104857600"/>
+    </bean>
+    
+    <!-- <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+      <property name="velocityProperties">
+         <value>
+          resource.loader=class
+          class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+          </value>
+      </property>
+    </bean> -->
+</beans>

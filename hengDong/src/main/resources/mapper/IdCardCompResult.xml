@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.pfirs.dao.IdCardCompResultDao">
+	<resultMap id="idCardComResultMap" type="com.hd.pfirs.model.IdCardCompResult">
+		<id column="CardCompRltID" property="cardCompRltID" />
+		<result column="ReceiveTime" property="receiveTime" />
+		<result column="ReceiveTimeStamp" property="receiveTimeStamp" />
+		<result column="CardCode" property="cardCode" />
+		<result column="CtrlBaseID" property="ctrlBaseID" />
+		<result column="IsControlled" property="isControlled" />
+		<result column="CollectIDCardNo" property="collectIDCardNo" />
+		<result column="CollectIDCardName" property="collectIDCardName" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />
+		<result column="UpdateTime" property="updateTime" />
+	</resultMap>
+
+	<insert id="insertIdCardCompResult" parameterType="IdCardCompResult">
+		insert into
+		T_PP_IDCardCompResult(
+		CardCompRltID,
+		ReceiveTime,
+		ReceiveTimeStamp,
+		CardCode,
+		CtrlBaseID,
+		IsControlled,
+		CollectIDCardNo,
+		CollectIDCardName,
+		DeleteStatus,
+		CreateTime,
+		UpdateTime
+		)values(
+		#{cardCompRltID},
+		#{receiveTime},
+		#{receiveTimeStamp},
+		#{cardCode},
+		#{ctrlBaseID},
+		#{isControlled},
+		#{collectIDCardNo},
+		#{collectIDCardName},
+		#{deleteStatus},
+		sysdate,
+		sysdate
+		)
+	</insert>
+</mapper>

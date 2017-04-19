@@ -1,0 +1,1377 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.UserDao">
+	<sql id="filterRecordSql">
+		(
+		<if test="user==null">
+		SELECT id FROM org_managers
+		WHERE org_managers.delete_time IS NULL
+		AND user_id IS NOT NULL
+		AND org_managers.create_by IN (
+			SELECT r.manager_id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		)
+		
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		<if test="user!=null">
+			SELECT id FROM org_managers
+			WHERE delete_time IS NULL
+			AND user_id=#{user.id}
+			AND org_id=#{orgId}
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		)
+	</sql>
+
+
+	<resultMap type="User" id="UserMap">
+		<id property="id" column="id" />
+		<result property="username" column="user_name" />
+		<result property="password" column="password" />
+		<result property="realname" column="real_name" />
+		<result property="type" column="user_type" />
+		<result property="phone" column="phone" />
+		<result property="email" column="email" />
+		<result property="mark" column="mark" />
+		<result property="gender" column="gender" />
+		<result property="sign" column="sign" />
+		<result property="is_active" column="is_active" />
+		<result property="is_lock" column="is_lock" />
+		<result property="address" column="address" />
+		<result property="office_phone" column="office_phone" />
+		<result property="position" column="position" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="createBy" column="create_by" />
+		<result property="updateBy" column="update_by" />
+		<result property="last_time" column="last_time" />
+		<result property="weight" column="weight" />
+		<result property="login_count" column="login_count" />
+		<result property="token" column="token" />
+		<result property="is_create_email_account" column="is_create_email_account" />
+		<result property="is_create_email_inform" column="is_create_email_inform" />
+		<result property="authorition_properties" column="authorition_properties" />
+		<result property="createDate" column="create_date" />
+		<result property="totalUser" column="total_user" />
+		<result property="activeUser" column="active_user" />
+		<result property="inActiveUser" column="inActive_user"/>
+		<result property="deleteUser" column="delete_user" />
+		<result property="deviceLoginCount" column="device_login_count" />
+		<result property="configFile" column="config_file" />
+		<result property="signConfigFile" column="sign_config_file" />
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id" />
+		</association>
+		<association property="structure" javaType="Structure">
+			<id property="id" column="group_id" />
+			<result property="name" column="name" />
+		</association>
+		<association property="policy" javaType="Policy">
+			<id property="id" column="policy_id" />
+			<result property="name" column="policy_name" />
+		</association>
+		<association property="deviceManager" javaType="DeviceManager">
+			<id property="id" column="id" />
+			<result property="device_type" column="device_type" />
+			<result property="deviceToken" column="device_token" />
+		</association>
+	</resultMap>
+	
+	<resultMap type="User" id="UserPicMap">
+		<id property="id" column="id"/>
+		<result property="username" column="user_name" />
+		<result property="realname" column="real_name" />
+	</resultMap>
+
+	<select id="findUser" resultMap="UserMap">
+		SELECT
+		id,org_id,user_name,password,group_id,policy_id,real_name,user_type,phone,email,gender,sign,address,office_phone,position,authorition_properties,ip_range,login_time_range,last_time,last_ip,is_active,is_lock,mark,update_time,create_time,create_by,update_by,delete_time,is_create_email_account,is_create_email_inform,weight,login_count
+		FROM users
+		WHERE
+		delete_time is null
+		AND user_name=#{0}
+		AND org_id=#{1}
+		LIMIT 1
+	</select>
+	
+	<select id="attemp" resultMap="UserMap">
+		SELECT
+		id,org_id,user_name,group_id,policy_id,real_name,user_type,phone,email,gender,sign,address,office_phone,position,authorition_properties,ip_range,login_time_range,last_time,last_ip,is_active,is_lock,mark,update_time,create_time,create_by,update_by,delete_time,is_create_email_account,is_create_email_inform,weight,login_count,device_login_count
+		FROM users
+		WHERE user_name=#{username}
+		AND org_id=#{orgId}
+		AND password=#{password}
+		LIMIT 1
+	</select>
+
+	<insert id="save" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		users(org_id,user_name,password,group_id,policy_id,real_name,user_type,phone,email,gender,sign,address,office_phone,position,authorition_properties,ip_range,login_time_range,last_time,last_ip,is_active,is_lock,mark,update_time,create_time,create_by,update_by,delete_time,is_create_email_account,is_create_email_inform,weight,login_count)
+		VALUES(#{organization.id},#{username},#{password},#{structure.id},#{policy.id},#{realname},#{type},#{phone},#{email},#{gender},#{sign},#{address},#{office_phone},#{position},#{authorition_properties},#{ip_range},#{login_time_range},#{last_time},#{last_ip},0,0,#{mark},NOW(),NOW(),#{createBy},#{updateBy},null,#{is_create_email_account},#{is_create_email_inform},#{weight},0)
+	</insert>
+
+	<select id="findAllCount" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM users
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+		AND group_id in
+		<foreach item="item" index="index" collection="idlist" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="findUserBysIds" resultMap="UserMap">
+		SELECT
+		id,org_id,user_name,group_id,policy_id,real_name,user_type,phone,email,mark,gender,sign,address,office_phone,position,authorition_properties,is_create_email_account,is_create_email_inform,create_time,weight,is_active,is_lock
+		FROM users
+		WHERE delete_time is null
+		AND org_id=#{orgId}
+		AND group_id in
+		<foreach item="item" index="index" collection="idlist" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		ORDER BY update_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+
+	<select id="findOne" parameterType="java.lang.Integer"
+		resultMap="UserMap">
+		SELECT
+		id,org_id,user_name,password,group_id,real_name,phone,email,gender,sign,address,office_phone,position,mark,is_create_email_account,is_create_email_inform,weight,is_active,is_lock,login_count,create_time,policy_id,device_login_count,update_time,config_file,sign_config_file
+		FROM users
+		WHERE delete_time is null
+		AND id=#{id}
+		LIMIT 1
+	</select>
+	
+	<update id="updateUser" parameterType="User">
+		UPDATE users
+		<set>
+			<if test="realname!=null and realname!=''">
+				real_name=#{realname},
+			</if>
+			<if test="phone!=null">
+				phone=#{phone},
+			</if>
+			<if test="email!=null">
+				email=#{email},
+			</if>
+			<if test="mark!=null">
+				mark=#{mark},
+			</if>
+			<if test="configFile!=null and configFile !=''">
+				config_file = #{configFile},
+			</if>
+			<if test="signConfigFile!=null and signConfigFile !=''">
+				sign_config_file = #{signConfigFile},
+			</if>
+			<if test="deviceLoginCount!=null">
+				device_login_count = #{deviceLoginCount},
+			</if>
+			update_time=NOW()
+		</set>
+		WHERE delete_time is null
+		AND id=#{id}
+	</update>
+	
+	<update id="update" parameterType="User">
+		UPDATE users
+		SET
+		<if test="username!='' and username!=null">
+			 user_name=#{username},
+		</if>
+		<if test="password!='' and password!=null">
+			password=#{password},
+		</if>
+		<if test="structure!=null and structure.id!=null and structure.id!=''">
+			group_id=#{structure.id},
+		</if>
+		<if test="realname!=null and realname!=''">
+			real_name=#{realname},
+		</if>
+		<if test="phone!=null and phone!=''">
+			phone=#{phone},
+		</if>
+		<if test="email!=null and email!=''">
+			email=#{email},
+		</if>
+		<if test="gender!=null">
+			gender=#{gender},
+		</if>
+		<if test="sign!=null and sign!=''">
+			sign=#{sign},
+		</if>
+		<if test="address!=null and address!=''">
+			address=#{address},
+		</if>
+		<if test="office_phone!=null and office_phone!=''">
+			office_phone=#{office_phone},
+		</if>
+		<if test="position!=null and position!=''">
+			position=#{position},
+		</if>
+		<if test="mark!=null and mark!=''">
+			mark=#{mark},
+		</if>
+		<if test="is_create_email_account!=null">
+			is_create_email_account=#{is_create_email_account},
+		</if>
+		<if test="is_create_email_inform!=null">
+			is_create_email_inform=#{is_create_email_inform},
+		</if>
+		<if test="weight!=null">
+			weight=#{weight},
+		</if>
+		<if test="is_lock!=null">
+			is_lock=#{is_lock},
+		</if>
+		<if test="is_active!=null">
+			is_active=#{is_active},
+		</if>
+		<if test="login_count!=null">
+			login_count=#{login_count},
+		</if>
+		<if test="policy!=null">
+			policy_id=#{policy.id},
+		</if>
+		<if test="last_time!=null">
+			last_time=#{last_time},
+		</if>
+		<if test="token!=null">
+			token=#{token},
+		</if>
+		<if test="updateBy!=null">
+			update_by=#{updateBy},
+		</if>
+		update_time=NOW()
+		WHERE delete_time is null
+		AND id=#{id}
+	</update>
+
+	<update id="deleteWithPk" parameterType="java.lang.Integer">
+		UPDATE users
+		SET
+		delete_time = NOW()
+		WHERE delete_time is null
+		AND id=#{id}
+	</update>
+	
+	<delete id="truncateWithPk" parameterType="java.lang.Integer">
+		DELETE FROM users
+		WHERE id=#{id}
+	</delete>
+	
+	<delete id="truncateWithPKs">
+		DELETE FROM users
+		WHERE id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+
+	<update id="deleteWithPKs">
+		UPDATE users
+		SET delete_time = NOW()
+		WHERE delete_time is null
+		AND id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<update id="updateActiveBatch">
+		UPDATE users
+		SET is_active=1
+		WHERE delete_time is null
+		AND id in
+		<foreach item="item" index="index" collection="array" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+   <!-- 校验用户名 -->
+	<select id="checkUser" resultType="java.lang.Integer">
+		SELECT id
+		FROM users
+		WHERE
+		user_name=#{0}
+		AND org_id=#{1}
+		AND delete_time is null
+		LIMIT 1
+	</select>
+	  <!-- 根据用户名查询密码，校验密码 -->
+	  <select id="checkPassword" resultMap="UserMap">
+	      select password,device_login_count from users where user_name = #{userName} and org_id = #{orgId} and delete_time is null limit 1
+	  </select>   
+  
+	<!--虚拟组用户管理：根据组ID，模糊name查看存在用户的首页前10条记录（多选） -->
+	<select id="queryExistMember" resultMap="UserMap">
+		SELECT
+		u.id,
+		u.real_name,
+		u.user_name
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		g.id =vg.virtual_id
+		AND vg.user_id = u.id
+		AND g.id =#{id}
+		AND u.real_name LIKE
+		CONCAT('%',#{name},'%')
+		AND
+		vg.delete_time IS NULL
+		 <if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		</foreach>
+		 </if>
+		ORDER BY
+		u.create_time
+		limit 0,10
+	</select>
+
+	<!--虚拟组用户管理：查看不存在用户的首页（多选） -->
+	<select id="queryNoExistMember" resultMap="UserMap">
+		SELECT
+		id,
+		real_name,
+		user_name
+		FROM
+		users
+		WHERE
+		id NOT IN (
+		SELECT
+		u.id
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		g.id = vg.virtual_id
+		AND vg.user_id
+		= u.id
+		AND g.id =#{id}
+
+		)
+		AND delete_time IS NULL
+		AND org_id=#{orgid}
+		<if test="idlist != null">
+		AND group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		AND real_name LIKE
+		CONCAT('%',#{name},'%')
+		ORDER BY
+		create_time DESC limit 0,10
+	</select>
+
+	<!--虚拟组用户管理：查看不存在用户的首页前十条（单选） -->
+	<select id="queryNoExistMemberRadio" resultMap="UserMap">
+		SELECT
+		id,
+		real_name,
+		user_name
+		FROM
+		users
+		WHERE
+		id NOT IN (
+		SELECT
+		u.id
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		vg.collection_id=g.collection_id
+		AND vg.user_id = u.id
+		AND g.id =#{id}
+
+		)
+		AND delete_time IS NULL
+		AND org_id=#{orgid}
+		<if test="idlist != null">
+		AND group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		AND
+		real_name LIKE CONCAT('%',#{name},'%')
+		ORDER BY
+		create_time DESC limit 0,10
+	</select>
+
+	<!--虚拟组用户管理：根据ID，索引，name查看不存在用户（多选） 虚拟组 -->
+	<select id="queryNoExistMemberPage" resultMap="UserMap">
+		SELECT
+		id,
+		real_name,
+		user_name
+		FROM
+		users
+		WHERE
+		id NOT IN (
+		SELECT
+		u.id
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		g.id = vg.virtual_id
+		AND vg.user_id
+		= u.id
+		AND g.id =#{id}
+		AND vg.delete_time IS NULL
+		)
+		AND delete_time IS NULL
+		AND org_id=#{orgid}
+		<if test="idlist != null">
+		AND group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		 
+		<if test="idlist != null">
+			AND real_name LIKE CONCAT('%',#{name},'%')
+		</if>
+		
+		ORDER BY
+		create_time DESC limit
+		#{start},10
+	</select>
+
+	<!--虚拟组用户管理：根据ID，索引，name查看不存在用户（单选） -->
+	<select id="queryNoExistMemberPageRadio" resultMap="UserMap">
+		SELECT
+		id,
+		real_name,
+		user_name
+		FROM
+		users
+		WHERE
+		id NOT IN (
+		SELECT
+		u.id
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		vg.collection_id=g.collection_id
+		AND vg.user_id = u.id
+		AND g.id =#{id}
+		AND vg.delete_time IS NULL
+		)
+		AND
+		delete_time IS NULL
+		AND real_name LIKE CONCAT('%',#{name},'%')
+		AND org_id=#{orgid}
+		<if test="idlist != null">
+		AND group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		ORDER BY
+		create_time DESC limit #{start},10
+
+	</select>
+
+	<!-- 虚拟组用户管理：根据虚拟组ID 索引Index 模糊name 查询虚拟组存在用户的指定页数 -->
+	<select id="queryExistMemberPage" resultMap="UserMap">
+		SELECT
+		u.id,
+		u.real_name,
+		u.user_name
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		g.id = vg.virtual_id
+		AND vg.user_id = u.id
+		AND g.id = #{id}
+		AND real_name
+		LIKE CONCAT('%',#{name},'%')
+		AND vg.delete_time IS NULL
+		<if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		ORDER BY
+		u.create_time limit #{start},10
+	</select>
+	<!-- 虚拟组用户管理：根据虚拟组ID 模糊name 查询虚拟组不存在用户的最大页数（多选） -->
+	<select id="queryNeMemberMaxPage" resultType="java.lang.Integer">
+		SELECT
+		COUNT(id)AS
+		recordsTotal
+		FROM
+		users
+		WHERE
+		id NOT IN (
+		SELECT
+		u.id
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		g.id = vg.virtual_id
+		AND vg.user_id
+		= u.id
+		AND g.id =#{id}
+		)
+		AND delete_time IS NULL
+		AND org_id=#{orgid}
+		AND real_name LIKE
+		CONCAT('%',#{name},'%')
+		<if test="idlist != null">
+		AND group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		ORDER BY
+		create_time DESC
+	</select>
+
+	<!-- 查询不存在的用户的最大页数 -->
+	<select id="queryNeMemberMaxPageRadio" resultType="java.lang.Integer">
+		SELECT
+		COUNT(id)AS recordsTotal
+		FROM
+		users
+		WHERE
+		id NOT IN (
+		SELECT
+		u.id
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		vg.collection_id=g.collection_id
+		AND vg.user_id = u.id
+		AND g.id =#{id}
+		)
+		AND delete_time IS NULL
+		AND real_name LIKE CONCAT('%',#{name},'%')
+		AND org_id=#{orgid}
+		<if test="idlist != null">
+		AND group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		ORDER BY
+		create_time DESC
+	</select>
+
+	<!-- 虚拟组用户管理：根据虚拟组ID，name查看查询存在的用户最大页数 -->
+	<select id="queryEMemberMaxPage" resultType="java.lang.Integer">
+		SELECT
+		COUNT(u.id)AS
+		recordsTotal
+		FROM
+		virtual_group g,
+		users_virtual_group vg,
+		users u
+		WHERE
+		g.id = vg.virtual_id
+		AND vg.user_id = u.id
+		AND g.id = #{id}
+		AND
+		vg.delete_time IS NULL
+		AND real_name LIKE CONCAT('%',#{name},'%')
+		<if test="idlist != null">
+		AND u.group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		ORDER BY
+		u.create_time DESC
+	</select>
+	<select id="updatePolicyById" parameterType="int">
+		update users set policy_id = #{policy.id} where group_id = #{structure.id} and delete_time is null
+	</select>
+	<select id="findCountByMap" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM users
+		WHERE org_id=#{orgId}
+		AND group_id=#{steId}
+		AND delete_time is null
+	</select>
+	
+	<select id="findCountByMaps" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM users
+		WHERE org_id=#{orgId}
+		AND group_id=#{steId}
+		AND delete_time is null
+		<!-- AND users.create_by in
+		<include refid="filterRecordSql" /> -->
+	</select>
+
+	<select id="findUsersByMap" resultMap="UserMap">
+		SELECT id,user_name
+		FROM
+		users
+		WHERE org_id=#{orgId}
+		AND group_id=#{steId}
+		AND delete_time is null
+	</select>
+
+	<!-- 根据用户名查找用户 -->
+	<select id="findUserByName" parameterType="com.softtek.mdm.util.DataGridModel"
+		resultType="com.softtek.mdm.model.UserModel">
+		SELECT
+		T1.id,
+		T1.user_name as username,
+		T1.real_name as realname
+		FROM users T1
+		WHERE T1.org_id = #{params.orgId}
+		AND T1.delete_time is null
+		AND (T1.user_name like #{params.name} or T1.real_name like
+		#{params.name})
+		<if test="params.list != null">
+			AND T1.id not in
+			<foreach item="item" collection="params.list" separator=","
+				open="(" close=")" index="">
+				#{item}
+			</foreach>
+		</if>
+		<if test="params.groupList != null">
+		AND T1.group_id in
+		<foreach item="item" index="index" collection="params.groupList" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		</if>
+	</select>
+	
+	<select id="findUsersInfoByMap" resultMap="UserMap">
+	SELECT
+		users.id,users.org_id,user_name,group_id,policy_id,user_policy.name as policy_name,real_name,user_type,phone,email,mark,gender,sign,address,office_phone,position,authorition_properties,is_create_email_account,is_create_email_inform,users.create_time,weight,is_active,is_lock,users.create_by,users.update_by
+		FROM users
+		LEFT JOIN user_policy
+		ON users.policy_id=user_policy.id
+		WHERE users.delete_time is null
+		AND users.org_id=#{orgId}
+		AND user_policy.org_id=#{orgId}
+		AND user_policy.delete_time is null
+		AND FIND_IN_SET(group_id,findSidsByOrgId_Pid(#{orgId},#{rootid}))
+		AND real_name LIKE '%${searchUserName}%' AND user_name LIKE '%${searchAccountName}%' 
+		<if test="searchActiveStatus != '' and searchActiveStatus !=null">
+			AND is_active = #{searchActiveStatus}
+		</if>
+		ORDER BY users.update_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+
+	<select id="findUserByMap" resultMap="UserMap">
+		SELECT
+		users.id,users.org_id,user_name,group_id,policy_id,user_policy.name as policy_name,real_name,user_type,phone,email,mark,gender,sign,address,office_phone,position,authorition_properties,is_create_email_account,is_create_email_inform,users.create_time,weight,is_active,is_lock,users.create_by,users.update_by
+		FROM users
+		LEFT JOIN user_policy
+		ON users.policy_id=user_policy.id
+		WHERE users.delete_time is null
+		AND users.org_id=#{orgId}
+		AND user_policy.org_id=#{orgId}
+		AND user_policy.delete_time is null
+		AND group_id in 
+		<foreach item="item" index="index" collection="idlist" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND real_name LIKE '%${searchUserName}%' AND user_name LIKE '%${searchAccountName}%' 
+		<if test="searchActiveStatus != '' and searchActiveStatus !=null">
+			AND is_active = #{searchActiveStatus}
+		</if>
+		<!-- AND users.create_by in
+		<include refid="filterRecordSql" /> -->
+		
+		ORDER BY users.update_time desc
+		LIMIT #{pageNum},#{pageSize}
+	</select>
+	
+	<select id="findIdsByMap" resultType="java.lang.Integer">
+		SELECT
+		users.id
+		FROM users
+		LEFT JOIN user_policy
+		ON users.policy_id=user_policy.id
+		WHERE users.delete_time is null
+		AND users.org_id=#{orgId}
+		AND user_policy.org_id=#{orgId}
+		AND user_policy.delete_time is null
+		AND group_id in 
+		<foreach item="item" index="index" collection="idlist" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND real_name LIKE '%${searchUserName}%' AND user_name LIKE '%${searchAccountName}%' 
+		<if test="searchActiveStatus != '' and searchActiveStatus !=null">
+			AND is_active = #{searchActiveStatus}
+		</if>
+	</select>
+	
+	<select id="findRecordsByMap" resultMap="UserMap">
+		SELECT
+		users.id,is_active
+		FROM users
+		LEFT JOIN user_policy
+		ON users.policy_id=user_policy.id
+		WHERE users.delete_time is null
+		AND users.org_id=#{orgId}
+		AND user_policy.org_id=#{orgId}
+		AND user_policy.delete_time is null
+		AND group_id in 
+		<foreach item="item" index="index" collection="idlist" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND real_name LIKE '%${searchUserName}%' AND user_name LIKE '%${searchAccountName}%' 
+		<if test="searchActiveStatus != '' and searchActiveStatus !=null">
+			AND is_active = #{searchActiveStatus}
+		</if>
+	</select>
+
+	<select id="findUserInfoCountWithMap" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM users
+		LEFT JOIN user_policy
+		ON users.policy_id=user_policy.id
+		WHERE users.delete_time is null
+		AND users.org_id=#{orgId}
+		AND user_policy.org_id=#{orgId}
+		AND user_policy.delete_time is null
+		AND FIND_IN_SET(group_id,findSidsByOrgId_Pid(#{orgId},#{rootid}))
+		AND real_name LIKE '%${searchUserName}%' AND user_name LIKE '%${searchAccountName}%' 
+		<if test="searchActiveStatus != '' and searchActiveStatus !=null">
+			AND is_active = #{searchActiveStatus}
+		</if>
+	</select>
+
+	<select id="findCountWithMap" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM users
+		LEFT JOIN user_policy
+		ON users.policy_id=user_policy.id
+		WHERE users.delete_time is null
+		AND users.org_id=#{orgId}
+		AND user_policy.org_id=#{orgId}
+		AND user_policy.delete_time is null
+		AND group_id in 
+		<foreach item="item" index="index" collection="idlist" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND real_name LIKE '%${searchUserName}%' AND user_name LIKE '%${searchAccountName}%' 
+		<if test="searchActiveStatus != '' and searchActiveStatus !=null">
+			AND is_active = #{searchActiveStatus}
+		</if>
+		<!-- AND users.create_by in
+		<include refid="filterRecordSql" /> -->
+		
+		
+	</select>
+
+	<select id="findCountByDid" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM users
+		WHERE delete_time is null
+		AND group_id in
+		<foreach item="item" index="index" collection="ids" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		<!-- AND users.create_by in
+		<include refid="filterRecordSql" /> -->
+	</select>
+	
+	<select id="findCountByOrgId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM users
+		WHERE delete_time is null
+		<if test="idlist != null">
+		AND group_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     		             </foreach>
+		 </if>
+		AND org_id=#{orgId}
+	</select>
+	
+	<select id="findUserNamesByMaps" resultMap="UserMap">
+		SELECT id,user_name,real_name
+		FROM users
+		WHERE org_id=#{orgId}
+		AND group_id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND delete_time is null
+	</select>
+	
+	<select id="queryUserInfoById" resultMap="UserMap" parameterType="int">
+	     select org_id,user_type,real_name from users where id = #{id}
+	</select>
+	<!-- 根据策略的id查用户 -->
+	 <select id="queryUserByPolicy" parameterType="int" resultMap="UserMap">
+	     select u.id,d.device_type,d.device_token,d.id from users u left join (select * from device_basic_info where delete_time is null) d on u.id = d.user_id  where u.policy_id = #{policyId}
+	 </select>
+	 <select id="queryPolicyByUserId" parameterType="int" resultMap="UserMap">
+	     select s.policy_id as policy_id,s.id as group_id from users u,org_structure s where u.group_id = s.id and u.id = #{userId} 
+	 </select>
+	 <select id="findUserIdByUserName" resultMap="UserMap">
+	     SELECT id,user_name
+		FROM users
+		WHERE org_id=#{orgid}
+		AND user_name in
+		<foreach item="item" index="index" collection="usernamelist" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND delete_time is null
+	 </select>
+	<!--  根据部门ID获得对应下的用户部分信息 -->
+	  <select id="exportUsersById" resultType="UserExport">
+	   SELECT
+	        id,
+			user_name,
+			real_name,
+			phone,
+			email,
+			mark,
+			gender,
+			group_id
+		from
+			users
+		WHERE
+			group_id in <foreach item="item" index="index" collection="idList" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		AND
+			ISNULL(delete_time)
+			ORDER BY users.update_time desc
+	 </select>
+	 <select id="findAllMember" resultType="string">
+	   SELECT
+			user_name
+		from
+			users
+		WHERE
+			delete_time is NULL
+        AND org_id=#{orgid}
+	 </select>
+	 <select id="getActiveUserCount" resultType="int">
+	 	select count(0) from users where users.is_active = '1'
+	 </select>
+	 
+ <insert id="importUsers" parameterType="java.util.List" >
+INSERT INTO users (
+	org_id,
+	user_name,
+	password,
+	group_id,
+	policy_id,
+	real_name,
+	user_type,
+	phone,
+	email,
+	gender,
+	sign,
+	address,
+	office_phone,
+	position,
+	is_active,
+	is_lock,
+	mark,
+	update_time,
+	create_time,
+	create_by,
+	update_by,
+	create_type
+)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=","> 
+    	 ( #{item.orgid},
+ 		   #{item.user_name},
+		   #{item.password},
+ 		   #{item.group_id},
+	   	   #{item.policy_id},
+	   	   #{item.real_name},
+	   	   4,
+	   	   #{item.phone},
+	   	   #{item.email},
+	   	   #{item.gender},
+	   	   #{item.sign},
+	   	   #{item.address},
+	   	   #{item.office_phone},
+	   	   #{item.position},
+	   	   0,
+	   	   0,
+	   	   #{item.mark},
+		   NOW(),
+		   NOW(),
+		   #{item.create_by},
+		   #{item.create_by},
+		   1
+		   )
+    	</foreach>
+					
+    </insert>
+    
+<select id="getUsersCountByMap" resultType="java.lang.Integer">	
+SELECT
+	COUNT(0)
+FROM
+	(
+		SELECT
+			DATE_FORMAT(statistical_time,'%Y-%m-%d') AS statistical_time,
+			count(0) AS toal_user
+		FROM
+			users_statistics
+		WHERE
+			org_id = #{org_id} 
+		AND statistical_time BETWEEN CONCAT(#{firstDay},':00:00:00') 
+		AND CONCAT(#{lastDay},':23:59:59') 
+		AND delete_time is NULL
+		<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+		GROUP BY DATE_FORMAT(statistical_time,'%Y-%d-%m')
+		) a
+	</select>
+   <!-- 用户统计列表语句 -->
+<select id="getUsersListsByMap" resultMap="UserMap">
+	select 
+	 a.id,
+	 a.statistical_time as create_date,
+	 IFNULL(a.toal_user,0)as total_user,
+	 IFNULL(c.new_user,0)as inActive_user,
+	 IFNULL(b.active_user,0) as active_user,
+	 IFNULL(d.delete_user,0)as delete_user from( 
+	
+		SELECT
+			DATE_FORMAT(
+				statistical_time,
+				'%Y-%m-%d'
+			) as statistical_time,
+			id,
+			count(0) as toal_user
+		FROM
+			users_statistics
+		WHERE
+			org_id = #{org_id}
+		AND statistical_time BETWEEN CONCAT(#{firstDay}, ':00:00:00')
+		And CONCAT(#{lastDay}, ':23:59:59')
+		AND delete_time is NULL
+		<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+		group by
+			DATE_FORMAT(
+				statistical_time,
+				'%Y-%d-%m'
+			)
+		ORDER BY
+			statistical_time desc
+	)
+a
+LEFT JOIN (
+	select
+		DATE_FORMAT(
+			statistical_time,
+			'%Y-%m-%d'
+		) as statistical_time,
+		count(0) as active_user
+	from
+		users_statistics
+	where
+org_id = #{org_id}
+AND statistical_time BETWEEN CONCAT(#{firstDay}, ':00:00:00')
+And CONCAT(#{lastDay}, ':23:59:59')
+and delete_time is null
+and unix_timestamp(statistical_time) - unix_timestamp(last_time) <![CDATA[<]]> 604800
+<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	group by
+		DATE_FORMAT(
+			statistical_time,
+			'%Y-%d-%m'
+		)
+) b on a.statistical_time = b.statistical_time
+
+LEFT JOIN (
+	select
+		DATE_FORMAT(
+			statistical_time,
+			'%Y-%m-%d'
+		) as statistical_time,
+		count(0) as new_user
+	from
+		users_statistics
+	where
+org_id = #{org_id}
+and  DATE_FORMAT(
+		statistical_time,
+		'%Y-%m-%d'
+	) = DATE_FORMAT(create_time, '%Y-%m-%d')
+	and delete_time is null
+	<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+	group by
+		DATE_FORMAT(
+			statistical_time,
+			'%Y-%d-%m'
+		)
+) c on a.statistical_time = c.statistical_time
+LEFT JOIN(
+select
+	DATE_FORMAT(
+		create_time,
+		'%Y-%m-%d'
+	) as statistical_time,
+	count(0) as delete_user
+from
+	deleted_users
+where
+	org_id = #{org_id}
+	<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+group by
+	DATE_FORMAT(
+		statistical_time,
+		'%Y-%d-%m'
+	)) d on a.statistical_time = d.statistical_time 
+  limit #{start},#{offset}
+	</select>
+	
+	<select id="getExportUsersListsByMap" resultMap="UserMap">
+		       	select   a.id,a.statistical_time as create_date,IFNULL(a.toal_user,0)as total_user,IFNULL(c.new_user,0)as inActive_user,IFNULL(b.active_user,0) as active_user,IFNULL(d.delete_user,0)as delete_user from( 
+SELECT DATE_FORMAT(statistical_time,'%Y-%m-%d') as statistical_time,id,count(0) as toal_user 
+FROM users_statistics WHERE org_id=#{org_id} AND delete_time is NULL AND statistical_time BETWEEN CONCAT(#{firstDay},':00:00:00') And CONCAT(#{lastDay},':23:59:59')
+<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>  group by 
+DATE_FORMAT(statistical_time,'%Y-%d-%m')ORDER BY statistical_time )
+a  LEFT JOIN (select DATE_FORMAT(statistical_time,'%Y-%m-%d') as statistical_time,count(0)as active_user from users_statistics where delete_time is null and org_id=#{org_id} and unix_timestamp(statistical_time)-unix_timestamp(last_time) <![CDATA[<]]> 604800 <if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if> group by DATE_FORMAT(statistical_time,'%Y-%d-%m'))b on a.statistical_time=b.statistical_time
+LEFT JOIN(select DATE_FORMAT(statistical_time,'%Y-%m-%d') as statistical_time,count(0)as new_user from users_statistics where  delete_time is null and  org_id=#{org_id}
+and DATE_FORMAT(create_time,'%Y-%m-%d')=DATE_FORMAT(statistical_time,'%Y-%m-%d')<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if> group by DATE_FORMAT(statistical_time,'%Y-%d-%m'))c on a.statistical_time=c.statistical_time
+LEFT JOIN(select DATE_FORMAT( create_time,'%Y-%m-%d') as statistical_time,count(0) as delete_user from deleted_users
+ where org_id = #{org_id} <if test="groupId != null"> AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item}  </foreach> </if> group by DATE_FORMAT(statistical_time,'%Y-%d-%m')) d on a.statistical_time = d.statistical_time 
+
+ ORDER BY create_date desc
+	
+	</select>
+	
+	<select id="getChartUsersListsByMap" resultMap="UserMap">
+     select a.id, a.statistical_time as create_date, IFNULL(a.toal_user, 0) as total_user, IFNULL(c.new_user, 0) as inActive_user, IFNULL(b.active_user, 0) as active_user, IFNULL(d.delete_user, 0) as delete_user from ( SELECT DATE_FORMAT( statistical_time, '%Y-%m-%d' ) as statistical_time, id, count(0) as toal_user FROM users_statistics WHERE org_id = #{org_id}
+      AND delete_time is NULL AND statistical_time BETWEEN CONCAT(#{firstDay},':00:00:00') And CONCAT(#{lastDay},':23:59:59')  <if test = "groupId != null" > AND group_id in <foreach item = "item" index = "index" collection = "groupId" open = "(" separator = "," close = ")" > #{item}
+</foreach> </if>  group by DATE_FORMAT( statistical_time, '%Y-%d-%m' ) ORDER BY statistical_time ) a LEFT JOIN ( select DATE_FORMAT( statistical_time, '%Y-%m-%d' ) as statistical_time, count(0) as active_user from users_statistics where delete_time is null and org_id = #{org_id} and unix_timestamp(statistical_time)-unix_timestamp(last_time) <![CDATA[<]]> 604800
+<if test = "groupId != null" > AND group_id in <foreach item = "item" index = "index" collection = "groupId" open = "(" separator = "," close = ")" > #{item}
+</foreach> </if> group by DATE_FORMAT( statistical_time, '%Y-%d-%m' )) b on a.statistical_time = b.statistical_time LEFT JOIN ( select DATE_FORMAT( statistical_time, '%Y-%m-%d' ) as statistical_time, count(0) as new_user from users_statistics where delete_time is null and org_id = #{org_id}
+and DATE_FORMAT(create_time, '%Y-%m-%d') = DATE_FORMAT( statistical_time, '%Y-%m-%d' ) <if test = "groupId != null" > AND group_id in <foreach item = "item" index = "index" collection = "groupId" open = "(" separator = "," close = ")" > #{item}
+</foreach> </if> group by DATE_FORMAT( statistical_time, '%Y-%d-%m' )) c on a.statistical_time = c.statistical_time LEFT JOIN ( select DATE_FORMAT( create_time,'%Y-%m-%d') as statistical_time,count(0) as delete_user from deleted_users
+ where org_id = #{org_id} <if test="groupId != null"> AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")"> #{item}  </foreach> </if> group by DATE_FORMAT(statistical_time,'%Y-%d-%m')) d on a.statistical_time = d.statistical_time ORDER BY create_date asc
+</select>
+	
+	
+	<select id="getTotalUsersCountByMap" resultType="java.lang.Integer">
+		select count(0) from (select user_name,real_name,group_id,create_time from users where org_id = #{org_id} and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc ) as list
+	</select>
+    
+    <select id="getTotalUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time from users where org_id = #{org_id} and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc limit #{start},#{offset}  
+	</select>
+	
+	<select id="getExportTotalUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date from users where org_id = #{org_id} and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc
+	</select>
+	
+	<select id="getActiveUsersCountByMap" resultType="java.lang.Integer">
+		select count(0) from (select user_name,real_name,group_id,create_time from users where org_id = #{org_id} and is_active = 1 and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc ) as list
+	</select>
+    
+    <select id="getActiveUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time from users where org_id = #{org_id} and is_active = 1 and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc limit #{start},#{offset}  
+	</select>
+	
+	<select id="getExportActiveUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date from users where org_id = #{org_id} and is_active = 1 and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc
+	</select>
+	
+	<select id="getInActiveUsersCountByMap" resultType="java.lang.Integer">
+		select count(0) from (select user_name,real_name,group_id,create_time from users where org_id = #{org_id} and is_active = 0 and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc ) as list
+	</select>
+    
+    <select id="getInActiveUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time from users where org_id = #{org_id} and is_active = 0 and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc limit #{start},#{offset}  
+	</select>
+	
+	<select id="getExportInActiveUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date from users where org_id = #{org_id} and is_active = 0 and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc
+	</select>
+	
+	<select id="getDeleteUsersCountByMap" resultType="java.lang.Integer">
+		select count(0) from (select user_name,real_name,group_id,create_time from deleted_users where org_id = #{org_id}  and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc ) as list
+	</select>
+    
+    <select id="getDeleteUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time from deleted_users where org_id = #{org_id}  and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc limit #{start},#{offset}  
+	</select>
+	
+	<select id="getExportDeleteUsersListsByMap" resultMap="UserMap">
+		select id,user_name,real_name,group_id,create_time,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date from deleted_users where org_id = #{org_id}  and create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="real_name !=null  and real_name !=''">
+			and real_name like CONCAT('%',#{real_name},'%')
+		</if>
+		<if test="user_name != null  and user_name !=''">
+			and user_name like CONCAT('%',#{user_name},'%')
+		</if>
+		ORDER BY create_time desc
+	</select>
+
+	<select id="getUserModels" resultMap="UserPicMap" parameterType="string">
+    	select id,
+          user_name as username,
+          real_name as realname 
+        from
+          users where id in (
+          	<foreach collection="list" item="item" index="index" separator=","> 
+    	 		#{item}
+    		</foreach>
+          )
+    </select>
+    
+    <select id="getUserIdsByDeptIds" parameterType="map" resultType="java.lang.Integer">
+  		select 
+      		t1.id as usersId 
+     		from users t1 
+    	<where> 
+      		t1.delete_time is null 
+       		and t1.org_id = #{orgId}
+       		and t1.group_id in 
+   		 <foreach item="item" collection="deptIdList" separator="," open="(" close=")" index="">    
+     		 #{item}  
+    	 </foreach>
+    	 </where>
+  </select>
+	<update id="updateDeviceLoginCount" parameterType="map">
+	    update users set device_login_count = #{deviceLoginCount} where id = #{id}
+	</update>
+
+	<insert id="autoBackupUsers">
+		insert into users_statistics(real_name,user_name,org_id,create_time,last_time,statistical_time,delete_time,group_id)
+		select u.real_name,u.user_name,u.org_id,u.create_time,u.last_time,now(),delete_time,group_id from users u; 
+	</insert>
+	
+	<select id="getTodayUsersListsByMap" resultMap="UserMap">
+		 select
+			a.id,
+			a.create_date as create_date,
+			IFNULL(b.total_user, 0) as total_user,
+			IFNULL(a.inActive_user, 0) as inActive_user,
+			IFNULL(c.active_user, 0) as active_user,
+			IFNULL(d.deleted_users, 0) as delete_user
+		from
+			(
+				SELECT
+					id,
+					count(0) as inActive_user,
+					DATE_FORMAT(now(), "%Y-%m-%d") as create_date
+				from
+					users
+				where
+				org_id = #{org_id}
+				<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+				and
+					DATE_FORMAT(create_time, "%Y-%m-%d") = DATE_FORMAT(now(), "%Y-%m-%d")
+			) a,
+			(
+				SELECT
+					count(0) as total_user
+				from
+					users
+				where
+					org_id = #{org_id}
+					<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+				AND delete_time is NULL
+			) b,
+			(
+				select
+					count(0) as active_user
+				from
+					users
+				where
+					org_id = #{org_id}
+					<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+				and unix_timestamp(now()) - unix_timestamp(last_time) <![CDATA[<]]> 604800
+			) c,
+			(
+				SELECT
+					count(0) as deleted_users
+				from
+					deleted_users
+				where
+					org_id = #{org_id}
+				<if test="groupId != null">
+				AND group_id in  <foreach item="item" index="index" collection="groupId" open="(" separator="," close=")">
+		                      				  #{item}
+		     		             </foreach>
+				 </if>
+					AND
+					DATE_FORMAT(create_time,"%Y-%m-%d") = DATE_FORMAT(now(),"%Y-%m-%d")
+			) d	 
+</select>
+	<!-- 更新描述文件路径 -->
+	<update id="updateConfigFile" parameterType="User">
+	    update users set config_file = #{configFile},sign_config_file = #{signConfigFile} where id = #{id}
+	</update>
+	
+	<delete id="deleteUserStatisJob">
+		delete FROM users_statistics where statistical_time <![CDATA[<]]> DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+	</delete>
+	
+</mapper>

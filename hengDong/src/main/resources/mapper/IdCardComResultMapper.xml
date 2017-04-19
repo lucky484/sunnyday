@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.pfirs.dao.IdCardComResultDao">
+
+	<resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="IdCardComResultMap">
+		<id column="CARDCOMPRLTID" property="cardId" />
+		<result column="Photo" property="idCardPic" />
+		<result column="CollectIDCardNo" property="idCardNo" />
+		<result column="CollectIDCardName" property="idCardName" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="CardCode" property="cardCode" />
+	</resultMap>
+	
+	<resultMap type="com.hd.pfirs.model.IdCardComModel" id="IdCardComMap">
+		<id column="CARDCOMPRLTID" property="cardComprltId"  jdbcType="BIGINT"/>
+		<result column="RECEIVETIME" property="receiveTime"  jdbcType="DATE"/>
+		<result column="RECEIVETIMESTAMP" property="receiveTimeStamp"  jdbcType="VARCHAR"/>
+		<result column="CARDCODE" property="cardCode"  jdbcType="VARCHAR"/>
+		<result column="CTRLBASEID" property="ctrlBaseID"  jdbcType="VARCHAR"/>
+		<result column="ISCONTROLLED" property="isControlled"  jdbcType="VARCHAR"/>
+		<result column="COLLECTIDCARDNO" property="collectIDCardNo"  jdbcType="VARCHAR"/>
+		<result column="COLLECTIDCARDNAME" property="collectIDCardName"  jdbcType="VARCHAR"/>
+		<result column="REMARKDESC" property="remarkDesc"  jdbcType="VARCHAR"/>
+		<result column="DELETESTATUS" property="deleteStatus"  jdbcType="VARCHAR"/>
+		<result column="CREATENAME" property="createName"  jdbcType="VARCHAR"/>
+		<result column="CREATETIME" property="createTime"  jdbcType="DATE"/>
+		<result column="UPDATENAME" property="updateName"  jdbcType="VARCHAR"/>
+		<result column="UPDATETIME" property="updateTime"  jdbcType="DATE"/>
+		<result column="COMPAREBASEID" property="compareBaseID"  jdbcType="VARCHAR"/>
+		<result column="PHOTO" property="photo"  jdbcType="BLOB"/>
+		<result column="RELAYTIME" property="relayTime"  jdbcType="DATE"/>
+		<result column="RELAYTIMESTAMP" property="relayTimeStamp"  jdbcType="VARCHAR"/>
+		<result column="RELAYFLAG" property="relayFlag"  jdbcType="VARCHAR"/>
+		<result column="FLAG" property="flag"  jdbcType="VARCHAR"/>
+	</resultMap>
+	
+      <insert id="saveIdCardInfo2ComResult">
+       insert into T_PP_IDCardCompResult (
+	       CARDCOMPRLTID,
+	       RELAYFLAG,
+	       Photo,
+	       CollectIDCardNo,
+	       CardCode,
+	       CollectIDCardName,
+	       RemarkDesc,
+	       DeleteStatus,
+	       CREATENAME,
+	       CREATETIME,
+	       UPDATENAME,
+	       UPDATETIME,
+	       DeviceCode
+       )
+	   values(
+		   #{cardId, jdbcType=BIGINT},
+		   '0',
+		   #{idCardPic, jdbcType=BLOB},
+		   #{idCardNo, jdbcType=VARCHAR},
+		   #{cardCode, jdbcType=VARCHAR},
+		   #{idCardName, jdbcType=VARCHAR},
+		   #{remarkDesc, jdbcType=VARCHAR},
+		   '0',
+		   'system',
+		   sysdate,
+		   'system',
+		   sysdate,
+		   #{deviceCode, jdbcType=VARCHAR}
+	   )
+     </insert>
+     
+    <select id="getIdCardComMap" resultType="map">
+		select CARDCOMPRLTID,
+			COLLECTIDCARDNO 
+			from T_PP_IDCardCompResult 
+		where 
+		DELETESTATUS ='0' and RELAYFLAG= '0' and COLLECTIDCARDNO is not null and rownum =1
+	</select>
+	
+	
+	<update id="updateIdCardComInfo">
+		update T_PP_IDCardCompResult
+		 set RelayFlag = '1',
+	     UpdateName = 'system',
+	     UpdateTime = sysdate
+		where CARDCOMPRLTID = #{comId}
+	</update>
+	
+	
+	<update id="updateIdCardComModel" parameterType="IdCardComModel">
+		update T_PP_IDCardCompResult
+		 set RelayFlag = '2',
+	     RELAYTIME=sysdate,
+	     RELAYTIMESTAMP = #{relayTimeStamp, jdbcType=VARCHAR},
+	     ReceiveTime =sysdate,
+	     ReceiveTimeStamp = #{relayTimeStamp, jdbcType=VARCHAR},
+	     CTRLBASEID = #{ctrlBaseID, jdbcType=VARCHAR},
+	     ISCONTROLLED = #{isControlled, jdbcType=VARCHAR},
+	     COMPAREBASEID = #{compareBaseID, jdbcType=VARCHAR},
+	     flag = #{flag, jdbcType=VARCHAR},
+	     UpdateName = 'system',
+	     UpdateTime = sysdate
+		where CARDCOMPRLTID = #{cardComprltId}
+	</update>
+</mapper>

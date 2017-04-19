@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.VirtualGroupDao">
+    
+    <resultMap type="VirtualGroup" id="VirtualGroupMap">
+    	<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="weight" column="weight"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createBy" column="createBy"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="quantity" column="quantity"/> 
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id"/>
+		</association>
+		<association property="virtualCollection" javaType="VirtualCollection">
+			<id property="id" column="collection_id"/>
+			<result property="name" column="parent_name"/>
+		</association>
+    </resultMap>
+    
+    <select id="findOne" parameterType="java.lang.Integer" resultMap="VirtualGroupMap">
+    	SELECT id,org_id,name,collection_id,weight,create_time,update_time,create_by,update_by
+    	FROM virtual_group
+    	WHERE id=#{id}
+    	AND delete_time is null;
+    </select>
+    
+    <insert id="save" parameterType="VirtualGroup">
+    	INSERT INTO virtual_group(org_id,name,collection_id,weight,create_time,update_time,create_by,update_by,delete_time)
+    	VALUES(#{organization.id},#{name},#{virtualCollection.id},#{weight},NOW(),NOW(),#{createBy},#{createBy},null)
+    </insert>
+    <update id="deleteWithPk" parameterType="int">
+    	  update virtual_group set delete_time = NOW() where id= #{id}
+    </update>
+     <delete id="deleteAllUsers" parameterType="java.lang.Integer">  
+   DELETE from users_virtual_group where virtual_id= #{id}
+   </delete>
+     <update id="updateWeightByName" parameterType="VirtualGroup">
+    	  update virtual_group set weight = #{weight},update_time =NOW() where name= #{name}
+    </update>
+     <update id="updateNameById" parameterType="VirtualGroup">
+    	  update virtual_group set name = #{name},update_time =NOW() where id= #{id}
+    </update>
+    <select id="findByCid" parameterType="java.lang.Integer" resultMap="VirtualGroupMap">
+    	SELECT id,org_id,name,collection_id,weight,create_time,update_time
+    	FROM virtual_group
+    	WHERE delete_time is null 
+    	AND collection_id=#{id}
+    	ORDER BY weight asc
+    </select>
+    
+    <select id="findByCids" resultMap="VirtualGroupMap">
+    	SELECT id,org_id,name,collection_id,weight,create_time,update_time
+    	FROM virtual_group
+    	WHERE delete_time is null 
+    	AND collection_id in
+    	<foreach item="item" index="index" collection="array" 
+                         open="(" separator="," close=")">
+                        #{item}
+        </foreach>
+    	ORDER BY weight asc
+    </select>
+    <select id="isExists" parameterType="VirtualGroup" resultType="boolean">
+    	SELECT count(1)
+    	FROM virtual_group
+    	WHERE delete_time is null
+    	AND name = #{name}
+    	AND collection_id = #{virtualCollection.id}
+    </select>
+    <select id="findByids" resultMap="VirtualGroupMap">
+    	SELECT id,org_id,name,collection_id,weight,create_time,update_time
+    	FROM virtual_group
+    	WHERE delete_time is null 
+    	AND id in
+    	<foreach item="item" index="index" collection="array" 
+             open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+        <select id="findByOrgIdMember" resultMap="VirtualGroupMap">
+     SELECT id,
+          T1.org_id,
+          T1.name,
+          T1.weight,
+          collection_id,
+          (select count(T2.id) from users_virtual_group T2,users u WHERE T2.virtual_id = T1.id AND T2.delete_time IS NULL
+             AND  u.id=T2.user_id  
+           <if test="idlist != null">
+     				 and u.group_id in 
+   							    <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                      				  #{item}
+     							</foreach></if>) as quantity
+        FROM 
+          virtual_group T1 
+        WHERE 
+          T1.delete_time is null 
+        AND 
+          T1.org_id= #{orgId} 
+        ORDER BY T1.weight asc
+        	
+  </select>
+     <select id="findByOrgId" resultMap="VirtualGroupMap">
+   SELECT id,
+    	  T1.org_id,
+    	  T1.name,
+    	  T1.weight,
+          T1.collection_id,
+          T1.create_by as createBy
+    	FROM 
+    	  virtual_group T1 
+    	WHERE 
+    	  T1.delete_time is null 
+    	AND 
+    	  T1.org_id= #{id}   
+        ORDER BY T1.weight asc
+  </select>
+   <select id="existsEditName" parameterType="VirtualGroup"
+		resultType="int">
+		SELECT count(1)
+		FROM virtual_group
+		WHERE delete_time is null
+		AND name = #{name}
+		AND collection_id= #{virtualCollection.id}
+		AND id!=#{id}
+		AND delete_time is null
+	</select>
+</mapper>

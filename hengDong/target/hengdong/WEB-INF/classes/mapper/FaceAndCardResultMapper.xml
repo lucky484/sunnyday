@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.pfirs.dao.FaceAndCardResultDao">
+    <resultMap id="faceAndCardResultMap" type="com.hd.pfirs.model.FaceAndCardResult">
+         	<id column="CIID" property="ciID" />
+           <result column="ReceiveTime" property="receiveTime" />
+           <result column="ReceiveTimeStamp" property="receiveTimeStamp" />
+           <result column="CardCode" property="cardCode" />
+           <result column="FaceCode" property="faceCode" />
+           <result column="Similarity" property="similarity" />
+           <result column="RemarkDesc" property="remarkDesc" />
+           <result column="DeleteStatus" property="deleteStatus" />
+           <result column="CreateName" property="createName" />
+           <result column="CreateTime" property="createTime" />
+           <result column="UpdateName" property="updateName" />
+           <result column="UpdateTime" property="updateTime" />
+    </resultMap>
+    
+     <insert id="insertFaceAndCardResult" parameterType="FaceAndCardResult">
+        
+ 	   insert into t_pp_faceAndCardResult(
+ 	   CIID,
+ 	   ReceiveTime,
+ 	   ReceiveTimeStamp,
+ 	   CardCode,
+ 	   FaceCode,
+ 	   Similarity,
+ 	   DeleteStatus,
+ 	   CreateTime,
+ 	   UpdateTime
+ 	   )values(
+ 	    #{ciID},
+ 	    #{receiveTime},
+ 	    #{receiveTimeStamp},
+ 	    #{cardCode},
+ 	    #{faceCode},
+ 	    #{similarity},
+ 	    #{deleteStatus},
+ 	     sysdate,
+ 	     sysdate
+ 	   )
+        
+     </insert>
+</mapper>

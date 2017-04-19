@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.FluxDao">
+	
+	<resultMap type="FluxModel" id="FluxMap">
+		<id property="id" column="id"/>
+		<result property="device_name" column="device_name"/>
+		<result property="device_type" column="device_type"/>
+		<result property="sn" column="sn"/>
+		<result property="esnorimei" column="esnorimei"/>
+		<result property="device_status" column="device_status"/>
+		<result property="flux" column="flux"/>
+		<result property="totalFlux" column="total_flux"/>
+		<result property="createTime" column="create_time"/>
+		<association property="organization" javaType="Organization">
+			<id property="id" column="org_id" />
+			<result property="orgType" column="org_type"/>
+			<result property="name" column="org_name"/>
+		</association>
+		<association property="user" javaType="User">
+			<id property="id" column="user_id" />
+			<result property="realname" column="real_name"/>
+		</association>
+	</resultMap>
+	
+	<select id="getFluxsCountByMap" resultType="java.lang.Integer">
+		SELECT count(0) from (select
+				id,
+				ROUND(flux / 1024, 2) as total_flux,
+				DATE_FORMAT(
+					statistical_time,
+					'%Y-%m-%d'
+				) as create_time
+			from
+				flux
+			where
+				org_id = #{org_id}
+				<if test="firstDay!= null and firstDay !='' and lastDay!=null and lastDay!=''">
+				and statistical_time between CONCAT(#{firstDay}':00:00:00')	and  CONCAT(#{lastDay}':23:59:59') 
+				</if>
+				<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+				and statistical_time between CONCAT(#{startTime}':00:00:00')	and  CONCAT(#{endTime}':23:59:59') 
+				</if>
+			ORDER BY
+				statistical_time asc)a
+		<!-- select count(0) from (
+		<if test="firstDay!= null and firstDay !='' and lastDay!=null and lastDay!=''">
+			select id,DATE_FORMAT(create_time,'%Y-%m-%d') as create_time ,IFNULL(sum(flux),0) as total_flux from device_basic_info where org_id = #{org_id} and create_time between CONCAT(DATE_FORMAT(now(),'%Y-%m-%d'),' :00:00:00')
+			and  CONCAT(DATE_FORMAT(now(),'%Y-%m-%d'),' :23:59:59') group by DATE_FORMAT(create_time,'%Y-%m-%d')  union 
+			select id,DATE_FORMAT(statistical_time,'%Y-%m-%d') as create_time ,IFNULL(sum(flux),0) as total_flux from flux where org_id = #{org_id} and statistical_time between CONCAT(#{firstDay},' :00:00:00')
+			and  CONCAT(#{lastDay},' :23:59:59') group by DATE_FORMAT(statistical_time,'%Y-%m-%d') ) a ORDER BY create_time  desc
+		</if>
+		<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+			select id,DATE_FORMAT(create_time,'%Y-%m-%d') as create_time ,IFNULL(sum(flux),0) as total_flux from device_basic_info where org_id = #{org_id} and create_time between CONCAT(DATE_FORMAT(now(),'%Y-%m-%d'),' :00:00:00')
+			and  CONCAT(DATE_FORMAT(now(),'%Y-%m-%d'),' :23:59:59') group by DATE_FORMAT(create_time,'%Y-%m-%d')  union 
+			select id,DATE_FORMAT(statistical_time,'%Y-%m-%d') as create_time ,IFNULL(sum(flux),0) as total_flux from flux where org_id = #{org_id} and statistical_time between CONCAT(#{startTime},' :00:00:00')
+			and  CONCAT(#{endTime},' :23:59:59') group by DATE_FORMAT(statistical_time,'%Y-%m-%d') ) a ORDER BY create_time desc
+		</if> -->
+	</select>
+    
+    <select id="getFluxsListsByMap" resultMap="FluxMap">
+    		select
+				id,
+				ROUND(flux / 1024, 2) as total_flux,
+				DATE_FORMAT(
+					statistical_time,
+					'%Y-%m-%d'
+				) as create_time
+			from
+				flux
+			where
+				org_id = #{org_id}
+				<if test="firstDay!= null and firstDay !='' and lastDay!=null and lastDay!=''">
+				and statistical_time between CONCAT(#{firstDay}':00:00:00')	and  CONCAT(#{lastDay}':23:59:59') 
+				</if>
+				<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+				and statistical_time between CONCAT(#{startTime}':00:00:00')	and  CONCAT(#{endTime}':23:59:59') 
+				</if>
+			ORDER BY
+				statistical_time desc
+		 	limit 	#{start},#{offset} 
+	</select>
+	
+	<select id="getExportFluxsListsByMap" resultMap="FluxMap">
+			select
+				id,
+				CASE 
+				WHEN ROUND(flux / 1024, 2) <![CDATA[<=]]> 0 THEN
+					0 
+				else
+					ROUND(flux / 1024, 2)  END total_flux,
+				DATE_FORMAT(
+					statistical_time,
+					'%Y-%m-%d'
+				) as create_time
+			from
+				flux
+			where
+				org_id = #{org_id}
+				<if test="firstDay!= null and firstDay !='' and lastDay!=null and lastDay!=''">
+				and statistical_time between CONCAT(#{firstDay}':00:00:00')	and  CONCAT(#{lastDay}':23:59:59') 
+				</if>
+				<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+				and statistical_time between CONCAT(#{startTime}':00:00:00')	and  CONCAT(#{endTime}':23:59:59') 
+				</if>
+			ORDER BY
+				statistical_time desc
+	</select>
+	
+	<select id="getChartFluxsListsByMap" resultMap="FluxMap">
+			select
+				id,
+				CASE 
+				WHEN ROUND(flux / 1024, 2) <![CDATA[<=]]> 0 THEN
+					0 
+				else
+					ROUND(flux / 1024, 2)  END total_flux,
+				DATE_FORMAT(
+					statistical_time,
+					'%Y-%m-%d'
+				) as create_time
+			from
+				flux
+			where
+				org_id = #{org_id}
+				<if test="firstDay!= null and firstDay !='' and lastDay!=null and lastDay!=''">
+				and statistical_time between CONCAT(#{firstDay}':00:00:00')	and  CONCAT(#{lastDay}':23:59:59') 
+				</if>
+				<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+				and statistical_time between CONCAT(#{startTime}':00:00:00')	and  CONCAT(#{endTime}':23:59:59') 
+				</if>
+			ORDER BY
+				statistical_time asc
+	</select>
+	<select id="getTotalFluxCountByMap" resultType="java.lang.Integer">
+		select count(0) from (select d.id,DATE_FORMAT(d.create_time,'%Y-%m-%d')as create_time,device_name,flux,u.real_name from device_basic_info d left join users u on d.user_id = u.id where d.org_id = #{org_id} and d.create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="device_name !=null  and device_name !=''">
+			and d.device_name like CONCAT('%',#{device_name},'%')
+		</if>
+		ORDER BY d.create_time desc ) as list
+	</select>
+    
+    <select id="getTotalFluxListsByMap" resultMap="FluxMap">
+		select d.id,DATE_FORMAT(d.create_time,'%Y-%m-%d')as create_time,device_name,flux,u.real_name from device_basic_info d left join users u on d.user_id = u.id where d.org_id = #{org_id} and d.create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="device_name !=null  and device_name !=''">
+			and d.device_name like CONCAT('%',#{device_name},'%')
+		</if>
+		ORDER BY d.create_time desc limit #{start},#{offset}  
+	</select>
+	
+	<select id="getTotalFluxsCountByMap" resultType="java.lang.Integer">
+		select count(0) from (select f.id,DATE_FORMAT(f.create_time,'%Y-%m-%d')as create_time,device_name,flux, u.real_name from flux f left join users u on f.user_id = u.id where f.org_id = #{org_id} and f.create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="device_name !=null  and device_name !=''">
+			and f.device_name like CONCAT('%',#{device_name},'%')
+		</if>
+		ORDER BY f.create_time desc ) as list
+	</select>
+    
+    <select id="getTotalFluxsListsByMap" resultMap="FluxMap">
+		select f.id,DATE_FORMAT(f.create_time,'%Y-%m-%d')as create_time,device_name,flux, u.real_name from flux f left join users u on f.user_id = u.id where f.org_id = #{org_id} and f.create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="device_name !=null  and device_name !=''">
+			and f.device_name like CONCAT('%',#{device_name},'%')
+		</if>
+		ORDER BY f.create_time desc limit #{start},#{offset}  
+	</select>
+	
+	<select id="getExportTotalFluxListsByMap" resultMap="FluxMap">
+		select d.id,DATE_FORMAT(d.create_time,'%Y-%m-%d')as create_time,device_name,flux,u.real_name from device_basic_info d left join users u on d.user_id = u.id where d.org_id = #{org_id} and d.create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="device_name !=null  and device_name !=''">
+			and d.device_name like CONCAT('%',#{device_name},'%')
+		</if>
+		ORDER BY d.create_time desc
+	</select>
+	
+	<select id="getExportTotalFluxsListsByMap" resultMap="FluxMap">
+		select f.id,DATE_FORMAT(f.statistical_time,'%Y-%m-%d')as create_time,device_name,flux, u.real_name from flux f left join users u on f.user_id = u.id where f.org_id = #{org_id} and f.create_time between CONCAT(#{create_time},' :00:00:00')
+		and  CONCAT(#{create_time},' :23:59:59') 
+		<if test="device_name !=null  and device_name !=''">
+			and f.device_name like CONCAT('%',#{device_name},'%')
+		</if>
+		ORDER BY f.create_time desc
+	</select>
+	
+	<!-- <insert id="autoBackupFlux">
+		insert into flux (device_basic_info_id,org_id,device_name,device_type,sn,esnorimei,device_status,create_time,flux,user_id)
+		select d.id,d.org_id,d.device_name,d.device_type,d.sn,d.esnorimei,d.device_status,d.create_time,CONCAT(IFNULL((d.flux-f.flux),0),'MB') as flux,d.user_id from device_basic_info d 
+		left join (select * from flux where DATE_FORMAT(create_time,'%Y-%m-%d') = date_sub(curdate(),interval 1 day)) f on d.id = f.device_basic_info_id
+	</insert> -->
+	
+	<insert id="autoBackupFlux">
+				insert into flux (
+							flux,
+							org_id,
+							statistical_time
+						) select
+						   	CASE d.totalflux - ifnull(f.totalflux, 0)  
+														WHEN CAST(d.totalflux - ifnull(f.totalflux, 0) AS signed) <![CDATA[<]]> 0 THEN 0
+														WHEN  CAST(d.totalflux - ifnull(f.totalflux, 0) AS signed) <![CDATA[>]]> 0 THEN CAST(d.totalflux - ifnull(f.totalflux, 0) AS signed)
+														ELSE  CAST(d.totalflux - ifnull(f.totalflux, 0) AS signed) END
+													as total_flux,
+													d.org_id as org_id,
+													now()
+													from
+							(
+								select
+									sum(flux) as totalflux,
+									org_id
+								from
+									device_basic_info
+								group by
+									org_id
+							) d
+						left join (
+							select
+								sum(flux) as totalflux,
+								org_id
+							from
+								flux 
+							group by
+								org_id
+						) f on d.org_id = f.org_id
+						group by
+							d.org_id
+	</insert>
+	
+	
+	<select id="selectTodayFlux"  resultMap="FluxMap">
+			select
+              0  as id,
+			CASE CAST(ROUND((d.totalflux - ifnull(f.totalflux, 0))/1024,2) as signed)
+			WHEN CAST(ROUND((d.totalflux - ifnull(f.totalflux, 0))/1024,2) as signed) <![CDATA[>]]> 0 then CAST(ROUND((d.totalflux - ifnull(f.totalflux, 0))/1024,2) as signed)
+			else 0
+			end  as total_flux,
+										DATE_FORMAT(
+								now(),
+								'%Y-%m-%d'
+							) as create_time  
+									from
+										(
+											select
+												sum(flux) as totalflux,
+												org_id
+											from
+												device_basic_info
+											where org_id = #{org_id}
+											group by
+												org_id
+										) d
+									left join (
+										select
+											sum(flux) as totalflux,
+											org_id
+										from
+											flux 
+										group by
+											org_id
+									) f on d.org_id = f.org_id
+									group by
+										d.org_id
+	</select>
+	
+	
+<delete id="deleteFluxStatisJob">
+		delete FROM flux where statistical_time <![CDATA[<]]> DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+	</delete>
+	
+</mapper>

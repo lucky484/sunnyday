@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.AppDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.App" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="INTEGER" />
+    <result column="release_type" property="releaseType" jdbcType="CHAR" />
+    <result column="apk_file" property="apkFile" jdbcType="VARCHAR" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+    <result column="icon_path" property="iconPath" jdbcType="VARCHAR" />
+    <result column="app_name" property="appName" jdbcType="VARCHAR" />
+    <result column="app_version" property="appVersion" jdbcType="VARCHAR" />
+    <result column="signature_certificate" property="signatureCertificate" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="app_description" property="appDescription" jdbcType="VARCHAR" />
+    <result column="minimum_version" property="minimumVersion" jdbcType="CHAR" />
+    <result column="state" property="state" jdbcType="CHAR" />
+    <result column="app_count" property="appCount" jdbcType="INTEGER" />
+    <result column="orgName" property="orgName" jdbcType="VARCHAR" />
+    <result column="file_size" property="fileSize" jdbcType="VARCHAR" />
+    <result column="track_id" property="trackId" jdbcType="VARCHAR" />
+    <result column="formatted_price" property="formattedPrice" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+    <collection property="userList" resultMap="usersMap"></collection>
+  </resultMap>
+  <resultMap type="User" id="usersMap">
+	<id property="id" column="userId"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, org_id, release_type, apk_file, app_id, icon_path, app_name, app_version, signature_certificate, 
+    author, app_description, minimum_version, state, app_count, create_date, create_user, update_date, 
+    update_user, delete_time, track_id 
+  </sql>
+  
+  <!-- 根据主键查询应用表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from app
+    where id = #{id,jdbcType=INTEGER} 
+    and delete_time is null 
+  </select>
+  
+  <!-- 根据主键删除应用表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from app
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入应用表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.App"  useGeneratedKeys="true" keyProperty="id">
+    insert into app (org_id, release_type, 
+      apk_file, app_id, icon_path, 
+      app_name, app_version, signature_certificate, 
+      author, app_description, minimum_version, 
+      state, app_count, create_date, create_user, 
+      update_date, update_user, delete_time
+      )
+    values (#{orgId,jdbcType=INTEGER}, #{releaseType,jdbcType=CHAR}, 
+      #{apkFile,jdbcType=VARCHAR}, #{appId,jdbcType=VARCHAR}, #{iconPath,jdbcType=VARCHAR}, 
+      #{appName,jdbcType=VARCHAR}, #{appVersion,jdbcType=VARCHAR}, #{signatureCertificate,jdbcType=VARCHAR}, 
+      #{author,jdbcType=VARCHAR}, #{appDescription,jdbcType=VARCHAR}, #{minimumVersion,jdbcType=CHAR}, 
+      #{state,jdbcType=CHAR}, #{appCount,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <!-- 插入可选的应用表数据 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.App" useGeneratedKeys="true" keyProperty="id">
+    insert into app 
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="releaseType != null" >
+        release_type,
+      </if>
+      <if test="apkFile != null" >
+        apk_file,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+      <if test="iconPath != null" >
+        icon_path,
+      </if>
+      <if test="appName != null" >
+        app_name,
+      </if>
+      <if test="appVersion != null" >
+        app_version,
+      </if>
+      <if test="signatureCertificate != null" >
+        signature_certificate,
+      </if>
+      <if test="author != null" >
+        author,
+      </if>
+      <if test="appDescription != null" >
+        app_description,
+      </if>
+      <if test="minimumVersion != null" >
+        minimum_version,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="appCount != null" >
+        app_count,
+      </if>
+      <if test="fileSize != null" >
+        file_size,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+      <if test="trackId != null" >
+        track_id,
+      </if>
+      <if test="formattedPrice != null" >
+        formatted_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="releaseType != null" >
+        #{releaseType,jdbcType=CHAR},
+      </if>
+      <if test="apkFile != null" >
+        #{apkFile,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="iconPath != null" >
+        #{iconPath,jdbcType=VARCHAR},
+      </if>
+      <if test="appName != null" >
+        #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null" >
+        #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="signatureCertificate != null" >
+        #{signatureCertificate,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="appDescription != null" >
+        #{appDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="minimumVersion != null" >
+        #{minimumVersion,jdbcType=CHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=CHAR},
+      </if>
+      <if test="appCount != null" >
+        #{appCount,jdbcType=INTEGER},
+      </if>
+      <if test="fileSize != null" >
+        #{fileSize,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trackId != null" >
+        #{trackId,jdbcType=VARCHAR},
+      </if>    
+      <if test="formattedPrice != null" >
+        #{formattedPrice,jdbcType=VARCHAR},
+      </if>   
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的应用表字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.App" >
+    update app
+    <set >
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="releaseType != null" >
+        release_type = #{releaseType,jdbcType=CHAR},
+      </if>
+      <if test="apkFile != null" >
+        apk_file = #{apkFile,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="iconPath != null" >
+        icon_path = #{iconPath,jdbcType=VARCHAR},
+      </if>
+      <if test="appName != null" >
+        app_name = #{appName,jdbcType=VARCHAR},
+      </if>
+      <if test="appVersion != null" >
+        app_version = #{appVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="signatureCertificate != null" >
+        signature_certificate = #{signatureCertificate,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="appDescription != null" >
+        app_description = #{appDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="minimumVersion != null" >
+        minimum_version = #{minimumVersion,jdbcType=CHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=CHAR},
+      </if>
+      <if test="appCount != null" >
+        app_count = #{appCount,jdbcType=INTEGER},
+      </if>
+      <if test="fileSize != null" >
+        file_size = #{fileSize,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新应用表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.App" >
+    update app
+    set org_id = #{orgId,jdbcType=INTEGER},
+      release_type = #{releaseType,jdbcType=CHAR},
+      apk_file = #{apkFile,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      icon_path = #{iconPath,jdbcType=VARCHAR},
+      app_name = #{appName,jdbcType=VARCHAR},
+      app_version = #{appVersion,jdbcType=VARCHAR},
+      signature_certificate = #{signatureCertificate,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      app_description = #{appDescription,jdbcType=VARCHAR},
+      minimum_version = #{minimumVersion,jdbcType=CHAR},
+      state = #{state,jdbcType=CHAR},
+      app_count = #{appCount,jdbcType=INTEGER},
+      file_size = #{fileSize,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+   
+     <!-- 获取应用管理列表数据 start -->
+  <select id="getApplicationByOrgId" resultType="com.softtek.mdm.model.App" parameterType="com.softtek.mdm.util.DataGridModel">
+    select 
+      t1.id,
+      t1.release_type as releaseType,
+      t1.apk_file as apkFile,
+      t1.app_id as appId,
+      t1.icon_path as iconPath,
+      t1.app_name as appName,
+      t1.app_count as appCount,
+      (select count(distinct(t2.id)) from device_basic_info t2 
+      where t2.user_id in 
+      (select t3.id from users t3 where t3.group_id in 
+      (select t4.org_structure_id from app_department_authorization t4 where t4.app_id = t1.id))
+       and t2.user_id in 
+       (select t5.user_id from users_virtual_group t5 where t5.virtual_id in 
+       (select t6.virtual_group_id  from app_virtual_group_authorization t6 where t6.app_id = t1.id)) 
+      ) as notAuthCount,
+      t1.state 
+    from 
+      app t1 
+    where 
+      t1.delete_time is null 
+     and t1.org_id = #{params.orgId} 
+     <if test="params.value!=null and params.value!=''">
+        and t1.app_name like CONCAT('%',#{params.value} ,'%') 
+     </if>
+     order by t1.update_date desc 
+  </select>
+  <!-- 获取应用管理列表数据  end -->
+   
+  <!-- 获取应用管理列表数据 start -->
+  <select id="getApplicationListByParams" resultMap="BaseResultMap" parameterType="com.softtek.mdm.util.DataGridModel">
+    select 
+      t1.id,
+      t1.release_type,
+      t1.apk_file,
+      t1.app_id,
+      t1.icon_path,
+      t1.app_name,
+      t1.app_version,
+      t1.state, 
+      t1.app_count,
+      t2.name as orgName,
+      t3.user_id as userId 
+    from 
+      app t1 
+    left join organization t2 on t1.org_id = t2.id 
+    left join user_app t3 on t3.app_id = t1.id and t3.state = 1 and t3.delete_time is null 
+    where 
+      t1.delete_time is null 
+     and t1.org_id = #{params.orgId} 
+    <if test="params.appName != null and params.appName != ''">
+        and t1.app_name like CONCAT('%',#{params.appName} ,'%') 
+    </if>
+    <if test="params.releaseType != null and params.releaseType != ''">
+        and t1.release_type = #{params.releaseType}
+    </if>
+    <if test="params.appState != null and params.appState != ''">
+        and t1.state = #{params.appState}  
+    </if>
+     order by t1.update_date desc 
+     limit #{begin},#{num} 
+  </select>
+  <!-- 获取应用管理列表数据  end -->
+  
+  <!-- 获取应用管理列表数据 Size start-->
+  <select id="getApplicationCountByParams" resultType="java.lang.Integer" parameterType="com.softtek.mdm.util.DataGridModel">
+    select 
+      count(t1.id) 
+    from 
+      app t1 
+    left join organization t2 on t1.org_id = t2.id 
+    left join user_app t3 on t3.app_id = t1.id and t3.state = 1 and t3.delete_time is null 
+    where 
+      t1.delete_time is null 
+    and t1.org_id = #{params.orgId} 
+    <if test="params.appName != null and params.appName != ''">
+        and t1.app_name like CONCAT('%',#{params.appName} ,'%') 
+    </if>
+    <if test="params.releaseType != null and params.releaseType != ''">
+        and t1.release_type = #{params.releaseType} 
+    </if>
+    <if test="params.appState != null and params.appState != ''">
+        and t1.state = #{params.appState}  
+    </if>
+  </select>
+  <!-- 获取应用管理列表数据 Size end-->
+  
+  <!-- 根据id删除应用-->
+  <update id="updateByPrimaryId" parameterType="java.lang.Integer">
+    update app 
+    set  delete_time = now() 
+    where id = #{id,jdbcType=INTEGER} 
+  </update>
+  
+    <!-- 根据id启用/禁用功能-->
+  <update id="updateStateByPrimaryId" parameterType="com.softtek.mdm.util.DataGridModel">
+    update app 
+    set state = #{params.state} 
+    where id = #{params.id,jdbcType=INTEGER} 
+  </update>
+  
+  <!-- 根据id启用/禁用功能-->
+  <update id="updateAppDescriptionById" parameterType="com.softtek.mdm.model.App">
+    update app 
+    set app_description = #{appDescription}, 
+      update_date = #{updateDate},
+      update_user = #{updateUser} 
+    where id = #{id,jdbcType=INTEGER} 
+  </update>
+  
+  <!-- 检索设备信息 -->
+  <select id="queryDevice" resultType="com.softtek.mdm.model.DeviceBasicInfoModel" parameterType="com.softtek.mdm.util.DataGridModel"> 
+    select 
+      t3.real_name,
+      t2.device_name,
+      t2.device_type,
+      t2.sn,
+      t2.esnorimei,
+      t2.belong 
+    from 
+      device_basic_info t2 
+    left join users t3 on t2.user_id = t3.id 
+    left join user_app t4 on t2.user_id = t4.user_id 
+    where t4.delete_time is null 
+       and t2.delete_time is null 
+       and t3.delete_time is null 
+       and t4.app_id = #{params.id} 
+       and t2.org_id = #{params.orgId} 
+       order by t2.update_time desc 
+     limit #{begin},#{num} 
+  </select>
+  
+  <!-- 检索设备信息数-->
+  <select id="queryDeviceCount" resultType="java.lang.Integer" parameterType="com.softtek.mdm.util.DataGridModel">
+     select 
+      count(t2.id) 
+     from 
+       device_basic_info t2 
+      where t2.user_id in (select t3.user_id from user_app t3 where t3.delete_time is null and t3.app_id = #{params.id})  
+       and t2.org_id = #{params.orgId} 
+       order by t2.update_time desc 
+  </select>
+  
+  <!-- 获取授权部门应用列表 -->
+  <select id="getAppListByDepartIds" resultType="com.softtek.mdm.bean.AppBean" parameterType="com.softtek.mdm.util.DataGridModel">
+      select 
+       t2.id,
+       t2.app_name as appName,
+       t2.apk_file as filePath,
+       t2.app_count as appCount,
+       t2.icon_path as iconPath,
+       t2.app_id as appId,
+       t3.id as userId,
+       t2.file_size as fileSize,
+       t2.state,
+       t2.delete_time as deleteTime,
+       t2.create_date as createDate,
+       t2.track_id as trackId,
+       t2.app_version as appVersion  
+     from 
+       app_department_authorization t1 
+     left join app t2 on t1.app_id = t2.id  
+     left join users t3 on t1.org_structure_id = t3.group_id and t3.delete_time is null 
+     <if test="params.userId != null and params.userId != ''">
+      and  t3.id = #{params.userId} 
+     </if>  
+     where t2.state = 1 
+     and t1.delete_time is null 
+     <if test="params.type != null and params.type !=''">
+     and t2.release_type = #{params.type} 
+     </if>
+     union  
+     select 
+       t2.id,
+       t2.app_name as appName,
+       t2.apk_file as filePath,
+       t2.app_count as appCount,
+       t2.icon_path as iconPath,
+       t2.app_id as appId,
+       t3.user_id as userId, 
+       t2.file_size as fileSize,
+       t2.state,
+       t2.delete_time as deleteTime,
+       t2.create_date as createDate,
+       t2.track_id as trackId,
+       t2.app_version as appVersion  
+     from 
+       app_virtual_group_authorization t1 
+     left join app t2 on t1.app_id = t2.id and t2.delete_time is null 
+     left join users_virtual_group t3 on t1.virtual_group_id = t3.virtual_id  and t3.delete_time is null 
+     <if test="params.userId != null and params.userId != ''">
+      and  t3.user_id = #{params.userId} 
+     </if> 
+     where t2.state = 1 
+     and t1.delete_time is null 
+     <if test="params.type != null and params.type !=''">
+     and t2.release_type = #{params.type}  
+     </if>
+     order by appId desc,userId desc,createDate DESC 
+  </select>
+  
+  <!-- 根据应用Id查询应用存在 start -->
+  <select id="selectNameByAppId" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">
+    select 
+      count(t1.id) 
+    from app t1 
+    where 
+      t1.delete_time is null 
+    and t1.app_id = #{params.appId}  
+    and t1.org_id =  #{params.orgId} 
+    <if test="params.id != null and params.id !=''">
+      and t1.id != #{params.id} 
+    </if>
+  </select>
+  <!-- 根据策略名称获取策略  end -->
+  
+  <!-- 根据应用Id获取应用 -->
+  <select id="selectAppByAppId" parameterType="java.lang.String" resultType="com.softtek.mdm.model.App">
+     select 
+       t1.id,
+       t1.app_count as appCount 
+     from app t1 
+     where t1.delete_time is null 
+     and t1.app_id = #{appId} 
+     order by t1.update_date desc 
+     limit 1
+  </select>
+  
+  <!-- 根据应用id获取用户Ids -->
+  <select id="selectUserIdsByAppId" parameterType="com.softtek.mdm.util.DataGridModel" resultType="java.lang.Integer">	
+	SELECT DISTINCT(T10.userId) FROM 
+	(SELECT 
+	  T6.id as userId  
+	FROM users T6 
+	LEFT JOIN app_department_authorization T7 ON T6.group_id = T7.org_structure_id 
+  INNER JOIN device_basic_info T11 ON T6.id = T11.user_id 
+	WHERE T7.app_id = #{params.appId} AND T7.delete_time IS NULL 
+   AND T11.delete_time IS NULL AND T11.org_id = #{params.orgId}
+	UNION 
+	SELECT 
+	  T8.user_id as userId 
+	 FROM users_virtual_group T8 
+	LEFT JOIN app_virtual_group_authorization T9 ON T9.virtual_group_id = T8.virtual_id
+  INNER JOIN device_basic_info T12 ON T8.user_id = T12.user_id 
+	WHERE T8.delete_time IS NULL AND T9.delete_time IS NULL AND T9.app_id = #{params.appId} 
+     AND T12.delete_time IS NULL AND T12.org_id = #{params.orgId} 
+) AS T10  
+  </select>
+</mapper>

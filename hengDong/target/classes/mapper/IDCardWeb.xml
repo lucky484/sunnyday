@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.IdCardWebDao">	
+	<resultMap type="com.hd.pfirs.model.IdCardWebModel" id="IdCardWebModelMap">
+		<id column="CardID" property="cardID" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="Collectsite" property="collectsite" />
+		<result column="IdCardPic" property="idCardPic" />
+		<result column="IdCardName" property="idCardName" />
+		<result column="IdCardNo" property="idCardNo" />
+		<result column="IdCardSex" property="idCardSex" />
+		<result column="IdCardNation" property="idCardNation" />
+		<result column="IsControlled" property="isControlled" />
+		<result column="CardCode" property="cardCode" />
+		<result column="CollectTimeStr" property="collectTimeStr" />
+	</resultMap>
+	
+	
+	<select id="getIdCardWebModelListByidCardNo" resultMap="IdCardWebModelMap" >	
+	 select CardID,CollectTime,Collectsite,IdCardPic,IdCardName,IdCardNo,IdCardSex,IdCardNation,IsControlled,CardCode,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss')
+	collectTimeStr from (
+	select rownum rn ,c.* from (
+	select
+	a.CardID,a.collecttime,a.collectsite,a.IDCardPic,a.IDCardName,a.IDCardNo,a.IDCardSex,a.IDCardNation,b.IsControlled,a.CardCode
+	from T_PP_IDCARDINFO A,T_PP_IDCardCompResult B where  a.cardcode = b.cardcode and  a.IDCardNo like '%'||#{idCardNo}||'%' and a.collectsite like '%'||#{collectSite}||'%'  order
+	by a.collecttimestamp desc ) c  where rownum <![CDATA[<]]> #{fys}*#{page} +1) d where d.rn <![CDATA[>]]> #{fys}*(#{page}-1)
+	</select>
+	
+	
+	<select id="getIdCardWebModelCountByidCardNo" resultType="int">
+	select count(1) count 
+	from T_PP_IDCARDINFO A,T_PP_IDCardCompResult B where  a.cardcode = b.cardcode and a.IDCardNo like '%'||#{idCardNo}||'%' and a.collectsite like '%'|| #{collectSite} ||'%'
+	</select>
+	
+	
+	<select id="getIdCardWebModelList" resultMap="IdCardWebModelMap" >	
+	select CardID,CollectTime,Collectsite,IdCardPic,IdCardName,IdCardNo,IdCardSex,IdCardNation,IsControlled,CardCode,to_char(collecttime,'yyyy-mm-dd HH24:mi:ss')
+	collectTimeStr from (
+	select rownum rn ,c.* from (
+	select
+	a.CardID,a.collecttime,a.collectsite,a.IDCardPic,a.IDCardName,a.IDCardNo,a.IDCardSex,a.IDCardNation,b.IsControlled,a.CardCode
+	from T_PP_IDCARDINFO A,T_PP_IDCardCompResult B where  a.cardcode = b.cardcode and  a.collectsite like '%'||#{collectSite}||'%'  order
+	by a.collecttimestamp desc ) c  where rownum <![CDATA[<]]> #{fys}*#{page} +1) d where d.rn <![CDATA[>]]> #{fys}*(#{page}-1)
+	</select>
+	
+	
+	<select id="getIdCardWebModelCount" resultType="int">
+	select count(1) count 
+	from T_PP_IDCARDINFO A,T_PP_IDCardCompResult B where  a.cardcode = b.cardcode and  a.collectsite like '%'|| #{collectSite} ||'%'
+	</select>
+	
+</mapper>

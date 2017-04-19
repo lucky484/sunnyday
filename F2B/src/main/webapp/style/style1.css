@@ -1,0 +1,113 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+* {
+	margin: 0;
+	padding: 0;
+	outline: none;
+	font-family: "Microsoft YaHei";
+}
+body {
+	width: 100%;
+	font-family: Hiragino Sans GB, Arial, Helvetica, "Microsoft YaHei", sans-serif;
+	font: normal 12px;
+	color: #000000;
+	-webkit-touch-callout: inherit;
+	-webkit-user-select: auto;
+	background-color: #fff;
+}
+a {
+	color: #fff;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: none;
+	color: #c70b22;
+}
+img {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+ul, li {
+	list-style-type: none;
+}
+.img-responsive {
+	display: block;
+    margin: 0 auto;
+    vertical-align: bottom;
+    width: 100%;
+}
+
+
+
+/*首页*/
+.yqtz_main{padding:0;margin:0;position:relative;width:100%;background-size:100% auto;}
+.yqtz_m_text,.yqtz_m_packet{position:absolute;z-index:9;font-size:1.25em;color:#fff;text-align:center;top:37%;width:100%;display:block;line-height:1.75em;text-shadow: 1px 2px 3px #923434;font-weight:bold;}
+.yqtz_m_yellow{color:#ebd23c;}
+
+/*红包*/
+.yqtz_m_packet{top:18%; text-shadow:none;}
+.yqtz_m_packet_s{width:71.875%;margin:0 auto;position:relative;}
+.yqtz_m_packet_s.success{width:100%;}
+.yqtz_m_packet_s.register .yqtz_m_p_text{position:absolute;width:100%;top:25%;}
+.yqtz_m_p_text.register{position:absolute;width:100%;display:block;bottom:2em;}
+.yqtz_m_p_text_s,.yqtz_m_p_text_ss,.yqtz_m_p_text_s.register{margin:0 auto;width:100%;display:block;text-align:center;position:relative;font-weight:normal;}
+.yqtz_m_packet_s.success .yqtz_m_p_text_s{width:71.875%;}
+.yqtz_m_p_text_s.register{width:80%;margin:0 auto;}
+
+.yqtz_m_register{background:#d9d9d9;width:98%;overflow:hidden;display:block;margin-bottom:8px;position:relative;border:2px solid #d9d9d9;-webkit-border-radius:2px; -moz-border-radius:2px; border-radius:2px;padding:1px;}
+.yqtz_m_register.area{overflow:visible;}
+.yqtz_m_register label{background:#d9d9d9;position:absolute;padding:5px;left:0px;z-index:999;}
+.yqtz_m_register i{background:url(../images/user.svg) 0px center no-repeat #d9d9d9;width:1.25em;height:1.25em;line-height:1.25em;display:block;}
+.yqtz_m_r_call i{background:url(../images/call.svg) 0px center no-repeat #d9d9d9;}
+.yqtz_m_r_area i{background:url(../images/area.svg) 0px center no-repeat #d9d9d9;}
+.yqtz_m_user,.yqtz_m_call,.yqtz_m_area{border:none;width:100%;vertical-align: middle;float:left;height:2.25em;line-height:2.25em;display:block;padding-left:2.5em;font-size:0.75em;}
+.yqtz_m_call option{border:none;margin-top:3px;height:2.25em;}
+.lingqu{margin:1em auto 0;}
+.yqtz_m_lq{font-size:0.75em;background:url(../images/red_bg.jpg) left top repeat;border:none;padding:0.75em 2em;color:#fff;-webkit-border-radius:25px; -moz-border-radius:25px; border-radius:25px;}
+.yqtz_m_lq:hover,.yqtz_m_lq:active{background:url(../images/red_bgs.jpg) left top repeat;padding:0.75em 2em;color:#fff;-webkit-border-radius:25px; -moz-border-radius:25px; border-radius:25px;}
+
+.yqtz_m_add{width:100%;display:block;}
+.yqtz_m_add p{
+	width:90%;
+	color: #c58714;
+	margin:0 auto;
+	text-align:center;
+	font-size:0.5em;
+	line-height:1.5em;
+	}
+/*index*/
+.yqtz_m_text,.yqtz_m_d{position:absolute;z-index:9;font-size:1.25em;color:#fff;text-align:center;top:37%;width:100%;display:block;line-height:1.75em;text-shadow: 1px 2px 3px #923434;font-weight:bold;}
+.yqtz_m_yellow{color:#ebd23c;}
+
+.yqtz_m_d{top:29%;height:20%;text-shadow:none;}
+.yqtz_m_d_s{width:21%;height:38%;margin:1% 2%;float:left;position:relative;}
+.yqtz_m_d_s img{width:100%;height:100%;text-align:center;}
+.dd2{top:32%;height:20%;text-shadow:none;}
+.dd2{position:absolute;z-index:9;font-size:1.25em;color:#fff;text-align:center;top:37%;width:100%;display:block;line-height:1.75em;text-shadow: 1px 2px 3px #923434;font-weight:bold;}
+.dd2{top:82%;height:14%;}
+.dd2_in{margin:0 0 0 37%;height:100%;display:block;background:url(../images/dd.png) repeat;background-size:100% 100%;border: none;}
+
+.top_input{width:150px;height:30px;top:20%;margin:0 auto;text-align:center;border:none;background-color:#30757c;color:#fef200;border-radius:18px;font-size:4.5vw;}
+.top_inputp{width:40%;height:20%;line-height:1.6em;margin:0 auto;text-align:center;color:#fbf34a;font-family:"微软雅黑";font-size:3vw;    z-index: 1;}
+/*获得急救包*/
+.jjb{position:absolute;z-index:9;font-size:1.25em;color:#fff;text-align:center;top:37%;width:100%;display:block;line-height:1.75em;text-shadow: 1px 2px 3px #923434;font-weight:bold;}
+.jjb{top:77.4%;height:6.43%;}
+.txxx{position:absolute;z-index:9;font-size:1.25em;color:#fff;text-align:center;top:37%;width:100%;display:block;line-height:1.75em;text-shadow: 1px 2px 3px #923434;font-weight:bold;}
+.txxx{top:76%;height:6.43%;}
+.cuizi{position:absolute;z-index:9;font-size:1.25em;color:#fff;text-align:center;top:37%;width:100%;display:block;line-height:1.75em;text-shadow: 1px 2px 3px #923434;font-weight:bold;}
+.cuizi{top:82%;height:12.5%;}
+.cuizi_in{margin:0 0 0 48%;width:27%;height:100%;display:block;background:url(../images/cuizi.png) repeat;background-size:100%;}
+.cuizi_in:hover{background:url(../images/cuizihover.png) repeat;background-size:100%;}
+
+.jjba{margin:0 auto;width:46.8%;height:100%;display:block;background:url(../images/jjbt.png) repeat;background-size:100%;}
+.jjba:hover{background:url(../images/jjbthover.png) repeat;background-size:100%;}
+.pyq{margin:0 auto;width:46.8%;height:100%;display:block;background:url(../images/pyq.png) repeat;background-size:100%;}
+.pyq:hover{background:url(../images/pyqhover.png) repeat;background-size:100%;}
+.fxhy{margin:0 auto;width:46.8%;height:100%;display:block;background:url(../images/fxhy.png) repeat;background-size:100%;}
+.fxhy:hover{background:url(../images/fxhyhover.png) repeat;background-size:100%;}
+.jjbtijiao{margin: 1em auto 0;}
+.jjb_m_lq{font-size:0.75em;background:url(../images/red_bg.jpg) left top repeat;border:none;padding:0.75em 2em;color:#fff;-webkit-border-radius:25px; -moz-border-radius:25px; border-radius:25px;}
+.jjb_m_lq:hover,.jjb_m_lq:active{background:url(../images/red_bgs.jpg) left top repeat;padding:0.75em 2em;color:#fff;-webkit-border-radius:25px; -moz-border-radius:25px; border-radius:25px;}

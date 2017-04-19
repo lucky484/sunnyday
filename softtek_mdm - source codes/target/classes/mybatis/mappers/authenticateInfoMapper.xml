@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.softtek.mdm.dao.AuthenticateInfoDao" >
+  <resultMap id="BaseResultMap" type="com.softtek.mdm.model.AuthenticateInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="topic" property="topic" jdbcType="VARCHAR" />
+    <result column="udid" property="udid" jdbcType="VARCHAR" />
+    <result column="control" property="control" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, topic, udid, control, user_id, create_date, create_user, update_date, update_user, delete_time
+  </sql>
+  <!-- 根据主键查询表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from authenticate_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除认证表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from authenticate_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入认证表 -->
+  <insert id="insert" parameterType="com.softtek.mdm.model.AuthenticateInfo" >
+    insert into authenticate_info (id, topic, udid, control, 
+      user_id, create_date, create_user, update_date, 
+      update_user, delete_time)
+    values (#{id,jdbcType=INTEGER}, #{topic,jdbcType=VARCHAR}, #{udid,jdbcType=VARCHAR}, #{control,jdbcType=CHAR},
+     #{userId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER},
+     #{updateDate,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{deleteTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 插入可选的认证表 -->
+  <insert id="insertSelectiveAuthenticate" parameterType="com.softtek.mdm.model.AuthenticateInfo"  useGeneratedKeys="true" keyProperty="id">
+   insert into authenticate_info(
+        topic,
+        udid,
+        control,
+        user_id,
+        create_date,
+        update_date) 
+        values 
+        (#{topic,jdbcType=VARCHAR},
+        #{udid,jdbcType=VARCHAR},
+        #{control,jdbcType=CHAR},
+        #{userId,jdbcType=INTEGER},
+        #{createDate,jdbcType=TIMESTAMP},
+        #{updateDate,jdbcType=TIMESTAMP})  
+  </insert>
+  
+  <!-- 插入可选的认证表 -->
+  <insert id="insertSelective" parameterType="com.softtek.mdm.model.AuthenticateInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into authenticate_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="topic != null" >
+        topic,
+      </if>
+      <if test="udid != null" >
+        udid,
+      </if>
+      <if test="control != null" >
+        control,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="deleteTime != null" >
+        delete_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="topic != null" >
+        #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="udid != null" >
+        #{udid,jdbcType=VARCHAR},
+      </if>
+      <if test="control != null" >
+        #{control,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.softtek.mdm.model.AuthenticateInfo" >
+    update authenticate_info
+    <set >
+      <if test="topic != null" >
+        topic = #{topic,jdbcType=VARCHAR},
+      </if>
+      <if test="udid != null" >
+        udid = #{udid,jdbcType=VARCHAR},
+      </if>
+      <if test="control != null" >
+        control = #{control,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="deleteTime != null" >
+        delete_time = #{deleteTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新表 -->
+  <update id="updateByPrimaryKey" parameterType="com.softtek.mdm.model.AuthenticateInfo" >
+    update authenticate_info
+    set topic = #{topic,jdbcType=VARCHAR},
+      udid = #{udid,jdbcType=VARCHAR},
+      control = #{control,jdbcType=CHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      delete_time = #{deleteTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据设备id获取设备 -->
+  <select id="selectAuthenticateInfoByUdid" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    from authenticate_info 
+    where udid = #{udid}  
+    and delete_time is null 
+  </select>
+  
+  <update id="deleteAuthenticateInfoByUdid" parameterType="String">
+      update authenticate_info set update_date = now(),delete_time = now() where udid = #{udid}
+  </update>
+</mapper>

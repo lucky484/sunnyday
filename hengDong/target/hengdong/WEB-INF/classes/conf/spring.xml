@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/task 
+      http://www.springframework.org/schema/task/spring-task-4.0.xsd
+      http://cxf.apache.org/jaxws   
+      http://cxf.apache.org/schemas/jaxws.xsd"> 
+    <!-- 引入jdbc, Global Settings 配置文件 -->
+	<context:property-placeholder
+		location="classpath:conf/*.properties" /> 
+    
+	<!-- 扫描文件（自动将service层注入） -->
+	<context:component-scan base-package="com.hd.pfirs.service" />
+	<context:component-scan base-package="com.hd.pfirs.service.impl" />
+<!-- 	<context:component-scan base-package="com.hd.pfirs.webservice" />
+	<context:component-scan base-package="com.hd.pfirs.util" /> -->
+	<context:component-scan base-package="com.hd.pfirs.job" />
+	
+	<!-- 利用SpringContextUtils 可以在源码中直接拿到bean，而不用注入 -->
+	<bean id="SpringContextUtils" class="com.hd.pfirs.util.SpringContextUtils"
+		lazy-init="false"></bean>
+
+	<!-- spring quartz scheduler factory -->
+	<!-- <bean id="scheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false"> -->
+<!-- 		will add the triggers and jobs dynamically -->
+<!-- 	<property name="triggers"> <list> <ref bean="startWorkTrigger" />  -->
+<!-- 			</list> </property>  -->
+	<!-- </bean> -->
+
+	<!-- 配置一个缓存拦截器对象，处理具体的缓存业务 -->
+<!-- 	<bean id="methodCacheInterceptor" class="com.hp.cess.intercepter.MethodCacheInterceptor"> -->
+<!-- 		<property name="cache" ref="reCache" /> -->
+<!-- 	</bean> -->
+           <!-- 为导入CXF的bean定义文件 --> 
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>  
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>  
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>  
+    <bean id="SendFaceAndCardResultImpl" class="com.hd.pfirs.webservice.impl.SendFaceAndCardResultImpl" />
+<!--     <bean id="SendFaceCompareResultImpl" class="com.hd.pfirs.webservice.impl.SendFaceCompareResultImpl" /> -->
+    <!-- 拦截器 -->
+<!--     <bean id="licenseInInterceptor" class="com.hd.pfirs.util.LicenseInInterceptor"/> -->
+    <!-- 发布webservice服务 --> 
+	    <jaxws:endpoint id="SendFaceAndCardResultService" implementor="#SendFaceAndCardResultImpl" address="/SendFaceAndCardResultService">
+		</jaxws:endpoint>
+		
+<!-- 		   <jaxws:endpoint id="SendFaceCompareResult" implementor="com.hd.pfirs.webservice.impl.SendFaceCompareResultImpl" address="/SendFaceCompareResult"> -->
+<!-- 		</jaxws:endpoint> -->
+	<task:annotation-driven /> <!-- 定时器开关--> 
+	<task:scheduled-tasks>
+		<!-- 这里表示的是每隔五秒执行一次 -->
+		<task:scheduled ref="sendDataJob" method="sendData" cron="${push-idcard-job-corn}" />
+		<!-- <task:scheduled ref="sendFaceDataJob" method="sendData" cron="${push-face-job-corn}" /> -->
+	</task:scheduled-tasks>
+</beans>

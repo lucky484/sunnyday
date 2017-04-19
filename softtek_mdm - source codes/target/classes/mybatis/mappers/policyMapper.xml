@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softtek.mdm.dao.PolicyDao">
+    <resultMap id="policyMap" type="Policy">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="is_default" property="isDefault" />
+        <result column="create_time" property="createTime" />
+        <result column="department" property="department" />
+        <result column="count" property="count" />
+        <result column="create_by" property="createBy" />
+    </resultMap>
+    <resultMap id="policyInfoMap" type="Policy">
+         <id column="id" property="id" />
+         <result column="name" property="name" />
+         <result column="is_default" property="isDefault" />
+         <result column="visit_on_worktime" property="visit_on_worktime" />
+         <result column="visit_time_start" property="visit_time_start" />
+         <result column="visit_time_end" property="visit_time_end" />
+         <result column="allow_wifi" property="allow_wifi" />
+         <result column="only_comp_wifi" property="only_comp_wifi" />
+         <result column="login_limit" property="login_limit" />
+         <result column="auto_login_limit" property="auto_login_limit" />
+         <result column="login_error_limit" property="login_error_limit" />
+         <result column="login_error_limit_times" property="login_error_limit_times" />
+         <result column="login_error_limit_lock_times" property="login_error_limit_lock" />
+         <result column="device_limit" property="device_limit" />
+         <result column="device_limit_count" property="device_limit_count" />
+         <result column="access_resource_limit" property="access_resource_limit" />
+         <result column="device_password_interval" property="device_password_interval" />
+         <result column="doc_space" property="doc_space" />
+         <result column="force_password" property="force_password" />
+         <result column="departmentName" property="deparmentName" />
+         <result column="departmentId" property="deparmentId" />
+         <result column="parentId" property="parentId" />
+         <association property="user" javaType="User" >
+			<id property="id" column="id"/>
+		 </association>
+		 <association property="deviceManager" javaType="DeviceManager">
+			<id property="id" column="id"/>
+			<id property="device_type" column="device_type"/>
+			<id property="deviceToken" column="device_token"/>
+		 </association>
+    </resultMap>
+     <resultMap id="policyAllInfoMap" type="Policy">
+         <id column="id" property="id" />
+         <result column="name" property="name" />
+         <result column="is_default" property="isDefault" />
+         <result column="visit_on_worktime" property="visit_on_worktime" />
+         <result column="visit_time_start" property="visit_time_start" />
+         <result column="visit_time_end" property="visit_time_end" />
+         <result column="allow_wifi" property="allow_wifi" />
+         <result column="only_comp_wifi" property="only_comp_wifi" />
+         <result column="login_limit" property="login_limit" />
+         <result column="auto_login_limit" property="auto_login_limit" />
+         <result column="login_error_limit" property="login_error_limit" />
+         <result column="login_error_limit_times" property="login_error_limit_times" />
+         <result column="login_error_limit_lock_times" property="login_error_limit_lock" />
+         <result column="device_limit" property="device_limit" />
+         <result column="device_limit_count" property="device_limit_count" />
+         <result column="access_resource_limit" property="access_resource_limit" />
+         <result column="device_password_interval" property="device_password_interval" />
+         <result column="doc_space" property="doc_space" />
+         <result column="force_password" property="force_password" />
+    </resultMap>
+     <sql id="userFilterRecordSql">
+		(
+		SELECT id FROM org_managers
+		WHERE id=#{mid}
+		UNION ALL
+		SELECT r.manager_id AS id FROM organization_manager_relation r
+		WHERE r.org_id = #{orgId}
+		)
+	</sql>
+   	<sql id="filterRecordSql">
+		(
+		<if test="user==null">
+		SELECT id FROM org_managers
+		WHERE org_managers.delete_time IS NULL
+		AND user_id IS NOT NULL
+		AND org_managers.create_by IN (
+			SELECT r.manager_id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		)
+		
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		<if test="user!=null">
+			SELECT id FROM org_managers
+			WHERE delete_time IS NULL
+			AND user_id=#{user.id}
+			AND org_id=#{orgId}
+			UNION ALL
+			SELECT r.manager_id AS id FROM organization_manager_relation r
+			WHERE r.org_id = #{orgId}
+		</if>
+		)
+	</sql>
+    <insert id="save" parameterType="Policy" keyProperty="id" useGeneratedKeys="true">
+        insert into user_policy
+        (org_id,
+        name,
+        is_default,
+        visit_on_worktime,
+        visit_time_start,
+        visit_time_end,
+        allow_wifi,
+        only_comp_wifi,
+        login_limit,
+        auto_login_limit,
+        login_error_limit,
+        login_error_limit_times,
+        login_error_limit_lock_times,
+        device_limit,
+        device_limit_count,
+        access_resource_limit,
+        device_password_interval,
+        doc_space,
+        force_password,
+        update_time,
+        create_time,
+        create_by,
+        update_by,
+        delete_time
+        )values(
+           #{organization.id},
+           #{name},
+           #{isDefault},
+           #{visit_on_worktime},
+           #{visit_time_start},
+           #{visit_time_end},
+           #{allow_wifi},
+           #{only_comp_wifi},
+           #{login_limit},
+           #{auto_login_limit},
+           #{login_error_limit},
+           #{login_error_limit_times},
+           #{login_error_limit_lock},
+           #{device_limit},
+           #{device_limit_count},
+           #{access_resource_limit},
+           #{device_password_interval},
+           #{doc_space},
+           #{force_password},
+           now(),
+           now(),
+           #{createBy},
+           #{updateBy},
+           #{deleteTime}   
+        )
+    </insert>
+    <select id="findOne" parameterType="java.lang.Integer" resultMap="policyInfoMap">
+    	SELECT id,
+        org_id,
+        name,
+        is_default,
+        visit_on_worktime,
+        visit_time_start,
+        visit_time_end,
+        allow_wifi,
+        only_comp_wifi,
+        login_limit,
+        auto_login_limit,
+        login_error_limit,
+        login_error_limit_times,
+        login_error_limit_lock_times,
+        device_limit,
+        device_limit_count,
+        access_resource_limit,
+        device_password_interval,
+        doc_space,
+        force_password,
+        update_time,
+        create_time,
+        create_by,
+        update_by
+		FROM user_policy
+		WHERE delete_time is null 
+		AND id=#{id}
+    </select>
+    
+    <select id="queryAll" resultMap="policyMap">
+    select p.id,
+      p.name,
+      p.is_default,
+      p.create_time,
+      group_concat(s.name) as department,
+      (select count(1) from users u where p.id = u.policy_id) as count
+      from user_policy p 
+      left join (select id,name,policy_id from org_structure where delete_time is null) s 
+      on p.id = s.policy_id
+      where p.delete_time is null and p.org_id = #{2}
+      group by p.id 
+      order by p.update_time desc
+      limit #{0},#{1}
+    </select>
+    <select id="queryAllCount" resultType="int" parameterType="int">
+      select count(1) from ( select p.id,
+      p.name,
+      p.is_default,
+      p.create_time,
+      group_concat(s.name) as department,
+      (select count(1) from users u where p.id = u.policy_id) as count
+      from user_policy p 
+      left join (select id,name,policy_id from org_structure where delete_time is null) s 
+      on p.id = s.policy_id
+      where p.delete_time is null and p.org_id = #{orgId} 
+      group by p.id 
+      order by p.create_time desc ) a
+	</select>
+	<update id="deletePolicy" parameterType="int">
+	    update user_policy set delete_time = now() where id=#{id}
+	</update>
+	<select id="queryInfoById" resultMap="policyInfoMap">
+	      select  p.id,
+			    p.name,
+			    p.is_default,
+			    p.visit_on_worktime,
+			    p.visit_time_start,
+			    p.visit_time_end,
+			    p.allow_wifi,
+			    p.only_comp_wifi,
+			    p.login_limit,
+			    p.auto_login_limit,
+			    p.login_error_limit,
+			    p.login_error_limit_times,
+			    p.login_error_limit_lock_times,
+			    p.device_limit,
+			    p.device_limit_count,
+			    p.access_resource_limit,
+			    p.device_password_interval,
+			    p.doc_space,
+			    p.force_password,
+			    group_concat(s.name) as departmentName,
+			    group_concat(s.id) as departmentId,
+			    group_concat(s.parentId) as parentId  
+	     from user_policy p left join org_structure s on p.id = s.policy_id where p.id = #{id} and s.delete_time is null and s.parentId is not null
+	</select>
+	<update id="updatePolicyInfo" parameterType="Policy">
+	    update user_policy set
+	     name = #{name},
+	     is_default = #{isDefault},
+	     visit_on_worktime = #{visit_on_worktime},
+	     visit_time_start = #{visit_time_start},
+	     visit_time_end = #{visit_time_end},
+	     allow_wifi = #{allow_wifi},
+	     only_comp_wifi = #{only_comp_wifi},
+	     login_limit = #{login_limit},
+	     auto_login_limit = #{auto_login_limit},
+	     login_error_limit = #{login_error_limit},
+	     login_error_limit_times = #{login_error_limit_times},
+	     login_error_limit_lock_times = #{login_error_limit_lock},
+	     device_limit = #{device_limit},
+	     device_limit_count = #{device_limit_count},
+	     access_resource_limit = #{access_resource_limit},
+	     device_password_interval = #{device_password_interval},
+	     doc_space = #{doc_space},
+	     force_password = #{force_password},
+	     update_time = now()
+	     where id = #{id}
+	</update>
+	
+	<select id="findAllByOrgId" parameterType="java.lang.Integer" resultType="Policy">
+		 SELECT id,
+				name,
+				is_default,
+				visit_on_worktime,
+				visit_time_start,
+				visit_time_end,
+				allow_wifi,
+				only_comp_wifi,
+				login_limit,
+				auto_login_limit,
+				login_error_limit,
+				login_error_limit_times,
+				login_error_limit_lock_times,
+				device_limit,
+				device_limit_count,
+				access_resource_limit,
+				device_password_interval,
+				doc_space,force_password
+		 FROM user_policy
+		 WHERE delete_time is null
+		 AND org_id=#{id}
+	</select>
+	
+	<select id="findAllByMap" resultType="Policy">
+		 SELECT id,
+				name,
+				is_default,
+				visit_on_worktime,
+				visit_time_start,
+				visit_time_end,
+				allow_wifi,
+				only_comp_wifi,
+				login_limit,
+				auto_login_limit,
+				login_error_limit,
+				login_error_limit_times,
+				login_error_limit_lock_times,
+				device_limit,
+				device_limit_count,
+				access_resource_limit,
+				device_password_interval,
+				doc_space,force_password
+		 FROM user_policy
+		 WHERE delete_time is null
+		 AND org_id=#{orgId}
+		 <!-- AND create_by in 
+		 <include refid="userFilterRecordSql" /> -->
+	</select>
+	
+	<update id="update" parameterType="Policy">
+		UPDATE user_policy
+		SET 
+		<if test="name !=null and name != ''">
+			name = #{name},
+		</if>
+		<if test="isDefault !=null">
+			is_default = #{isDefault},
+		</if>
+		<if test="visit_on_worktime !=null">
+			visit_on_worktime = #{visit_on_worktime},
+		</if>
+		<if test="visit_time_start !=null">
+			 visit_time_start = #{visit_time_start},
+		</if>
+		<if test="visit_time_end !=null">
+			visit_time_end = #{visit_time_end},
+		</if>
+		<if test="allow_wifi !=null">
+			allow_wifi = #{allow_wifi},
+		</if>
+		<if test="only_comp_wifi !=null">
+			only_comp_wifi = #{only_comp_wifi},
+		</if>
+		<if test="login_limit !=null">
+			login_limit = #{login_limit},
+		</if>
+		<if test="auto_login_limit !=null">
+			 auto_login_limit = #{auto_login_limit},
+		</if>
+		<if test="login_error_limit !=null">
+			 login_error_limit = #{login_error_limit},
+		</if>
+		<if test="login_error_limit_times !=null">
+			 login_error_limit_times = #{login_error_limit_times},
+		</if>
+		<if test="login_error_limit_lock !=null">
+			   login_error_limit_lock_times = #{login_error_limit_lock},
+		</if>
+		<if test="device_limit !=null">
+			    device_limit = #{device_limit},
+		</if>
+		<if test="device_limit_count !=null">
+			     device_limit_count = #{device_limit_count},
+		</if>
+		<if test="access_resource_limit !=null">
+			      access_resource_limit = #{access_resource_limit},
+		</if>
+		<if test="device_password_interval !=null">
+			      device_password_interval = #{device_password_interval},
+		</if>
+		<if test="doc_space !=null">
+			      doc_space = #{doc_space},
+		</if>
+		<if test="force_password !=null">
+			      force_password = #{force_password},
+		</if>
+		update_time=NOW()
+		WHERE delete_time is null
+		AND id=#{id}
+	</update>
+	<update id="updateDefaultPolicy" parameterType="int">
+	    update user_policy set is_default = 0 where org_id = #{orgId}
+	</update> 
+	<select id="queryDefaultPolicy" resultType="int" parameterType="int">
+	    select id from user_policy where is_default = 1 and delete_time is null and org_id = #{orgId}
+	</select>
+	<!-- 根据策略的id查询策略名称 -->
+	<select id="queryNameById" resultType="String" parameterType="int">
+	    select name from user_policy where id = #{policyId}
+	</select>
+	<!-- 查询所有的策略的分页，针对于部门 -->
+	<select id="findAllPolicy" parameterType="map" resultType="Policy">
+		 SELECT id,
+				name,
+				is_default,
+				visit_on_worktime,
+				visit_time_start,
+				visit_time_end,
+				allow_wifi,
+				only_comp_wifi,
+				login_limit,
+				auto_login_limit,
+				login_error_limit,
+				login_error_limit_times,
+				login_error_limit_lock_times,
+				device_limit,
+				device_limit_count,
+				access_resource_limit,
+				device_password_interval,
+				doc_space,force_password
+		 FROM user_policy
+		 WHERE delete_time is null
+		 AND org_id=#{orgId}
+		<!--  AND create_by in <include refid="filterRecordSql" /> -->
+		 limit #{start},#{pageSize}
+	</select>
+	<select id="findAllPolicyCount" parameterType="int" resultType="int">
+		 SELECT count(1) FROM user_policy
+		 WHERE delete_time is null
+		 AND org_id=#{orgId}
+		 <!-- AND create_by in <include refid="filterRecordSql" /> -->
+	</select>
+	<!-- 根据策略id查询策略的详细信息 -->
+	<select id="queryAllInfoById" resultMap="policyAllInfoMap" parameterType="int">
+	        select  p.id,
+			    p.name,
+			    p.is_default,
+			    p.visit_on_worktime,
+			    p.visit_time_start,
+			    p.visit_time_end,
+			    p.allow_wifi,
+			    p.only_comp_wifi,
+			    p.login_limit,
+			    p.auto_login_limit,
+			    p.login_error_limit,
+			    p.login_error_limit_times,
+			    p.login_error_limit_lock_times,
+			    p.device_limit,
+			    p.device_limit_count,
+			    p.access_resource_limit,
+			    p.device_password_interval,
+			    p.doc_space,
+			    p.force_password
+	     from user_policy p where p.id = #{id}
+	</select>
+	<select id="findLikeName" resultType="Policy">
+		SELECT id,name
+		FROM user_policy
+		 WHERE delete_time is null
+		 AND org_id=#{orgId}
+		 AND name like '%search%'
+	</select>
+	<!-- 检验策略名称是否存在 -->
+	<select id="queryCountByName" parameterType="String" resultType="int">
+	    select count(1) from user_policy where name = #{name} and delete_time is null
+	</select>
+	
+	<select id="queryByParams" resultMap="policyMap">
+    select p.id,
+      p.name,
+      p.is_default,
+      p.create_time,
+      p.create_by,
+      group_concat(s.name) as department,
+      (select count(1) from users u where p.id = u.policy_id and u.delete_time is null and u.org_id = #{orgId}) as count
+      from user_policy p 
+      left join (select id,name,policy_id from org_structure where delete_time is null and parentId is not null and org_id = #{orgId}) s 
+      on p.id = s.policy_id
+      where p.delete_time is null and p.org_id = #{orgId}
+       <!--  and p.create_by in <include refid="filterRecordSql" /> -->
+      	and p.name like CONCAT('%',#{searchPolicyName},'%') 
+      <if test="searchPolicyType != null">
+      	and p.is_default=#{searchPolicyType}
+      </if>
+      group by p.id 
+      order by p.update_time desc
+      limit #{start},#{length}
+    </select>
+    <select id="queryCountByParams" resultType="int">
+      select count(1) from ( select p.id,
+      p.name,
+      p.is_default,
+      p.create_time,
+      group_concat(s.name) as department,
+      (select count(1) from users u where p.id = u.policy_id and u.delete_time is null and u.org_id = #{orgId}) as count
+      from user_policy p 
+      left join (select id,name,policy_id from org_structure where delete_time is null and org_id = #{orgId}) s 
+      on p.id = s.policy_id
+      where p.delete_time is null and p.org_id = #{orgId} 
+     <!--  and p.create_by in <include refid="filterRecordSql" /> -->
+      and p.name like CONCAT('%',#{searchPolicyName},'%') 
+      <if test="searchPolicyType != null">
+      	and p.is_default=#{searchPolicyType}
+      </if>
+      group by p.id 
+      order by p.create_time desc ) a
+	</select>
+	<select id="queryUserIdbyDepartmentId" resultMap="policyInfoMap" parameterType="map">
+	    select u.id,d.id,d.device_type,d.device_token from users u left join device_basic_info d on u.id = d.user_id where u.group_id in 
+	     <foreach collection="idList" item="item" open="(" separator=","
+			close=")">#{item}
+		</foreach>
+	</select>
+	<select id="queryPolicyByUserId" resultMap="policyInfoMap" parameterType="int">
+	    select 
+	    p.org_id,
+	    p.name,
+	    p.is_default,
+	    p.visit_on_worktime,
+        p.visit_time_start,
+        p.visit_time_end,
+        p.allow_wifi,
+        p.only_comp_wifi,
+        p.login_limit,
+        p.auto_login_limit,
+        p.login_error_limit,
+        p.login_error_limit_times,
+        p.login_error_limit_lock_times,
+        p.device_limit,
+        p.device_limit_count,
+        p.access_resource_limit,
+        p.device_password_interval,
+        p.doc_space,
+        p.force_password,
+        p.update_time,
+        p.create_time,
+        p.create_by,
+        p.update_by
+        from user_policy p,users u 
+        where p.id = u.policy_id
+        and u.id = #{userId}
+        and p.delete_time is null
+	</select>
+</mapper>

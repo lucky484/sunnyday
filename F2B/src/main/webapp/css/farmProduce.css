@@ -1,0 +1,162 @@
+@charset "utf-8";
+
+/* 商品页面样式 */
+.float_r{
+	float: right;
+}
+.float_l{
+	float: left;
+}
+.font_26{
+	font-size: 26px;
+	color: #999;
+}
+.font_25{
+	font-size: 25px;
+	color: #000;
+}
+.font_36{
+	font-size: 36px;
+}
+.font_40{
+	font-size: 40px;
+}
+.font_45{
+	font-size: 45px;
+}
+.margin_1{
+	margin: 10px;
+}
+.margin_l3{
+	margin-left: 30px;
+}
+.margin_l5{
+	margin-left: 50px;
+}
+.magrin_t1{
+	margin-top: 10px;
+}
+.magrin_t2{
+	margin-top: 20px;
+}
+.padding_l3{
+	padding-left: 30px;
+}
+.padding_lm2_2{
+	padding-left: 11%;
+}
+.padding_lm4{
+	padding-left: 40%;
+}
+em {
+    font-style: normal;
+}
+.tb-rmb{
+	font-family: arial;
+    font-weight: 400;
+    margin-right: 4px;
+    color: #F40;
+}
+.tb-promo-type{
+	padding: 0 4px;
+    font-size: 18px;
+    line-height: 18px;
+    color: #FFF;
+    background: #FF8E1B;
+}
+.clear{
+	clear: both;
+}
+.hr {
+	margin: 0 0 5px;
+	border: 0;
+	border-bottom: 1px solid #ccc;
+	z-index: 5;
+	background: transparent;
+	padding: 5px;
+}
+
+.bottom{
+	width: 100%; 
+	bottom: 0; 
+	position: fixed;
+	background-color: #620d0a;
+	padding: 10px;
+}
+.bottom > input{
+	background-color: #620d0a;
+    width: 100%;
+    height: 120px;
+    color: #e8d586;
+    font-size: 40px;
+    font-weight: 700;
+    margin-left: 40%;
+}
+.top{
+	width: 100%;
+    height: 120px;
+	background-color: #f4f4f4;
+}
+.top > a{
+    width: 100%;
+    font-size: 40px;
+    font-weight: 700;
+    color: #000;
+    padding:20px;
+    margin-top: 20px!important;
+}
+.bottom_order{
+	width: 100%; 
+	bottom: 0; 
+	position: fixed;
+	padding: 10px;
+}
+.bottom_order > a{
+	background-color: #620d0a;
+    width: 100%;
+    height: 120px;
+    color: #e8d586;
+    font-size: 40px;
+    font-weight: 700;
+	text-align: -webkit-center;
+}
+.bottom_order > input{
+	background-color: #620d0a;
+    width: 100%;
+    height: 120px;
+    color: #e8d586;
+    font-size: 40px;
+    font-weight: 700;
+	text-align: -webkit-center;
+}
+.bottom > a{
+	background-color: #620d0a;
+    width: 100%;
+    color: #e8d586;
+    font-size: 44px;
+    font-weight: bolder;
+	text-align: -webkit-center;
+}
+
+.block {
+    margin:15px;
+    padding:10px;
+    background:#f8f8f8;
+    border:1px solid #ebebeb;
+    overflow:hidden;
+}
+
+.modal2 {
+    width:35%;
+    height:200px;
+    display:none;
+    border:5px solid #656565;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px; /* future proofing */
+    -khtml-border-radius: 10px; /* for old Konqueror browsers */
+}
+
+.text-decoration{
+    text-decoration: line-through;
+}

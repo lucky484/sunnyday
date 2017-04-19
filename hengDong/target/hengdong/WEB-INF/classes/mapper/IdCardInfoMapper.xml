@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.pfirs.dao.IdCardInfoDao">
+	<resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="IdCardInfoResultMap">
+		<id column="CardID" property="cardId" />
+		<result column="CardCode" property="cardCode" />
+		<result column="CollectTime" property="collectTime" />
+		<result column="CollectTimeStamp" property="collectTimeStamp" />
+		<result column="FrontSaveTime" property="frontSaveTime" />
+		<result column="FrontSaveTimeStamp" property="frontSaveTimeStamp" />
+		<result column="FrontRelayTime" property="frontRelayTime" />
+		<result column="FrontRelayTimeStamp" property="frontRelayTimeStamp" />
+		<result column="TogthSaveTime" property="togthSaveTime" />
+		<result column="TogthSaveTimeStamp" property="togthSaveTimeStamp" />
+		<result column="RelayTime" property="relayTime" />
+		<result column="RelayTimeStamp" property="relayTimeStamp" />
+		<result column="RelayFlag" property="relayFlag" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="RegionCode" property="regionCode" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="IDCardPic" property="idCardPic" />
+		<result column="IDCardName" property="idCardName" />
+		<result column="IDCardNo" property="idCardNo" />
+		<result column="IDCardSex" property="idCardSex" />
+		<result column="IDCardNation" property="idCardNation" />
+		<result column="IDCardBirth" property="idCardBrith" />
+		<result column="IDCardAddress" property="idCardAddress" />
+		<result column="CardUnit" property="cardUnit" />
+		<result column="CardIssueDate" property="cardIssueDate" />
+		<result column="CardExpiryDate" property="cardExpiryDate" />
+		<result column="CardID16" property="cardID16" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />
+		<result column="UpdateTime" property="updateTime" />
+	</resultMap>
+    <resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="sendCardInfoResultMap">
+        <id column="CardID" property="cardId" />
+        <result column="IDCardPic" property="idCardPic" />
+        <result column="CardCode" property="cardCode" />
+        <result column="DeviceCode" property="deviceCode" />
+        <result column="CollectTime" property="collectTime" />
+    </resultMap>
+    
+    <resultMap type="com.hd.pfirs.model.IdCardInfoModel" id="idCardInfoByCollectTimeMap">
+        <id column="cardId" property="cardId" />
+        <result column="idCardPic" property="idCardPic" />
+        <result column="idCardName" property="idCardName" />
+        <result column="idCardNo" property="idCardNo" />
+        <result column="idCardSex" property="idCardSex" />
+        <result column="idCardNation" property="idCardNation" />
+        <result column="idCardBrith" property="idCardBrith" />
+        <result column="idCardAddress" property="idCardAddress" />
+        <result column="cardUnit" property="cardUnit" />
+        <result column="collectTimeStamp" property="collectTimeStamp" />
+    </resultMap>
+
+	<insert id="saveIdCardInfo" parameterType="IdCardInfoModel">
+		insert into
+		T_PP_IDCARDINFO
+		(CardID,CardCode,CollectTimeStamp,
+		RelayFlag,CollectSite,
+		IDCardPic,IDCardName,IDCardNo,IDCardSex,IDCardNation,IDCardBirth,IDCardAddress,CardUnit,CardIssueDate,
+		CardExpiryDate,CardID16,DeleteStatus,CreateName,CreateTime)
+		values(
+		#{cardId},
+		#{cardCode},
+		#{collectTimeStamp},
+		#{relayFlag},
+		#{collectSite},
+		#{idCardPic},
+		#{idCardName},
+		#{idCardNo},
+		#{idCardSex},
+		#{idCardNation},
+		#{idCardBrith},
+		#{idCardAddress},
+		#{cardUnit},
+		#{cardIssueDate},
+		#{cardExpiryDate},
+		#{cardID16},
+		#{deleteStatus},
+		'system',
+		sysdate
+		)
+	</insert>
+
+	<select id="getIdCardInfoModel" resultMap="sendCardInfoResultMap">
+		select CardID,IDCardPic,CardCode,DeviceCode,CollectTimeStamp from (select
+		CardID,IDCardPic,CardCode,DeviceCode,CollectTimeStamp from t_pp_idcardinfo 
+		where RelayFlag='0' order by CreateTime) b where rownum=1
+	</select>
+    
+    <select id="getIdCardInfoByCollectTimeList" resultMap="idCardInfoByCollectTimeMap"> 
+      select cardId,idCardPic,idCardName,idCardNo,idCardSex,idCardNation,
+      idCardBirth,idCardAddress,cardUnit,collectTimeStamp 
+      from T_PP_IDCARDINFO where rownum <![CDATA[<]]> 5 order by collectTimeStamp
+    </select>
+    
+	<update id="updateIdCardInfo">
+		update t_pp_idcardinfo
+		set RelayFlag = #{relayFlag}
+		where CardID = #{cardId}
+	</update>
+</mapper>

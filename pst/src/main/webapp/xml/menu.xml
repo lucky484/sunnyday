@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+	<menu>
+		<name>首页</name>
+		<href>index.do</href>
+		<icon>icon-home</icon>
+		<authority>all</authority>
+	</menu>
+	<menu prefix="projectsManagement/">
+		<name>项目管理</name>
+		<href>javascript:;</href>
+		<icon>icon-table</icon>
+		<authority>all</authority>
+		<menu prefix="projects/">
+			<name>项目列表</name>
+			<href>projectsList.do</href>
+			<authority>all</authority>
+		</menu>
+		<menu prefix="customers/">
+			<name>客户列表</name>
+			<href>customerList.do</href>
+			<authority>all</authority>
+		</menu>
+		<menu prefix="projectManager/">
+			<name>项目经理</name>
+			<href>projectManagerList.do</href>
+			<authority>all</authority>
+		</menu>
+		<menu prefix="finance/">
+			<name>财务管理</name>
+			<href>financeList.do</href>
+			<authority>general_manager</authority>
+		</menu>
+		<menu prefix="implementManager/">
+			<name>客户经理</name>
+			<href>implementManagerList.do</href>
+			<authority>all</authority>
+		</menu>
+		<menu prefix="outsourcingManage/">
+			<name>外包管理</name>
+			<href>outsourcingManage.do</href>
+			<authority>all</authority>
+		</menu>
+		<menu prefix="chanceManage/">
+			<name>机会管理</name>
+			<href>chanceManage.do</href>
+			<authority>all</authority>
+		</menu>
+	</menu>
+	<menu prefix="usersManagement/">
+	    <name>用户管理</name>
+		<href>javascript:;</href>
+		<icon>icon-user</icon>
+		<authority>general_manager,admin</authority>
+		<menu prefix="users/">
+			<name>用户列表</name>
+			<href>userList.do</href>
+			<authority>general_manager,admin</authority>
+		</menu>
+	</menu>
+	<menu prefix="logsManagement/">
+	    <name>日志管理</name>
+		<href>javascript:;</href>
+		<icon>icon-file</icon>
+		<authority>admin,general_manager</authority>
+		<menu prefix="logging/">
+			<name>日志列表</name>
+			<href>loggingList.do</href>
+			<authority>admin,general_manager</authority>
+		</menu>
+	</menu>
+</menus>
