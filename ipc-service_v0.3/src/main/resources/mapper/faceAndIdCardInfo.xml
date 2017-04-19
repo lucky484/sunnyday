@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.client.dao.FaceAndIdcardDao">
+	<select id="getFaceAndIdcardMap"  resultType="map">
+		select '2' signid, null cardId, null cardCode, null collectSite, null idCardPic,null idCardName,null idCardNo,null idCardSex,null idCardNation,
+		null idCardBirth,null idCardAddress,null cardUnit,null cardIssueDate,null cardExpiryDate,null cardID16,b.relaytime relayTime,b.relayflag relayFlag,b.remarkdesc remarkDesc,b.deletestatus deleteStatus,
+		b.createname createName,b.createtime createTime,b.updatename updateName,b.updatetime updateTime,b.collecttimestamp collectTimeStamp,
+		b.faceid faceId,b.facecode faceCode,b.groupcode groupCode,b.collectpic collectPic,b.pictype picType,b.picno picNo,b.islast isLast,
+		b.direction direction,b.speed speed,b.size size 
+		from T_PR_FaceInfo b where b.relayFlag = '0' or b.relayFlag = '-1'
+		order by collectTimeStamp desc limit 1
+	</select>
+	<select id="getFCInfoMap" statementType="CALLABLE" resultType="map">  
+	<![CDATA[  
+	    {call fc_update_info()} 
+	]]>
+	</select> 
+</mapper>

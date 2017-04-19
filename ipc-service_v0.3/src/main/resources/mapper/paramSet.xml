@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.client.dao.ParamSetDao">
+	<resultMap type="com.hd.client.model.ParamSet" id="paramSetModelMap">
+		<id column="ParamID" property="paramId" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="DeviceType" property="deviceType" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="FaceDvNo" property="faceDvNo" />
+		<result column="FaceDvModel" property="faceDvModel" />
+		<result column="FaceDvLensModel" property="faceDvLensModel" />
+		<result column="FaceDvCollInterval" property="faceDvCollInterval" />
+		<result column="FaceDvIP" property="faceDvIP" />
+		<result column="FaceDvURL" property="faceDvURL" />
+		<result column="IDCardDvNo" property="idCardDvNo" />
+		<result column="VideoID" property="videoId" />
+		<result column="VideoIP" property="videoIp" />
+		<result column="ReplyIP" property="replyIp" />
+		<result column="StorePerio" property="storePerio" />
+		<result column="IntervalTime" property="intervalTime" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />		
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />
+		<result column="UpdateTime" property="updateTime" />
+
+	</resultMap>
+
+	
+	<select id="getParamSet" resultMap="paramSetModelMap">
+	    select  ParamID,
+	    DeviceCode,
+	    DeviceType,
+		CollectSite,
+		FaceDvNo,
+		FaceDvModel,
+		FaceDvLensModel,
+		FaceDvCollInterval,
+		FaceDvIP,
+		FaceDvURL,
+		IDCardDvNo,
+		VideoID,
+		VideoIP,
+		ReplyIP,
+		StorePerio,
+		IntervalTime,
+		RemarkDesc,
+		DeleteStatus,
+		CreateName,
+		CreateTime,
+		UpdateName,
+		UpdateTime from t_pr_paramset
+	</select>
+	
+	<select id="countDBSize" resultType="map">
+		SELECT sum(DATA_LENGTH)+sum(INDEX_LENGTH) as dbsize
+			FROM information_schema.TABLES where TABLE_SCHEMA='hengdong'
+	</select>
+	
+</mapper>

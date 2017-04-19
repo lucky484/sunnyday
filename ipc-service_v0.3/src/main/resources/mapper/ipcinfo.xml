@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.client.dao.IPCInfoDao">
+	<resultMap type="com.hd.client.model.IPCInfoModel" id="ipcInfoModelMap">
+		<id column="MonitID" property="faceId" />
+		<result column="DeviceCode" property="deviceCode" />
+		<result column="FaceConnState" property="faceConnState" />
+		<result column="IDCardConnState" property="idCardConnState" />
+		<result column="MemoryUsage" property="memoryUsage" />
+		<result column="DiskSpace" property="diskSpace" />
+		<result column="DBSize" property="dbSize" />
+		<result column="FaceCollectNum" property="faceCollectNum" />
+		<result column="FaceRelayNum" property="faceRelayNum" />
+		<result column="IDCardCollectNum" property="idCardCollectNum" />
+		<result column="IDCardRelayNum" property="idCardRelayNum" />
+		<result column="RelayTimeStamp" property="relayTimeStamp" />
+		<result column="RelayFlag" property="relayFlag" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />		
+		<result column="UpdateTime" property="updateDate" />
+
+	</resultMap>
+
+	<insert id="saveIPCInfo" parameterType="IPCInfoModel">
+		insert into t_pr_devicemonitorinfo(
+			DeviceCode,
+			FaceConnState,
+			IDCardConnState,
+			MemoryUsage,
+			DiskSpace,
+			DBSize,
+			FaceCollectNum,
+			FaceRelayNum,
+			IDCardCollectNum,
+			IDCardRelayNum,
+			RelayTimeStamp,
+			RelayFlag,
+			RemarkDesc,
+			DeleteStatus,
+			CreateName,
+			CreateTime,
+			UpdateName,
+			UpdateTime
+			) values(
+				#{deviceCode, jdbcType=VARCHAR},
+				#{faceConnState, jdbcType=VARCHAR},
+				#{idCardConnState, jdbcType=VARCHAR},
+				#{memoryUsage, jdbcType=VARCHAR},
+				#{diskSpace, jdbcType=VARCHAR},
+				#{dbSize, jdbcType=BIGINT},
+				#{faceCollectNum, jdbcType=BIGINT},
+				#{faceRelayNum, jdbcType=BIGINT},
+				#{idCardCollectNum, jdbcType=BIGINT},
+				#{idCardRelayNum, jdbcType=BIGINT},
+				#{relayTimeStamp, jdbcType=VARCHAR},
+				#{relayFlag, jdbcType=VARCHAR},
+				#{remarkDesc, jdbcType=VARCHAR},
+				'0',
+				#{createName, jdbcType=VARCHAR},
+				sysdate(),
+				#{updateName, jdbcType=VARCHAR},
+				sysdate()
+			)
+	</insert>
+	
+	
+	<select id="getAndUpdateIPCInfo" resultType="map">
+		<![CDATA[  
+		    {call dev_update_info()} 
+		]]>
+	</select>
+	
+	<insert id="updateIPInfo">
+		update t_pr_devicemonitorinfo
+		set RelayFlag = #{relayFlag},
+		UpdateName='system',
+		UpdateTime=sysdate()
+		where MonitID = #{monitID}
+	</insert>
+	
+</mapper>

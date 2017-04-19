@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.client.dao.FaceInfoDao">
+	<resultMap type="com.hd.client.model.FaceInfoModel" id="faceInfoModelMap">
+		<id column="FaceID" property="faceId" />
+		<result column="FaceCode" property="faceCode" />
+		<result column="CollectTimeStamp" property="collectTimeStamp" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="GroupCode" property="groupCode" />
+		<result column="CollectPic" property="collectPic" />
+		<result column="PicType" property="picType" />
+		<result column="PicNo" property="picNo" />
+		<result column="isLast" property="isLast" />
+		<result column="Direction" property="direction" />
+		<result column="Speed" property="speed" />
+		<result column="Size" property="size" />
+		<result column="RelayTime" property="relayTime" />
+		<result column="RelayFlag" property="relayFlag" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />		
+		<result column="UpdateTime" property="updateDate" />
+
+	</resultMap>
+
+	<insert id="addFaceInfo" parameterType="FaceInfoModel">
+		insert into T_PR_FaceInfo (
+		FaceCode,
+		CollectTimeStamp,
+		CollectSite,
+		CollectPic,
+		GroupCode,
+		PicType,
+		PicNo,
+		isLast,
+		Direction,
+		Speed,
+		Size,
+		RelayTime,
+		RelayFlag,
+		RemarkDesc,
+		DeleteStatus,
+		CreateName,
+		CreateTime,
+		UpdateName,
+		UpdateTime)
+ 		values(
+	 		#{faceCode},
+	 		#{collectTimeStamp},
+	 		#{collectSite},
+	 		#{collectPic},
+	 		#{groupCode},
+	 		#{picType},
+	 		#{picNo},
+	 		#{isLast},
+	 		#{direction},
+	 		#{speed},
+	 		#{size},
+	 		#{relayTime},
+	 		#{relayFlag},
+	 		#{remarkDesc},
+	 		#{deleteStatus},
+	 		'system',
+	 		sysdate(),
+	 		#{updateName},
+	 		#{updateDate}
+ 		)
+	</insert>
+	
+	<insert id="addFCInfo" parameterType="FaceInfoModel">
+		insert into t_pr_fcinfo (
+		FaceCode,
+		CollectTimeStamp,
+		CollectSite,
+		CollectPic,
+		GroupCode,
+		PicType,
+		PicNo,
+		isLast,
+		Direction,
+		Speed,
+		Size,
+		RelayTime,
+		RelayFlag,
+		RemarkDesc,
+		DeleteStatus,
+		CreateName,
+		CreateTime,
+		UpdateName,
+		UpdateTime,
+		flagtype)
+ 		values(
+	 		#{faceCode},
+	 		#{collectTimeStamp},
+	 		#{collectSite},
+	 		#{collectPic},
+	 		#{groupCode},
+	 		#{picType},
+	 		#{picNo},
+	 		#{isLast},
+	 		#{direction},
+	 		#{speed},
+	 		#{size},
+	 		#{relayTime},
+	 		#{relayFlag},
+	 		#{remarkDesc},
+	 		#{deleteStatus},
+	 		'system',
+	 		sysdate(),
+	 		#{updateName},
+	 		#{updateDate},
+	 		'2'
+ 		)
+	</insert>
+	
+	<select id="getfaceInfoModelList" resultMap="faceInfoModelMap">
+	    select 	FaceID,FaceCode,CollectTimeStamp,CollectSite,CollectPic,GroupCode,PicType,PicNo,isLast,Direction,
+			Speed,Size,RelayTime,RelayFlag,RemarkDesc,DeleteStatus,CreateName,CreateTime,UpdateName,UpdateTime
+		 from T_PR_FaceInfo  where RelayFlag = "0" or RelayFlag = "-1"
+	</select>
+	
+	<select id="getFaceInfo" resultMap="faceInfoModelMap">
+	    select 	FaceID,FaceCode,CollectTimeStamp,CollectSite,CollectPic,GroupCode,PicType,PicNo,isLast,Direction,
+			Speed,Size,RelayTime,RelayFlag,RemarkDesc,DeleteStatus,CreateName,CreateTime,UpdateName,UpdateTime
+		 from T_PR_FaceInfo where RelayFlag = "0" or RelayFlag = "-1" order by UpdateTime desc limit 1
+	</select>
+	
+	<update id="updateFaceInfo">
+		update t_pr_faceInfo 
+		set RelayFlag = #{relayFlag},
+		UpdateName='system',
+		UpdateTime=sysdate(),
+		RelayTime = sysdate()
+		where FaceID = #{faceId}
+	</update>
+	
+	<update id="updateFCInfo">
+		update t_pr_fcinfo 
+		set RelayFlag = #{relayFlag},
+		UpdateName='system',
+		UpdateTime=sysdate(),
+		RelayTime = sysdate()
+		where fc_id = #{fc_id}
+	</update>
+	
+	<select id="countFaceInfo" resultType="map">
+	    select (
+		    select count(0) from t_pr_faceinfo
+		    ) totalCollect, (
+			    select count(0) from t_pr_faceinfo where relayflag = '2'
+			    ) hasPushed 
+	    from dual
+	</select>
+	
+	
+	
+	
+	
+</mapper>

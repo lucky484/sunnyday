@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/task 
+      http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+	<!-- 引入jdbc, Global Settings 配置文件 -->
+	<context:property-placeholder location="classpath:conf/*.properties" />
+
+	<!-- 扫描文件（自动将service层注入） -->
+	<context:component-scan base-package="com.hd.client" />
+
+	<!-- 利用SpringContextUtils 可以在源码中直接拿到bean，而不用注入 -->
+	<bean id="SpringContextUtils" class="com.hd.client.util.SpringContextUtils"
+		lazy-init="false"></bean>
+	<bean id="dev" class="com.hd.client.service.impl.InitIDDevServiceImpl" />
+
+	<task:annotation-driven /> <!-- 定时器开关--> 
+	<task:scheduled-tasks>
+		<!-- 这里表示的是每隔1秒执行一次 -->
+		<task:scheduled ref="pushFaceAndIDCardJob" method="pushFaceAndIDCardInfo" cron="${push-info-job-corn}" />
+		<task:scheduled ref="ipcInfoJob" method="cycleSaveIPCInfo" cron="${client_info_collect_time_unit}" />
+		<task:scheduled ref="ipcInfoJob" method="cyclePushIPCInfo" cron="${client_info_collect_time_unit}" />
+	</task:scheduled-tasks>
+</beans>

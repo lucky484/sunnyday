@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.client.dao.IDInfoDao">
+	<resultMap type="com.hd.client.model.IdCardInfo" id="IdCardResultMap">
+		<id column="CardID" property="cardId" />
+		<result column="CardCode" property="cardCode" />
+		<result column="CollectTimeStamp" property="collectTimeStamp" />
+		<result column="CollectSite" property="collectSite" />
+		<result column="IDCardPic" property="idCardPic" />
+		<result column="IDCardName" property="idCardName" />
+		<result column="IDCardNo" property="idCardNo" />
+		<result column="IDCardSex" property="idCardSex" />
+		<result column="IDCardBirth" property="idCardBirth" />
+		<result column="IDCardNation" property="idCardNation" />
+		<result column="IDCardAddress" property="idCardAddress" />
+		<result column="CardUnit" property="cardUnit" />
+		<result column="CardIssueDate" property="cardIssueDate" />
+		<result column="CardExpiryDate" property="cardExpiryDate" />
+		<result column="CardID16" property="cardID16" />
+		<result column="RelayTime" property="relayTime" />
+		<result column="RelayFlag" property="relayFlag" />
+		<result column="RemarkDesc" property="remarkDesc" />
+		<result column="DeleteStatus" property="deleteStatus" />
+		<result column="CreateName" property="createName" />
+		<result column="CreateTime" property="createTime" />
+		<result column="UpdateName" property="updateName" />
+		<result column="UpdateTime" property="updateTime" />
+	</resultMap>
+
+	<insert id="saveIDInfo" parameterType="idCardInfo">
+		insert into
+		t_pr_idcardinfo
+		(CardCode,CollectTimeStamp,CollectSite,IDCardPic,IDCardName,IDCardNo,
+		IDCardSex,IDCardNation,IDCardBirth,IDCardAddress,CardUnit,CardIssueDate,CardExpiryDate,
+		CardID16,RelayFlag,RemarkDesc,DeleteStatus,CreateName,CreateTime)
+		values(#{cardCode},#{collectTimeStamp},#{collectSite},#{idCardPic},#{idCardName},#{idCardNo},
+		#{idCardSex},#{idCardNation},#{idCardBirth},#{idCardAddress},#{cardUnit},#{cardIssueDate},
+		#{cardExpiryDate},#{cardID16},#{relayFlag},#{remarkDesc},#{deleteStatus},
+		'system',
+		sysdate()
+		)
+	</insert>
+	
+	<insert id="saveFCInfo" parameterType="idCardInfo">
+		insert into
+		t_pr_fcinfo
+		(CardCode,CollectTimeStamp,CollectSite,IDCardPic,IDCardName,IDCardNo,
+		IDCardSex,IDCardNation,IDCardBirth,IDCardAddress,CardUnit,CardIssueDate,CardExpiryDate,
+		CardID16,RelayFlag,RemarkDesc,DeleteStatus,CreateName,CreateTime,flagtype)
+		values(#{cardCode},#{collectTimeStamp},#{collectSite},#{idCardPic},#{idCardName},#{idCardNo},
+		#{idCardSex},#{idCardNation},#{idCardBirth},#{idCardAddress},#{cardUnit},#{cardIssueDate},
+		#{cardExpiryDate},#{cardID16},#{relayFlag},#{remarkDesc},#{deleteStatus},
+		'system',
+		sysdate(),
+		'1'
+		)
+	</insert>
+
+	<insert id="addIDInfoDao" parameterType="idCardInfo">
+		insert into
+		t_pr_idcardinfo (CardCode,CollectTimeStamp,CollectSite,IDCardPic,
+		IDCardName,IDCardNo,IDCardSex,IDCardNation,IDCardBirth,IDCardAddress,
+		CardUnit,CardIssueDate,CardExpiryDate,CardID16,
+		RelayTime,RelayFlag,RemarkDesc,DeleteStatus,
+		CreateName,CreateTime)
+		values(#{cardCode},#{collectTimeStamp},#{collectSite},#{idCardPic},#{idCardName},
+		#{idCardNo},#{idCardSex},#{idCardNation},#{idCardBirth},#{idCardAddress},#{cardUnit},
+		#{cardIssueDate},#{cardExpiryDate},#{cardID16},#{relayTime},#{relayFlag},#{remarkDesc},#{deleteStatus},
+		'system',
+		sysdate()
+		)
+	</insert>
+
+	<insert id="updateIDInfoDao">
+		update t_pr_idcardinfo
+		set RelayFlag = #{relayFlag},
+		RelayTime=sysdate(),
+		UpdateName='system',
+		UpdateTime=sysdate()
+		where CardID = #{cardId};
+	</insert>
+	
+	<insert id="updateFCInfoDao">
+		update t_pr_fcinfo
+		set RelayFlag = #{relayFlag},
+		RelayTime=sysdate(),
+		UpdateName='system',
+		UpdateTime=sysdate()
+		where fc_id = #{fc_id};
+	</insert>
+
+	<select id="getIdCardInfoList" resultMap="IdCardResultMap">
+		select
+		CardID,CardCode,CollectTimeStamp,CollectSite,IDCardPic,IDCardName,IDCardNo,IDCardSex,
+		IDCardNation,IDCardBirth,IDCardAddress,CardUnit,CardIssueDate,CardExpiryDate,CardID16,
+		RelayTime,RelayFlag,RemarkDesc,DeleteStatus,CreateName,CreateTime,UpdateName,UpdateTime
+		from t_pr_idcardinfo where RelayFlag = "0" or RelayFlag = "-1"
+	</select>
+
+	<select id="getIdCardInfo" resultMap="IdCardResultMap">
+		select
+		CardID,CardCode,CollectTimeStamp,CollectSite,IDCardPic,IDCardName,IDCardNo,IDCardSex,
+		IDCardNation,IDCardBirth,IDCardAddress,CardUnit,CardIssueDate,CardExpiryDate,CardID16,
+		RelayTime,RelayFlag,RemarkDesc,DeleteStatus,CreateName,CreateTime,UpdateName,UpdateTime
+		from t_pr_idcardinfo where RelayFlag = "0" or RelayFlag = "-1" order
+		by UpdateTime limit 1
+	</select>
+	
+	<select id="countIdCardInfo" resultType="map">
+		select (
+			select count(0) from t_pr_idcardinfo
+			) totalCollect, (
+				select count(0) from t_pr_idcardinfo where relayflag = '2'
+				) 
+		hasPushed from dual
+	</select>
+</mapper>

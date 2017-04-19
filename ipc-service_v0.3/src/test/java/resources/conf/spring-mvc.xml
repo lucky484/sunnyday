@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+    http://www.springframework.org/schema/task 
+    http://www.springframework.org/schema/task/spring-task.xsd
+    ">
+
+
+	<mvc:default-servlet-handler/>
+	<mvc:annotation-driven /> 	
+	<!-- 扫描controller（controller层注入） -->
+	<context:component-scan base-package="com.hd.client.controller" />
+	
+	<mvc:annotation-driven>
+	<!--  可不设置，使用默认的超时时间 -->
+    	<mvc:async-support default-timeout="300000"/>
+	</mvc:annotation-driven>
+
+		
+		
+		<!-- 避免IE在ajax请求时，返回json出现下载 -->
+		<bean id="jacksonMessageConverter"
+			class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			<property name="supportedMediaTypes">
+				<list>
+					<value>text/html;charset=UTF-8</value>
+					<value>application/json;charset=UTF-8</value>
+					<value>application/octet-stream;charset=UTF-8</value>
+				</list>
+			</property>
+		</bean>
+		<!-- 对模型视图添加前后缀 -->
+		<!-- <bean id="viewResolver"
+			class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+			p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" /> -->
+			
+			<!-- 定义视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	
+	<!-- 定义文件上传解析器 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 设定默认编码 -->
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<!-- 设定文件上传的最大值5MB，5*1024*1024 -->
+		<!-- <property name="maxUploadSize" value="5242880"></property> -->
+	</bean>
+			
+			
+	<!-- 		  全局异常配置 start 
+     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">     
+         <property name="exceptionMappings">     
+             <props>     
+                 <prop key="java.lang.Exception">errors/error</prop>     
+                 <prop key="java.lang.Throwable">errors/err</prop>     
+             </props>     
+         </property>     
+         <property name="statusCodes">     
+             <props>     
+                 <prop key="errors/error">500</prop>     
+                 <prop key="errors/404">404</prop>     
+             </props>     
+         </property>     
+         设置日志输出级别，不定义则默认不输出警告等错误日志信息     
+         <property name="warnLogCategory" value="WARN"></property>     
+         默认错误页面，当找不到上面mappings中指定的异常对应视图时，使用本默认配置     
+         <property name="defaultErrorView" value="errors/error"></property>     
+         默认HTTP状态码     
+         <property name="defaultStatusCode" value="500"></property>     
+     </bean>     
+     全局异常配置 end -->
+</beans>
