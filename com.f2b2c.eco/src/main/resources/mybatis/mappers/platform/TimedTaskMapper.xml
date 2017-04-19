@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.common.TimedTaskDao">
+	<insert id="autoBakUpFSalesOrder">
+		insert into f_sales_order_bak_one (
+											id,
+											order_id,
+											user_id,
+											created_time,
+											receiver_name,
+											receiver_phone,
+											receiver_address,
+											receiver_postal_code,
+											total,
+											pay_type,
+											status,
+											remark,
+											reason,
+											updated_time,
+											deleted_time,
+											real_pay,
+											distribution_area,
+											receive_time_type,
+											shop_name
+										) select
+											id,
+											order_id,
+											user_id,
+											created_time,
+											receiver_name,
+											receiver_phone,
+											receiver_address,
+											receiver_postal_code,
+											total,
+											pay_type,
+											status,
+											remark,
+											reason,
+											updated_time,
+											deleted_time,
+											real_pay,
+											distribution_area,
+											receive_time_type,
+											shop_name
+										from
+											f_sales_order
+										where
+											DATE_FORMAT(created_time, "%Y-%m-%d") = DATE_FORMAT(now(), "%Y-%m-%d");
+	</insert> 
+	
+	<insert id="autoBakUpFSalesOrderDetails">
+		insert into f_sales_order_details_bak_one (
+													id,
+													order_id,
+													goods_id,
+													goods_version,
+													goods_qty,
+													price,
+													goods_name,
+													created_time,
+													created_user,	
+													updated_time,
+													updated_user
+												) select
+													id,
+													order_id,
+													goods_id,
+													goods_version,
+													goods_qty,
+													price,
+													goods_name,
+													created_time,
+													created_user,	
+													updated_time,
+													updated_user
+												from
+													f_sales_order_details
+												where
+													DATE_FORMAT(created_time, "%Y-%m-%d") = DATE_FORMAT(now(), "%Y-%m-%d");
+	</insert>
+</mapper>

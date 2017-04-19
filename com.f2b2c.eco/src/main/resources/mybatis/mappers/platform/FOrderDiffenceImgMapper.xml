@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.platform.FOrderDiffenceImgDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FOrderDiffenceImgModel">
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="diffence_id" property="diffenceId" jdbcType="VARCHAR" />
+    <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, diffence_id, img_url
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from f_order_diffence_img
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from f_order_diffence_img
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FOrderDiffenceImgModel" >
+    insert into f_order_diffence_img (id, diffence_id, img_url
+      )
+    values (#{id,jdbcType=VARCHAR}, #{diffenceId,jdbcType=VARCHAR}, #{imgUrl,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.platform.FOrderDiffenceImgModel" >
+    insert into f_order_diffence_img
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="diffenceId != null" >
+        diffence_id,
+      </if>
+      <if test="imgUrl != null" >
+        img_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="diffenceId != null" >
+        #{diffenceId,jdbcType=VARCHAR},
+      </if>
+      <if test="imgUrl != null" >
+        #{imgUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.platform.FOrderDiffenceImgModel" >
+    update f_order_diffence_img
+    <set >
+      <if test="diffenceId != null" >
+        diffence_id = #{diffenceId,jdbcType=VARCHAR},
+      </if>
+      <if test="imgUrl != null" >
+        img_url = #{imgUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 更新差价凭证表 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.platform.FOrderDiffenceImgModel" >
+    update f_order_diffence_img
+    set diffence_id = #{diffenceId,jdbcType=VARCHAR},
+      img_url = #{imgUrl,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 根据差价id获取图片list -->
+  <select id="selectImgListByDifferentId" parameterType="java.lang.String" resultType="java.lang.String">
+    select 
+      img_url 
+    from 
+      f_order_diffence_img 
+    where diffence_id = #{differentId} 
+  </select>
+</mapper>

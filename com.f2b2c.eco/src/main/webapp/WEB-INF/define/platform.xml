@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<!-- here is a test configuration start -->
+	<definition name="platform/test" extends="iframe_layout">
+		<put-attribute name="title" value="测试布局" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/moduleone/test.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/moduleone/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/moduleone/script.jsp" />
+	</definition>
+	
+	<definition name="platform/other" extends="iframe_layout">
+		<put-attribute name="title" value="测试跳转" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/moduleone/other.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="" />
+		<put-attribute name="script" value="" />
+	</definition>
+	<!-- here is a test configuration end -->
+	<!-- 店铺管理列表 -->
+	<definition name="platform/shop" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/shop/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/platform/shop/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/shop/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/shop/script.jsp" />
+	</definition>
+	<!-- 店铺管理添加 -->
+	<definition name="platform/shop/add" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/shop/add/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/shop/add/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/shop/add/script.jsp" />
+	</definition>
+	<!-- 店铺管理修改 -->
+	<definition name="platform/shop/update" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/shop/update/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/shop/update/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/shop/update/script.jsp" />
+	</definition>
+	<!-- 店铺管理查询 -->
+	<definition name="platform/shop/show" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/shop/show/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/shop/show/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/shop/show/script.jsp" />
+	</definition>
+	
+	<!-- B端商品管理列表 -->
+	<definition name="platform/goods" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/goods/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/goods/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/goods/script.jsp" />
+	</definition>
+	<!-- B端商品管理列表 -->
+	<definition name="platform/bkind" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bkind/main-kind.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bkind/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bkind/script.jsp" />
+	</definition>
+	<!-- B端商品审核不通过填写原因 -->
+	<definition name="goods/reply" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/goods/reply.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/goods/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/goods/script.jsp" />
+	</definition>
+	<!-- B端商品审核时查看商品详情 -->
+	<definition name="goods/show" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/goods/show.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/goods/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/goods/script.jsp" />
+	</definition>
+	<!-- 授权码 -->
+	<definition name="platform/auth" extends="iframe_layout">
+		<put-attribute name="title" value="授权码管理" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/auth/auth_table.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/auth/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/auth/script.jsp" />
+	</definition>
+	<!-- F商品分类 start-->
+	<definition name="platform/main-kind" extends="iframe_layout">
+		<put-attribute name="title" value="商品分类" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/kind/main-kind.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/platform/kind/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/kind/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/kind/script.jsp" />
+	</definition>
+	<!-- F商品管理 start-->
+	<definition name="platform/add-product" extends="iframe_layout">
+		<put-attribute name="title" value="商品管理" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/fshop/add-product.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/fshop/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/fshop/script.jsp" />
+	</definition>
+	<definition name="platform/new-kind" extends="iframe_layout">
+		<put-attribute name="title" value="授权码管理" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/kind/new-kind.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="" />
+		<put-attribute name="script" value="" />
+	</definition>
+	<definition name="platform/fshoplist" extends="iframe_layout">
+		<put-attribute name="title" value="平台商品列表" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/fshoplist/fshoplist.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/platform/fshoplist/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/fshoplist/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/fshoplist/script.jsp" />
+	</definition>
+	<!-- F商品管理 end -->
+	<definition name="platform/user" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/userlist/userlist.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/userlist/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/userlist/script.jsp" />
+	</definition>
+	<definition name="platform/adduser" extends="iframe_layout">
+		<put-attribute name="title" value="新增用户" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/useradd/useradd.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/useradd/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/useradd/script.jsp" />
+	</definition>
+	<definition name="platform/modifyuser" extends="iframe_layout">
+		<put-attribute name="title" value="修改用户" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/usermodify/usermodify.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/usermodify/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/usermodify/script.jsp" />
+	</definition>
+	<definition name="platform/viewyuser" extends="iframe_layout">
+		<put-attribute name="title" value="查看用户" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/userview/userview.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/userview/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/userview/script.jsp" />
+	</definition>
+	
+	<!-- 主页-统计 -->
+	<definition name="platform/home/home" extends="iframe_layout">
+		<put-attribute name="title" value="首页统计" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/home/home.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/home/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/home/script.jsp" />
+	</definition>
+	<!-- 主页-担保协议 -->
+	<definition name="platform/home/warrantor" extends="iframe_layout">
+		<put-attribute name="title" value="担保协议" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/home/warrantor/warrantorprotocol.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/home/warrantor/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/home/warrantor/script.jsp" />
+	</definition>
+	<!-- 主页-注册协议 -->
+	<definition name="platform/home/register" extends="iframe_layout">
+		<put-attribute name="title" value="注册协议" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/home/register/registerprotocol.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/home/register/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/home/register/script.jsp" />
+	</definition>
+	<!-- 主页-运费设置 -->
+	<definition name="platform/home/freight" extends="iframe_layout">
+		<put-attribute name="title" value="运费设置" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/home/freight/freight.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/home/freight/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/home/freight/script.jsp" />
+	</definition>
+	<!-- 主页-物流方式 -->
+	<definition name="platform/home/logistics" extends="iframe_layout">
+		<put-attribute name="title" value="物流方式" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/home/logistics/logistics.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/home/logistics/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/home/logistics/script.jsp" />
+	</definition>
+	<!-- 物流方式-修改 -->
+	<definition name="platform/home/logistics/update" extends="iframe_layout">
+		<put-attribute name="title" value="修改物流方式" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/home/logistics/update/update.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/home/logistics/update/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/home/logistics/update/script.jsp" />
+	</definition>
+	<!-- 物流方式-添加 -->
+	<definition name="platform/home/logistics/add" extends="iframe_layout">
+		<put-attribute name="title" value="添加物流方式" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/home/logistics/add/add.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/home/logistics/add/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/home/logistics/add/script.jsp" />
+	</definition>
+	<!-- 主页-wap分类 start-->
+	<definition name="platform/wap/main-wap" extends="iframe_layout">
+		<put-attribute name="title" value="wap" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/wap/main-wap.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/wap/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/wap/script.jsp" />
+	</definition>
+	
+	<!-- 主页-wap分类 start-->
+	<definition name="platform/orderlist" extends="iframe_layout">
+		<put-attribute name="title" value="orderlist" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/order/orderlist/orderlist.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/platform/order/orderlist/index_modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/order/orderlist/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/order/orderlist/script.jsp" />
+	</definition>
+	
+	<!-- 主页-wap分类 start-->
+	<definition name="platform/orderadd" extends="iframe_layout">
+		<put-attribute name="title" value="orderlist" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/order/modify/modify.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/order/modify/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/order/modify/script.jsp" />
+	</definition>
+	
+	<!-- 结算参数设置 -->
+	<definition name="platform/balance/param" extends="iframe_layout">
+		<put-attribute name="title" value="结算参数设置" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/balance/param/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/balance/param/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/balance/param/script.jsp" />
+	</definition>
+	
+	<!-- 结算管理 -->
+	<definition name="platform/settlement" extends="iframe_layout">
+		<put-attribute name="title" value="结算管理" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/settlement/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/settlement/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/settlement/script.jsp" />
+	</definition>
+	
+	<definition name="platform/manifest" extends="iframe_layout">
+		<put-attribute name="title" value="出货单列表" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/order/manifest/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/platform/order/manifest/modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/order/manifest/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/order/manifest/script.jsp" />
+	</definition>
+	
+	<definition name="platform/manifest/detail" extends="iframe_layout">
+		<put-attribute name="title" value="出货清单" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/order/manifest/orderdetail/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/order/manifest/orderdetail/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/order/manifest/orderdetail/script.jsp" />
+	</definition>
+	
+	<!-- F端商品详情 -->
+	<definition name="platform/fgoods/details" extends="iframe_layout">
+		<put-attribute name="title" value="商品详情" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/fgoods/details/add-product.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/fgoods/details/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/fgoods/details/script.jsp" />
+	</definition>
+	<!-- F端商品详情 -->
+	<definition name="platform/fgoods/modify" extends="iframe_layout">
+		<put-attribute name="title" value="商品修改" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/fgoods/modify/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/fgoods/modify/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/fgoods/modify/script.jsp" />
+	</definition>
+	<!-- 个人中心页面 -->
+	<definition name="platform/personal" extends="iframe_layout">
+		<put-attribute name="title" value="个人中心" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/personal/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/personal/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/personal/script.jsp" />
+	</definition>
+	<!-- 修改密码页面 -->
+	<definition name="platform/password" extends="iframe_layout">
+		<put-attribute name="title" value="修改密码" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/password/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/password/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/password/script.jsp" />
+	</definition>
+	<definition name="platform/role" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/role/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/role/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/role/script.jsp" />
+	</definition>
+	
+	<definition name="platform/orderdetails" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/order/details/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/order/details/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/order/details/script.jsp" />
+	</definition>
+	
+	<definition name="market/bGoodsDetails" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/jsp/market/bGoodsDetails.jsp" />
+		<put-attribute name="modal" value="" />
+	</definition>
+	<definition name="market/bGoodsParameter" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/jsp/market/bGoodsParameter.jsp" />
+		<put-attribute name="modal" value="" />
+	</definition>
+	<definition name="market/bWapDetails" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/jsp/market/bWapDetails.jsp" />
+		<put-attribute name="modal" value="" />
+	</definition>
+	<!-- 公告管理 -->
+	<definition name="farm/bnotice" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bnotice/list/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bnotice/list/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bnotice/list/script.jsp" />
+	</definition>
+	<definition name="farm/new" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bnotice/add/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bnotice/add/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bnotice/add/script.jsp" />
+	</definition>
+	
+	<definition name="bnotice/detail" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bnotice/details/details.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bnotice/details/script.jsp" />
+	</definition>
+	
+	<definition name="farm/bwap" extends="iframe_layout">
+		<put-attribute name="title" value="wap" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bwap/main-wap.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bwap/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bwap/script.jsp" />
+	</definition>
+	
+	<definition name="farm/bwap/addpage" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bwap/add/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bwap/add/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bwap/add/script.jsp" />
+	</definition>
+	
+	 <definition name="market/myQrcode" extends="iframe_layout">
+        <put-attribute name="title" value="我的二维码" />
+        <put-attribute name="content" value="/WEB-INF/jsp/market/myQrcode.jsp" />
+        <put-attribute name="modal" value=""/>
+        <put-attribute name="style" value=""/>
+        <put-attribute name="script" value=""/>
+    </definition>
+	
+	<!-- 帮助中心 -->
+	<definition name="platform/help/fHelpCenter" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/fHelpCenter.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/fhelpscript.jsp" />
+	</definition>
+	<definition name="platform/help/fLogisticsAndCustomer" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/fLogisticsAndCustomer.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/flogscript.jsp" />
+	</definition>
+	<definition name="platform/help/fOtherProblem" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/fOtherProblem.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/fotherscript.jsp" />
+	</definition>
+	<definition name="platform/help/fPaymentProblem" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/fPaymentProblem.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/fpayscript.jsp" />
+	</definition>
+	<definition name="platform/help/fQAndA" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/fQAndA.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/fqandascript.jsp" />
+	</definition>
+	<definition name="platform/help/fShoppingAdvice" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/fShoppingAdvice.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/fshopscript.jsp" />
+	</definition>
+	<definition name="platform/help/show" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/show.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/script.jsp" />
+	</definition>
+	<definition name="platform/help/update" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/help/update.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/help/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/help/updatescript.jsp" />
+	</definition>
+	<!-- B端app通知中心常见问题 -->
+	<definition name="farm/problem/index" extends="iframe_layout">
+		<put-attribute name="title" value="problem" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bconfig/index.jsp" />
+		<put-attribute name="modal" value="/WEB-INF/tiles/views/platform/bconfig/modal.jsp" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bconfig/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bconfig/script.jsp" />
+	</definition>
+	<definition name="farm/problem/add" extends="iframe_layout">
+		<put-attribute name="title" value="problem" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bconfig/add/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bconfig/add/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bconfig/add/script.jsp" />
+	</definition>
+	<definition name="farm/problem/show" extends="iframe_layout">
+		<put-attribute name="title" value="problem" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bconfig/show/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bconfig/show/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bconfig/show/script.jsp" />
+	</definition>
+	<definition name="farm/problem/update" extends="iframe_layout">
+		<put-attribute name="title" value="problem" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/bconfig/update/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/bconfig/update/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/bconfig/update/script.jsp" />
+	</definition>
+	
+	<definition name="farm/wap/addpage" extends="iframe_layout">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="/WEB-INF/tiles/views/platform/wap/add/index.jsp" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="/WEB-INF/tiles/views/platform/wap/add/style.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/views/platform/wap/add/script.jsp" />
+	</definition>
+	
+</tiles-definitions>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CUserScoreDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.CUserScoreModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="c_user_id" property="cUserId" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, c_user_id, score, version
+  </sql>
+  
+  <!-- 根据主键id获取用户帐户积分表字段 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from c_user_score
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+    <!-- 根据用户id获取我的积分 -->
+  <select id="selectScoreByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from c_user_score
+    where c_user_id = #{userId,jdbcType=INTEGER} 
+    limit 1 
+  </select>
+  
+  <!-- 插入可选的用户积分字段 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from c_user_score
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入用户积分表字段 -->
+  <insert id="insert" useGeneratedKeys="true" parameterType="com.f2b2c.eco.model.market.CUserScoreModel" >
+    <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+        SELECT LAST_INSERT_ID() AS id
+    </selectKey> 
+    insert into c_user_score (id, c_user_id, score, 
+      version)
+    values (#{id,jdbcType=INTEGER}, #{cUserId,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}, 
+      #{version,jdbcType=INTEGER})
+  </insert>
+  
+  <!-- 插入用户积分表字段 -->
+  <insert id="insertSelective" useGeneratedKeys="true" parameterType="com.f2b2c.eco.model.market.CUserScoreModel" >
+    <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+        SELECT LAST_INSERT_ID() AS id
+    </selectKey> 
+    insert into c_user_score
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cUserId != null" >
+        c_user_id,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cUserId != null" >
+        #{cUserId,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的用户积分表字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.CUserScoreModel" >
+    update c_user_score
+    <set >
+      <if test="cUserId != null" >
+        c_user_id = #{cUserId,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新用户积分表 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.CUserScoreModel" >
+    update c_user_score
+    set c_user_id = #{cUserId,jdbcType=INTEGER},
+      score = #{score,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <!-- 更新用户积分表 -->
+  <update id="updateScoreByPrimaryKey" parameterType="com.f2b2c.eco.model.market.CUserScoreModel" >
+    update c_user_score 
+     set score = #{score},
+      version = #{version} + 1  
+    where id = #{id,jdbcType=INTEGER} and version = #{version} 
+  </update>
+</mapper>

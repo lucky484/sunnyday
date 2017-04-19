@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CCommentDao" >
+<resultMap id="BaseResultMap" type="CComment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+  	<result column="goods_no" property="goodsNo" />
+  	<result column="content" property="content" />
+  	<result column="synthetical_score" property="syntheticalScore" />
+  	<result column="quality_score" property="qualityScore" />
+  	<result column="service_score" property="serviceScore" />
+  	<result column="speed_score" property="speedScore" />
+  	<result column="img_url" property="imgUrl" />
+  	<result column="create_time" property="createTime" />
+    <result column="delete_time" property="deletedTime" />
+    <result column="user_id" property="userId" />
+	<result column="account_name" property="userAccountName" />
+	<result column="nick_name" property="nickName" />
+	<result column="userPic" property="userPic" />
+</resultMap>
+<!-- 根据商品编号查询所有评价记录 -->
+	<select id="selectCountByGoodsNo" parameterType="String"  resultType="java.lang.Integer">
+		SELECT
+			COUNT(0)
+		FROM
+			`C_COMMENT`
+		WHERE
+			GOODS_NO = #{0}
+		</select>
+		
+ <!-- 根据商品编号查询所有评价 -->
+	<select id="selectByGoodsNo" parameterType="java.util.Map"  resultMap="BaseResultMap">
+		SELECT
+			c.content,
+			c.create_time,
+			c.goods_no,
+			c.id,
+			c.img_url,
+			c.synthetical_score,
+			c.quality_score,
+			c.service_score,
+			c.speed_score,
+			u.account_name,
+			u.nick_name,
+			u.pic_url as userPic,
+			c.user_id
+		FROM
+			`C_COMMENT` c LEFT JOIN c_user u ON c.user_id = u.id
+	 	WHERE c.goods_no = #{goodsNo}
+		ORDER BY 
+			c.create_time DESC
+		LIMIT #{start},#{length}
+	</select>
+	
+	<insert id="insert" parameterType="CComment">
+		INSERT INTO c_comment (
+			user_id,
+			content,
+			synthetical_score,
+			quality_score,
+			speed_score,
+			service_score,
+			create_time,
+			goods_no,
+			img_url,
+			oder_details_id
+		)VALUES(
+			#{userId},
+			#{content},
+			#{syntheticalScore},
+			#{qualityScore},
+			#{speedScore},
+			#{serviceScore},
+			now(),
+			#{goodsNo},
+			#{imgUrl},
+			#{orderDetailsId}
+		)
+	</insert>
+</mapper>

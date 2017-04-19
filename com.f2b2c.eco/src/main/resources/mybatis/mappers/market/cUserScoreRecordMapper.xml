@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CUserScoreRecordDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.CUserScoreRecordModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="operate_type" property="operateType" jdbcType="CHAR" />
+    <result column="operate_content" property="operateContent" jdbcType="VARCHAR" />
+    <result column="c_user_score_id" property="cUserScoreId" jdbcType="INTEGER" />
+    <result column="tag" property="tag" jdbcType="CHAR" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, operate_type, operate_content, c_user_score_id, tag, score, create_time
+  </sql>
+  
+  <!-- 根据主键查询用户账户表字段 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from c_user_score_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除用户帐户操作记录表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from c_user_score_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入用户帐户操作记录表 -->
+  <insert id="insert" useGeneratedKeys="true" parameterType="com.f2b2c.eco.model.market.CUserScoreRecordModel" >
+   <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+        SELECT LAST_INSERT_ID() AS id
+    </selectKey> 
+    insert into c_user_score_record (id, operate_type, operate_content, 
+      c_user_score_id, tag, score, 
+      create_time)
+    values (#{id,jdbcType=INTEGER}, #{operateType,jdbcType=CHAR}, #{operateContent,jdbcType=VARCHAR}, 
+      #{cUserScoreId,jdbcType=INTEGER}, #{tag,jdbcType=CHAR}, #{score,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 插入可选的用户帐户操作记录表字段 -->
+  <insert id="insertSelective" useGeneratedKeys="true" parameterType="com.f2b2c.eco.model.market.CUserScoreRecordModel" >
+    <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+        SELECT LAST_INSERT_ID() AS id
+    </selectKey> 
+    insert into c_user_score_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="operateType != null" >
+        operate_type,
+      </if>
+      <if test="operateContent != null" >
+        operate_content,
+      </if>
+      <if test="cUserScoreId != null" >
+        c_user_score_id,
+      </if>
+      <if test="tag != null" >
+        tag,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="operateType != null" >
+        #{operateType,jdbcType=CHAR},
+      </if>
+      <if test="operateContent != null" >
+        #{operateContent,jdbcType=VARCHAR},
+      </if>
+      <if test="cUserScoreId != null" >
+        #{cUserScoreId,jdbcType=INTEGER},
+      </if>
+      <if test="tag != null" >
+        #{tag,jdbcType=CHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的用户帐户表字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.CUserScoreRecordModel" >
+    update c_user_score_record
+    <set >
+      <if test="operateType != null" >
+        operate_type = #{operateType,jdbcType=CHAR},
+      </if>
+      <if test="operateContent != null" >
+        operate_content = #{operateContent,jdbcType=VARCHAR},
+      </if>
+      <if test="cUserScoreId != null" >
+        c_user_score_id = #{cUserScoreId,jdbcType=INTEGER},
+      </if>
+      <if test="tag != null" >
+        tag = #{tag,jdbcType=CHAR},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新用户帐户操作记录表 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.CUserScoreRecordModel" >
+    update c_user_score_record
+    set operate_type = #{operateType,jdbcType=CHAR},
+      operate_content = #{operateContent,jdbcType=VARCHAR},
+      c_user_score_id = #{cUserScoreId,jdbcType=INTEGER},
+      tag = #{tag,jdbcType=CHAR},
+      score = #{score,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据用户id获取积分变动信息 -->
+  <select id="selectScoreRecordByUserId" resultType="com.f2b2c.eco.model.market.CUserScoreRecordModel">
+    select 
+      T1.id, 
+      T1.operate_type as operateType, 
+      T1.operate_content as operateContent, 
+      T1.c_user_score_id as cUserScoreId, 
+      T1.tag, 
+      T1.score, 
+      date_format(T1.create_time,'%Y-%m-%d %H:%i:%s') as strCreateDate 
+    from c_user_score_record T1 
+    left join c_user_score T2 ON T1.c_user_score_id = T2.id 
+    where T2.c_user_id = #{params.userId} 
+    order by T1.create_time desc 
+    limit #{start},#{length}  
+  </select>
+</mapper>

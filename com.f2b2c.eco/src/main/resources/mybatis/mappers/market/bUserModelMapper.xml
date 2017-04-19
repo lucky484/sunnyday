@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.market.BUserDao">
+    <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BUserModel">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="real_name" jdbcType="VARCHAR" property="realName" />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="sex" jdbcType="INTEGER" property="sex" />
+        <result column="identity_id" jdbcType="VARCHAR" property="identityId" />
+        <result column="is_active" jdbcType="INTEGER" property="isActive" />
+        <result column="created_time" jdbcType="VARCHAR" property="createdTime" />
+        <result column="updated_time" jdbcType="VARCHAR" property="updatedTime" />
+        <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+        <result column="address" jdbcType="VARCHAR" property="address" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <!-- 关联对象 -->
+        <association property="createdUser"
+            javaType="com.f2b2c.eco.model.platform.FUserModel">
+            <id column="create_user" jdbcType="INTEGER" property="id" />
+            <result column="created_real_name" jdbcType="VARCHAR"
+                property="realName" />
+        </association>
+        <!-- 关联对象 -->
+        <association property="updatedUser"
+            javaType="com.f2b2c.eco.model.platform.FUserModel">
+            <id column="updated_user" jdbcType="INTEGER" property="id" />
+            <result column="updated_real_name" jdbcType="VARCHAR"
+                property="realName" />
+        </association>
+    </resultMap>
+
+    <resultMap id="personalInfoMap" type="FToBUserModel">
+        <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+        <result column="shop_logo_url" property="shopLogoUrl" jdbcType="VARCHAR" />
+        <result column="current_date_sale_count" property="currentDateSaleCount"
+            jdbcType="VARCHAR" />
+        <result column="current_date_price_count" property="currentDatePriceCount"
+            jdbcType="VARCHAR" />
+        <result column="real_name" property="realName" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <result column="province_code" property="provinceCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 根据专属顾问去查询所有的店铺老板信息 -->
+    <select id="getUserListsByfUserId" parameterType="java.lang.Integer"
+        resultMap="BaseResultMap">
+        select
+        id,account_name,password,real_name,nick_name,phone,email,sex,identity_id,is_active,address,remark
+        from b_user where created_user = #{id}
+    </select>
+
+    <!-- 根据用户id去查询该用户的信息 -->
+    <select id="getbUsyerById" parameterType="java.lang.Integer"
+        resultMap="BaseResultMap">
+        select
+        id,account_name,password,real_name,nick_name,phone,email,sex,identity_id,is_active,address,remark
+        from b_user where id = #{id} limit 1
+    </select>
+
+    <!-- 用户注册 -->
+    <insert id="insertUser" parameterType="BUserModel" keyProperty="id"
+        useGeneratedKeys="true">
+        insert into b_user
+        (
+        account_name,
+        password,
+        real_name,
+        nick_name,
+        phone,
+        email,
+        sex,
+        identity_id,
+        is_active,
+        created_user,
+        created_time,
+        updated_user,
+        updated_time,
+        address,
+        remark
+        )values(
+        #{accountName},
+        #{password},
+        #{realName},
+        #{nickName},
+        #{phone},
+        #{email},
+        #{sex},
+        #{identityId},
+        #{isActive},
+        #{createdUser.id},
+        now(),
+        #{updatedUser.id},
+        now(),
+        #{address},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 根据用户名查询用户是否存在 -->
+    <select id="queryUserIsExist" resultMap="BaseResultMap"
+        parameterType="map">
+        select
+        id,
+        account_name,
+        password,
+        real_name,
+        nick_name,
+        date_format(created_time,'%Y-%m-%d %h:%i:%s') as created_time,
+        date_format(updated_time,'%Y-%m-%d %h:%i:%s') as updated_time,
+        address
+
+        from b_user where account_name = #{userName}
+        <if test="password != null and password != ''">
+            and password = #{password}
+        </if>
+        and deleted_time is null
+    </select>
+
+    <update id="updatePassword" parameterType="BUserModel">
+        update b_user set password = #{password},updated_time = now() where phone =
+        #{phone}
+    </update>
+
+    <select id="queryUserByAccountName" parameterType="java.lang.String"
+        resultType="BUserModel">
+        select
+            buser.id,
+            buser.account_name as accountName,
+            buser. password,
+            buser.real_name as realName,
+            buser.nick_name as nickName,
+            buser.phone,
+            buser.email,
+            buser.sex,
+            buser.identity_id as identityId,
+            buser.is_active as isActive,
+            buser.created_user as `createdUser.id`,
+            buser.created_time as createdTime,
+            buser.updated_user as `updatedUser.id`,
+            buser.updated_time as updatedTime,
+            buser.deleted_time as deletedTime,
+            buser.address,
+            buser.remark,
+            shop.shop_name as shopName
+        from
+            b_user buser
+        LEFT JOIN b_shop_info shop on buser.id = shop.b_user_id 
+            where buser.account_name = #{account} and buser.deleted_time is null
+    </select>
+
+    <select id="findOne" parameterType="BUserModel" resultType="BUserModel">
+        select u.id,
+        u.account_name as accountName,
+        u.password,
+        u.real_name as
+        realName,
+        u.nick_name as nickName,
+        u.phone,
+        u.email,
+        u.sex,
+        u.identity_id as identityId,
+        u.is_active as isActive,
+        u.address,
+        u.remark
+        from b_user u
+        where
+        u.account_name = #{accountName,jdbcType=VARCHAR}
+        AND
+        u.password = #{password,jdbcType=VARCHAR}
+        AND
+        u.deleted_time is NULL limit 1
+    </select>
+
+    <select id="queryBUserByUserId" resultMap="personalInfoMap">
+        select
+        shop.shop_name,
+        shop.shop_logo_url,
+        shop.address,
+        area.area_name,
+        area.city_name,
+        area.province_name,
+        area.province_code,
+        (select count(1) from b_sales_order sales_order
+        where sales_order.b_user_id = user.id
+        and date_format(sales_order.created_time,'%y%m%d') =
+        date_format(#{date},'%y%m%d') and sales_order.deleted_status is null)as current_date_sale_count,
+        (select sum(total) from b_sales_order sales_order
+        where sales_order.b_user_id = user.id
+        and date_format(sales_order.created_time,'%y%m%d') =
+        date_format(#{date},'%y%m%d') and sales_order.deleted_status is null) as current_date_price_count,
+        user.real_name,
+        user.phone
+        from
+        b_user user,
+        b_shop_info shop left join (select area.code,area.name as area_name,city.name as city_name,province.name as province_name,province.code as province_code from area area,city city,province province where area.citycode = city.code and city.provincecode = province.code)area
+        on shop.area_code = area.code 
+        where
+        user.id = shop.b_user_id
+        and user.id = #{userId}
+    </select>
+
+    <!-- 主页统计 -->
+    <select id="findAllBUserCount" resultType="java.lang.Integer">
+        select count(*) from b_user
+    </select>
+    
+    <!-- 修改店老板手机号 -->
+    <update id="updatePhoneById" parameterType="BUserModel">
+        update b_user set phone = #{phone} where id = 
+        #{id}
+    </update>
+    
+    <update id="deleteUserById" parameterType="int">
+        update b_user set deleted_time = now(),updated_time= now() where id = #{userId}
+    </update>
+</mapper>

@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FSalesOrderDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FSalesOrderModel">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="merge_order_no" jdbcType="VARCHAR" property="mergeOrderNo" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="receiver_name" jdbcType="VARCHAR" property="receiverName" />
+    <result column="receiver_phone" jdbcType="VARCHAR" property="receiverPhone" />
+    <result column="receiver_address" jdbcType="VARCHAR" property="receiverAddress" />
+    <result column="receiver_postal_code" jdbcType="VARCHAR" property="receiverPostalCode" />
+    <result column="total" jdbcType="INTEGER" property="total" />
+    <result column="goods_count" jdbcType="INTEGER" property="goodsCount" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+    <result column="real_pay" jdbcType="INTEGER" property="realPay" />
+    <result column="distribution_area" jdbcType="VARCHAR" property="distributionArea"/>
+    <result column="receive_time_type" jdbcType="INTEGER" property="receiveTimeType"/>
+    <result column="shop_name" jdbcType="VARCHAR" property="shopName"/>
+    <association property="user" javaType="BUserModel">
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+    </association>
+    <collection property="fSalesOrderDetailsModel" resultMap="detailsResultMap"/>
+  </resultMap>
+  
+  <resultMap id="detailsResultMap" type="com.f2b2c.eco.model.platform.FSalesOrderDetailsModel">
+    <id column="bid" jdbcType="VARCHAR" property="id" />
+    <result column="border_id" jdbcType="VARCHAR" property="order.id" />
+    <result column="goods_id" jdbcType="INTEGER" property="goods.id" />
+    <result column="goods_version" jdbcType="INTEGER" property="goodsVersion" />
+    <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+    <result column="goods_qty" jdbcType="INTEGER" property="goodsQty" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <association property="goods" javaType="FGoodsModel">
+        <id column="gid" property="id" />
+        <result column="unit" jdbcType="INTEGER" property="unit" />
+        <result column="gprice" jdbcType="INTEGER" property="price" />
+        <result column="spec" jdbcType="VARCHAR" property="spec" />
+    </association>
+  </resultMap>
+  
+  <resultMap type="FSalesOrderModel" id="forderMap">
+      <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="total" jdbcType="INTEGER" property="total" />
+    <result column="real_pay" jdbcType="INTEGER" property="realPay" />
+    <result column="distribution_area" jdbcType="VARCHAR" property="distributionArea"/>
+    <result column="receiver_address" jdbcType="VARCHAR" property="receiverAddress" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="diffence_id" jdbcType="VARCHAR" property="diffenceId" />
+    <result column="diffence_type" jdbcType="INTEGER" property="diffenceType" />
+    <result column="diffence_amount" jdbcType="INTEGER" property="diffenceAmount" />
+    <result column="diffence_status" jdbcType="VARCHAR" property="diffenceStatus" />
+    <result column="finsh_time" jdbcType="TIMESTAMP" property="finshTime" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <association property="user" javaType="BUserModel">
+          <id column="user_id" jdbcType="VARCHAR" property="id" />
+          <result column="b_nick_name" jdbcType="VARCHAR" property="nickName" />
+          <result column="shop_name" jdbcType="VARCHAR" property="shopName" />
+      </association>
+    <collection property="fSalesOrderDetailsModel" resultMap="detailsResultMap"/>
+  </resultMap>
+  
+  <resultMap type="FSalesOrderModel" id="forderMangerMap">
+      <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="total" jdbcType="INTEGER" property="total" />
+    <result column="real_pay" jdbcType="INTEGER" property="realPay" />
+    <result column="distribution_area" jdbcType="VARCHAR" property="distributionArea"/>
+    <result column="receiver_address" jdbcType="VARCHAR" property="receiverAddress" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <association property="user" javaType="BUserModel">
+          <id column="user_id" jdbcType="VARCHAR" property="id" />
+          <result column="b_nick_name" jdbcType="INTEGER" property="nickName" />
+          <result column="shop_name" jdbcType="INTEGER" property="shopName" />
+      </association>
+    <collection property="fSalesOrderDetailsModel" resultMap="detailsResultMap"/>
+  </resultMap>
+  
+  <resultMap id="orderAllMap" type="BToCOrderModel">
+      <id column="id" property="id" jdbcType="VARCHAR" />
+      <result column="order_details_id" property="orderDetailsId" jdbcType="VARCHAR" />
+      <result column="order_id" property="orderNo" jdbcType="VARCHAR" />
+      <result column="merge_order_no" property="mergeOrderNo" jdbcType="VARCHAR" />
+      <result column="status" property="status" jdbcType="INTEGER" />
+       <result column="payType" property="payType"/>
+      <result column="receiverAddress" property="receiverAddress"/>
+      <result column="receiverTelephone" property="receiverTelephone"/>
+      <result column="receiverName" property="receiverName"/>
+      <result column="receive_time_type" property="receiveTimeType"/>
+      <result column="remark" property="remark"/>
+      <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+      <result column="goods_qty" property="quantity" jdbcType="INTEGER" />
+      <result column="total" property="total" jdbcType="INTEGER" />
+      <result column="diffenceRemark" property="diffenceRemark" />
+      <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+      <result column="price" property="price" jdbcType="INTEGER" />
+      <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+      <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+      <result column="real_pay" property="realTotalPrice" jdbcType="INTEGER" />
+      <result column="diffence_amount" property="diffenceAmount" jdbcType="INTEGER" />
+      <result column="diffence_status" property="diffenceStatus" jdbcType="INTEGER" />
+      <result column="diffence_type" property="diffenceType" jdbcType="INTEGER" />
+      <result column="diffence_cause" property="diffenceCause"/>
+      <collection property="list" resultMap="BGoodsToCMap" />
+  </resultMap>
+  <resultMap id="BGoodsToCMap" type="BGoodsToCModel">
+      <id column="goods_id" property="id" jdbcType="INTEGER" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="logo_url" property="logoUrl" jdbcType="VARCHAR" />
+      <result column="goods_qty" property="quantity" jdbcType="VARCHAR" />
+      <result column="price" property="price" jdbcType="DOUBLE" />
+      <result column="spec" property="spec"  />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, order_id, user_id, created_time, receiver_name, receiver_phone, receiver_address, 
+    receiver_postal_code, total, pay_type, status, remark, reason, updated_time, deleted_time, 
+    real_pay,distribution_area,shop_name
+  </sql>
+  <insert id="insert" parameterType="FSalesOrderModel">
+    insert into f_sales_order (id, order_id,merge_order_no, user_id, 
+      created_time, receiver_name, receiver_phone, 
+      receiver_address, receiver_postal_code, total, 
+      pay_type, status, remark, 
+      reason, updated_time, deleted_time,
+      real_pay,distribution_area,receive_time_type,shop_name,goods_count)
+    values (#{id}, #{orderId},#{mergeOrderNo}, #{userId}, 
+      #{createdTime}, #{receiverName}, #{receiverPhone}, 
+      #{receiverAddress}, #{receiverPostalCode}, #{total}, 
+      #{payType}, #{status}, #{remark}, 
+      #{reason}, #{updatedTime}, #{deletedTime}, 
+      #{realPay},
+      #{distributionArea},#{receiveTimeType},
+      #{shopName},#{goodsCount})
+  </insert>
+  <update id="updateOrderStatus">
+      update f_sales_order set status = #{status} 
+      <if test="realPay != null">
+      ,real_pay = #{realPay} 
+      </if>
+      <if test="deliverTime != null">
+      ,deliver_time = #{deliverTime}
+      </if>
+      <if test="receiverTime != null">
+      ,receiver_time = #{receiverTime}
+      </if>
+      where order_id=#{orderId}
+  </update>
+  
+  <select id="findWithPagination" resultMap="BaseResultMap">
+      select a.*,b.id as bid,b.order_id as border_id, b.goods_id,b.goods_version,b.goods_qty,b.price,b.goods_name from f_sales_order a left join f_sales_order_details b on a.order_id=b.order_id having deleted_time is null
+             limit #{start},#{offset}
+  </select>
+  
+  <select id="queryOrderById" resultMap="BaseResultMap">
+      select a.*,b.id as bid,b.order_id as border_id, b.goods_id,b.goods_version,b.goods_qty,b.price,b.goods_name from f_sales_order a left join f_sales_order_details b on a.order_id=b.order_id
+     where a.id=#{id} and a.deleted_time is null
+  </select>
+  
+  <select id="queryCountByCondition" resultType="int">
+      select count(0) from f_sales_order where deleted_time is null
+  </select>
+  
+  <insert id="addOrderDetails" parameterType="java.util.List">
+        insert into f_sales_order_details    
+                (order_id,goods_id,goods_version,goods_qty,price,goods_name)  
+        values 
+        <foreach collection="list" item="item" index="index" separator=","> 
+         (#{item.order.orderId},#{item.goods.id},#{item.goodsVersion},#{item.goodsQty},#{item.price},#{item.goodsName})  
+        </foreach>
+    </insert>
+  
+  <select id="findOrderRecord" resultMap="forderMap">
+      SELECT * FROM f_orders WHERE `status` in (1,4,5) 
+         <if test="bUserList != null and bUserList.size() > 0">
+          	and user_id in
+          	<foreach item="item" index="index" collection="bUserList" open="("
+			separator="," close=")">
+			#{item}
+			</foreach>
+          </if>
+          <if test="condition!=null and condition !=''">
+          	and (order_id like CONCAT('%',#{condition},'%')
+          	or b_nick_name like CONCAT('%',#{condition},'%')
+          	or shop_name like CONCAT('%',#{condition},'%')
+          	or distribution_area like CONCAT('%',#{condition},'%')
+          	or receiver_address like CONCAT('%',#{condition},'%'))
+          </if>
+          <if test="time!=null and time!=''">
+          	and created_time between CONCAT(#{time},' :00:00:00') and CONCAT(#{time},' :23:59:59') 
+          </if>
+          <if test="type!=null">
+          	and status = #{type}
+          </if>
+          order by (case status when 4 then 10 when 1 then 20 else 30 end ) asc,created_time desc
+      limit #{pageNumber},#{pageSize}
+  </select>
+  
+   <select id="findOrderListWithStatus" resultMap="forderMap">
+          SELECT 
+            T1.*,
+            case when T1.status = 1 then t1.updated_time
+            else null
+            end as finsh_time,
+            T2.id as diffence_id,
+            T2.diffence_type, 
+            T2.diffence_amount,
+            T2.status as diffence_status 
+          FROM f_order_manager T1 
+          LEFT JOIN f_order_diffence T2 ON T1.order_id = T2.order_no 
+          where T1.deleted_time is null
+          <if test="orderNo != null and orderNo != ''">
+              and upper(T1.order_id) like concat('%',upper(#{orderNo}),'%')
+          </if>
+          <if test="shopName != null and shopName != ''">
+              and upper(T1.shop_name) like concat('%',upper(#{shopName}),'%')
+          </if>
+          <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+              and date_format(T1.created_time,'%Y-%m-%d') <![CDATA[>=]]> date_format(#{startTime},'%Y-%m-%d') and date_format(T1.created_time,'%Y-%m-%d') <![CDATA[<=]]> date_format(#{endTime},'%Y-%m-%d')
+          </if>
+          <if test="startTime != null and startTime != '' and (endTime == null or endTime == '')">
+               and date_format(T1.created_time,'%Y-%m-%d') = date_format(#{startTime},'%Y-%m-%d')
+          </if>
+          <if test="(startTime == null or startTime == '') and endTime != null and endTime != ''">
+               and date_format(T1.created_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')
+          </if>
+          <if test="orderStatus == 1">
+              <!-- status待支付状态的订单状态 -->
+              and (T1.status = 2 or (T1.pay_Type = 0 and T1.status !=1))
+          </if>
+          <if test="orderStatus == 2">
+              <!-- status待发货的订单状态 -->
+              and (T1.status = 3 or (T1.pay_Type = 0 and T1.status =3))
+          </if>
+          <if test="orderStatus == 3">
+              <!-- status待收货物 -->
+              and T1.status = 4
+          </if>
+          <if test="orderStatus == 4">
+              and T1.pay_Type = 0
+          </if>
+          <if test="orderStatus == 5">
+              <!-- status已经完成的订单状态 -->
+              and T1.status = 1
+          </if>
+          <if test="orderStatus == 7">
+              <!-- status已经完成的订单状态 -->
+              and T2.id is not null 
+          </if>
+          <if test="bUserList != null and bUserList.size() > 0">
+          	and T1.user_id in
+          	<foreach item="item" index="index" collection="bUserList" open="("
+			separator="," close=")">
+			#{item}
+			</foreach>
+          </if>
+          order by T1.created_time desc
+          LIMIT #{pageNumber},#{pageSize}
+  </select>
+  <select id="orderRecordCount" resultType="int">
+      SELECT count(1) FROM f_orders WHERE status in (1,4,5) 
+      <if test="bUserList != null and bUserList.size() > 0">
+          	and user_id in
+          	<foreach item="item" index="index" collection="bUserList" open="("
+			separator="," close=")">
+			#{item}
+			</foreach>
+      </if>
+      <if test="condition!=null and condition !=''">
+          	and (order_id like CONCAT('%',#{condition},'%')
+          	or b_nick_name like CONCAT('%',#{condition},'%')
+          	or shop_name like CONCAT('%',#{condition},'%')
+          	or distribution_area like CONCAT('%',#{condition},'%')
+          	or receiver_address like CONCAT('%',#{condition},'%'))
+      </if>
+      <if test="time!=null and time!=''">
+      	and created_time between CONCAT(#{time},' :00:00:00') and CONCAT(#{time},' :23:59:59') 
+      </if>
+      <if test="type!=null">
+      	and status = #{type}
+      </if>
+  </select>
+  
+  <select id="getOrderCountWithStatus" resultType="int">
+          SELECT 
+            count(1) 
+          FROM f_order_manager T1 
+          LEFT JOIN f_order_diffence T2 ON T1.order_id = T2.order_no 
+          where T1.deleted_time is null
+      <if test="orderNo != null and orderNo != ''">
+           and upper(T1.order_id) like concat('%',upper(#{orderNo}),'%')
+      </if>
+      <if test="shopName != null and shopName != ''">
+          and upper(T1.shop_name) like concat('%',upper(#{shopName}),'%')
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+          and date_format(T1.created_time,'%Y-%m-%d') <![CDATA[>=]]> date_format(#{startTime},'%Y-%m-%d') and date_format(T1.created_time,'%Y-%m-%d') <![CDATA[<=]]> date_format(#{endTime},'%Y-%m-%d')
+      </if>
+      <if test="startTime != null and startTime != '' and (endTime == null or endTime == '')">
+           and date_format(T1.created_time,'%Y-%m-%d') = date_format(#{startTime},'%Y-%m-%d')
+      </if>
+      <if test="(startTime == null or startTime == '') and endTime != null and endTime != ''">
+           and date_format(T1.created_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')
+      </if>
+      <if test="orderStatus == 1">
+          <!-- status待支付状态的订单状态 -->
+          and (T1.status = 2 or (T1.pay_Type = 0 and T1.status !=1))
+      </if>
+      <if test="orderStatus == 2">
+          <!-- status待发货的订单状态 -->
+          and (T1.status = 3 or (T1.pay_Type = 0 and T1.status =3))
+      </if>
+      <if test="orderStatus == 3">
+          <!-- status待收货物 -->
+          and T1.status = 4 
+      </if>
+      <if test="orderStatus == 4">
+          and T1.pay_Type = 0 
+      </if>
+      <if test="orderStatus == 5">
+          <!-- status已经完成的订单状态 -->
+          and T1.status = 1 
+      </if>
+      <if test="orderStatus == 7">
+          <!-- status已经完成的订单状态 -->
+          and T2.id is not null 
+      </if>
+      <if test="bUserList != null and bUserList.size() > 0">
+          	and T1.user_id in
+          	<foreach item="item" index="index" collection="bUserList" open="("
+			separator="," close=")">
+			#{item}
+			</foreach>
+      </if>
+  </select>
+  
+  <delete id="deleteOrderDetails">
+      delete from f_sales_order_details where id in(
+      <foreach collection="list" item="item" index="index" separator=","> 
+          #{item}
+      </foreach>)
+  </delete>
+  
+  <update id="updateDetailsModel">
+          <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update f_sales_order_details 
+            <set>
+              goods_qty=#{item.goodsQty}
+            </set>
+            where id = #{item.id}
+         </foreach>
+  </update>
+  
+  <select id="findOne" parameterType="string" resultMap="BaseResultMap">
+        SELECT 
+        f_sales_order.id,
+        f_sales_order.order_id,
+        f_sales_order.user_id,
+        f_sales_order.created_time,
+        f_sales_order.goods_count,
+        date_sub(f_sales_order.created_time,interval -1 day) as send_time,
+        f_sales_order.receiver_name,
+        f_sales_order.receiver_phone,
+        f_sales_order.receiver_address,
+        f_sales_order.receiver_postal_code,
+        f_sales_order.total,
+        f_sales_order.pay_type,
+        f_sales_order.`status`,
+        f_sales_order.remark,
+        f_sales_order.reason,
+        f_sales_order.real_pay,
+        f_sales_order.distribution_area,
+        f_sales_order.receive_time_type,
+        shop.shop_name,
+        f_sales_order_details.id AS bid,
+        f_sales_order_details.order_id AS border_id,
+        f_sales_order_details.goods_id,
+        f_sales_order_details.goods_version,
+        f_sales_order_details.goods_qty,
+        f_sales_order_details.price,
+        f_goods.id AS gid,
+        f_goods.unit,
+        f_goods.price AS gprice,
+        f_goods.name as goods_name,
+        f_goods.spec as spec,
+        user.real_name,
+        user.phone
+        FROM f_sales_order 
+        LEFT JOIN f_sales_order_details 
+        ON f_sales_order.id=f_sales_order_details.order_id
+        LEFT JOIN f_goods 
+        ON f_sales_order_details.goods_id=f_goods.id
+        left join b_user user on f_sales_order.user_id = user.id
+        left join b_shop_info shop on user.id = shop.b_user_id
+        WHERE f_sales_order.order_id=#{orderId}
+   </select>
+   
+   <select id="getTotalOrders" resultMap="BaseResultMap">
+   		SELECT 
+        f_sales_order.id,
+        f_sales_order.order_id,
+        f_sales_order.user_id,
+        f_sales_order.created_time,
+        f_sales_order.goods_count,
+        date_sub(f_sales_order.created_time,interval -1 day) as send_time,
+        f_sales_order.receiver_name,
+        f_sales_order.receiver_phone,
+        f_sales_order.receiver_address,
+        f_sales_order.receiver_postal_code,
+        f_sales_order.total,
+        f_sales_order.pay_type,
+        f_sales_order.`status`,
+        f_sales_order.remark,
+        f_sales_order.reason,
+        f_sales_order.real_pay,
+        f_sales_order.distribution_area,
+        f_sales_order.receive_time_type,
+        f_sales_order.shop_name,
+        f_sales_order_details.id AS bid,
+        f_sales_order_details.order_id AS border_id,
+        f_sales_order_details.goods_id,
+        f_sales_order_details.goods_version,
+        f_sales_order_details.goods_qty,
+        f_sales_order_details.price,
+        f_goods.id AS gid,
+        f_goods.unit,
+        f_goods.price AS gprice,
+        f_goods.name as goods_name,
+        f_goods.spec as spec,
+        user.real_name,
+        user.phone
+        FROM f_sales_order 
+        LEFT JOIN f_sales_order_details 
+        ON f_sales_order.id=f_sales_order_details.order_id
+        LEFT JOIN f_goods 
+        ON f_sales_order_details.goods_id=f_goods.id
+        left join b_user user on f_sales_order.user_id = user.id
+        WHERE f_sales_order.order_id=#{orderId} limit #{pageNumber},#{pageSize}
+   </select>
+   
+   
+   
+   <!-- -1是担保付款且未发货，-2是担保付款已发货，-3是担保付款收货未付款  -->
+   <select id="findBusinessPurchesOrderRecord" resultMap="orderAllMap">
+             select
+                sales_order.id,
+                sales_order.order_id,
+                order_details.logo_url,
+                order_details.goods_qty,
+                order_details.name,
+                order_details.price,
+                order_details.spec,
+                sales_order.goods_count,
+                diffence.diffence_amount,
+                diffence.diffence_type,
+                diffence.status as diffence_status,
+                sales_order.total,
+                sales_order.real_pay,
+                case when sales_order.pay_type = 0 and (sales_order.status in (2,3))  then    -1
+                when sales_order.pay_type = 0 and sales_order.status = 4  then -2
+                else sales_order.status
+                end as status,
+                date_format(sales_order.created_time,'%Y-%m-%d %H:%i:%s') as created_time
+            from
+                 (select * from f_sales_order where user_id = #{userId} and deleted_time is null
+                 <if test="status != null and status != ''">
+                     <if test="status == -1">
+                         and pay_type=0
+                         and status not in(1)
+                     </if>
+                     <if test="status == 1">
+                         and status = #{status}
+                     </if>
+                     <if test="status > 1">
+                         and pay_type != 0
+                         and status = #{status}
+                     </if>
+                 </if>
+                  order by created_time desc
+                  limit #{num},#{pageSize}  
+                 )sales_order
+            left join(
+                select
+                    order_details.order_id,
+                    order_details.goods_qty,
+                    goods.name,
+                    goods.logo_url,
+                    goods.price,
+                    goods.spec
+                from
+                    f_sales_order_details order_details,
+                    f_goods goods
+                where
+                    order_details.goods_id = goods.id
+                and order_details.deleted_time is null
+                order by order_details.order_id
+            ) order_details on sales_order.id = order_details.order_id
+            left join f_order_diffence diffence on sales_order.order_id = diffence.order_no
+            order by sales_order.created_time desc
+  </select>
+  
+   <select id="findBusinessPurchesOrderDetail" resultMap="orderAllMap">
+             select
+                sales_order.id,
+                sales_order.order_id,
+                sales_order.merge_order_no,
+                order_details.logo_url,
+                order_details.goods_qty,
+                order_details.price,
+                order_details.name,
+                sales_order.goods_count,
+                sales_order.total, 
+                sales_order.real_pay,
+                sales_order.status,
+                date_format(sales_order.created_time,'%Y-%m-%d %H:%i:%s') as created_time
+            from
+                 (select * from f_sales_order where id = #{orderId})sales_order
+            left join(
+                select
+                    order_details.order_id,
+                    order_details.goods_qty,
+                    goods.name,
+                    goods.logo_url,
+                    goods.price
+                from
+                    f_sales_order_details order_details,
+                    f_goods goods
+                where
+                    order_details.goods_id = goods.id
+                and order_details.deleted_time is null
+                order by order_details.order_id
+            ) order_details on sales_order.id = order_details.order_id
+            left join f_order_diffence diffence on sales_order.order_id = diffence.order_no
+           order by sales_order.updated_time desc
+  </select>
+  <select id="findOrderByOrderId" resultMap="orderAllMap">
+  	   select
+                sales_order.id,
+                sales_order.order_id,
+                sales_order.merge_order_no,
+                order_details.logo_url,
+                order_details.goods_qty,
+                order_details.price,
+                order_details.goods_name as name,
+                sales_order.goods_count,
+                sales_order.total, 
+                sales_order.real_pay,
+                sales_order.status,
+                date_format(sales_order.created_time,'%Y-%m-%d %H:%i:%s') as created_time,
+				sales_order.receiver_address as receiverAddress,
+				sales_order.receiver_phone as receiverTelephone,
+				sales_order.receiver_name as receiverName,
+				sales_order.pay_type as payType,
+				sales_order.receive_time_type,
+				sales_order.remark,
+				sales_order.shop_name,
+				diffence.diffence_type,
+				diffence.diffence_amount,
+				diffence.remark as diffenceRemark,
+				diffence.diffence_cause,
+				diffence.status as diffence_status
+            from
+                 (select * from f_sales_order where id= #{orderId})sales_order
+            left join f_sales_order_details order_details on sales_order.id = order_details.order_id
+            left join f_order_diffence diffence on sales_order.order_id = diffence.order_no
+           order by sales_order.updated_time desc
+  </select>
+  <select id="findBusinessPurchesOrderCount" resultType="int">
+       select count(1) from f_sales_order sales_order where sales_order.user_id = #{userId} and sales_order.deleted_time is null
+        <if test="status != null and status != ''">
+              <if test="status == -1">
+                 and pay_type=0
+                 and status not in(1)
+             </if>
+             <if test="status == 1">
+                 and status = #{status}
+             </if>
+             <if test="status > 1">
+                 and pay_type != 0
+                 and status = #{status}
+             </if>
+         </if>
+  </select>
+  
+  <update id="deleteByOrderId" parameterType="string">
+      UPDATE f_sales_order
+      SET deleted_time = NOW()
+      WHERE id = #{orderId}
+  </update>
+  
+   <update id="deleteDetailsByOrderId" parameterType="string">
+      UPDATE f_sales_order_details
+      SET deleted_time = NOW()
+      WHERE order_id = #{orderId}
+  </update>
+  
+  <select id="findOneOrder" resultMap="BaseResultMap">
+      SELECT *
+    FROM f_sales_order
+    WHERE ISNULL(deleted_time)
+    AND user_id=#{userId}
+    AND DATE_FORMAT(created_time,'%Y-%m-%d') =  DATE_FORMAT(#{date},'%Y-%m-%d')
+    order by created_time desc
+    LIMIT 1
+  </select>
+  
+  <delete id="deleteOrderDetailsByOrderId" parameterType="string">
+      DELETE FROM f_sales_order_details
+    WHERE order_id=#{orderId}
+  </delete>
+  
+  <delete id="truncateByOrderId" parameterType="string">
+      DELETE FROM f_sales_order
+      WHERE order_id=#{orderId}
+  </delete>
+  <!-- 根据订单号查询订单状态 -->
+  <select id="queryStatusByOrderNo" parameterType="String" resultMap="BaseResultMap">
+      select id,order_id,user_id,status,pay_type from f_sales_order where merge_order_no = #{mergeOrderNo}
+  </select>
+  <!-- 根据订单号更新订单状态 -->
+  <update id="updateStatusByOrderNo" parameterType="String">
+      update f_sales_order set status = 3 where merge_order_no = #{mergeOrderNo}
+  </update>
+  
+  <select id="findExpiredOrder" resultMap="BaseResultMap">
+      SELECT 
+    fs.id,
+    fsd.id as bid,
+    fsd.goods_version,
+    fsd.goods_qty,
+    fsd.goods_id
+    FROM f_sales_order fs
+    LEFT JOIN f_sales_order_details fsd
+    ON fs.id=fsd.order_id
+    WHERE fs.`status`=2 AND TIMESTAMPDIFF(SECOND,fs.created_time,NOW())>1800
+  </select>
+  
+  <update id="deleteBatchOrders">
+      UPDATE f_sales_order
+    SET deleted_time=NOW()
+    WHERE f_sales_order.id IN (
+    <foreach collection="list" item="item" index="index" separator=",">
+    #{item.id}
+    </foreach>
+    )
+  </update>
+  
+  <!-- 根据订单的id修改价格 -->
+  <update id="updateTotalById" parameterType="FSalesOrderModel">
+      update f_sales_order set merge_order_no = #{mergeOrderNo}, total = total + #{total}, real_pay = real_pay + #{total}, goods_count = goods_count + #{goodsCount} where id = #{id}
+  </update>
+  
+  <!-- 根据差价id修改实际金额 -->
+  <update id="updateOrderPriceByOrderId" parameterType="FDifferentOrderBean">
+     update 
+        f_sales_order 
+	 <set>
+		<if test="realPay != null">
+			real_pay = #{realPay},
+		</if>
+        <if test="status != null">
+			status = #{status},
+		</if>
+	</set> 
+     where id = #{orderId} 
+  </update> 
+  
+  <!-- 修改订单的状态 -->
+    <update id="updateStatusByNo" parameterType="FSalesOrderModel">
+      update f_sales_order set status = #{status},updated_time = now(),pay_time = #{payTime} where merge_order_no = #{mergeOrderNo}
+  </update>
+  
+  <select id="getAreaIdByOrderId" parameterType="java.lang.String" resultType="java.lang.Integer">
+  	 select areaid from f_sales_order sales left join b_shop_info shop 
+		on sales.user_id = shop.b_user_id 
+			left join f_user user on shop.created_user = user.id where sales.order_id = #{orderId}
+  </select>
+  
+  <select id="findOrderIdByMergeOrderNo" parameterType="java.lang.String" resultType="java.lang.String">
+  	select order_id from f_sales_order where merge_order_no = #{out_trade_no}
+  </select>
+  
+  
+  <!-- 查询未付款的订单  -->
+  <select id="queryUnPayOrder" resultMap="BaseResultMap">
+      select id,order_id from f_sales_order where pay_type = 0 and status = 4 and deleted_time is null and user_id = #{userId} limit 1 
+  </select>
+  
+  <!-- 删除订单 -->
+  <update id="updateOrderDeleteTimeById" parameterType="String">
+      update f_sales_order set deleted_time = now() where id = #{orderId}
+  </update>
+  
+   <!-- 根据订单编号修改实际要付款的金额 -->
+  <update id="updateRealPayByOrderNo" parameterType="FSalesOrderModel">
+     update 
+        f_sales_order 
+	 <set>
+		<if test="realPay != null">
+			real_pay = real_pay + #{realPay},
+		</if>
+        <if test="status != null">
+			status = #{status},
+		</if>
+	</set> 
+     where order_id = #{orderId} 
+  </update> 
+</mapper>

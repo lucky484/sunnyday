@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FKindDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FKindModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="catalog" jdbcType="CHAR" property="catalog" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
+    <result column="is_enable" jdbcType="VARCHAR" property="isEnable" />
+    <association property="parent" javaType="com.f2b2c.eco.model.platform.FKindModel">
+    	<id column="parent_id" jdbcType="INTEGER" property="id" />
+    	<result column="parent_cata" jdbcType="VARCHAR"
+				property="catalog" />
+    </association>
+  </resultMap>
+  
+  <resultMap id="BaseResultMap2" type="BKindToCModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="catalog" jdbcType="CHAR" property="catalog" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
+    <collection property="subList" javaType="ArrayList"
+			column="id" ofType="BKindToCModel"
+			select="com.f2b2c.eco.dao.platform.FKindDao.queryAllKindsForTreeByParentId" />
+  </resultMap>
+  
+  <resultMap id="BToCMap" type="BKindToCModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="catalog" jdbcType="CHAR" property="catalog" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="icon_url" jdbcType="VARCHAR" property="iconUrl" />
+  </resultMap>
+  <sql id="Base_Column_List"> 
+    id, kind_name, remark, parent_id, catalog,weight,icon_url,is_enable
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />,
+    (select a.catalog from f_kind a where a.id=b.parent_id) as parent_cata 
+    from f_kind b
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  
+    delete from f_kind where id = #{id,jdbcType=INTEGER}
+    
+  </delete>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FKindModel">
+    insert into f_kind (kind_name, remark, 
+      parent_id, catalog,icon_url,on_phone,is_enable,weight,set_weight_time) 
+    values (#{kindName,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{parent.id,jdbcType=INTEGER}, #{catalog,jdbcType=CHAR}, #{iconUrl,jdbcType=VARCHAR},1,1,#{weight},now())
+  </insert>
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.platform.FKindModel">
+    insert into f_kind
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="kindName != null">
+        kind_name,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="parent != null">
+        parent.id,
+      </if>
+      <if test="catalog != null">
+        catalog,
+      </if>
+      <if test="iconUrl != null">
+        icon_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="kindName != null">
+        #{kindName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="parent != null">
+        #{parent.id,jdbcType=INTEGER},
+      </if>
+      <if test="catalog != null">
+        #{catalog,jdbcType=CHAR},
+      </if>
+      <if test="iconUrl != null">
+        #{iconUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.platform.FKindModel">
+    update f_kind
+    <set>
+      <if test="kindName != null">
+        kind_name = #{kindName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="parent != null">
+        parent_id = #{parent.id,jdbcType=INTEGER},
+      </if>
+      <if test="catalog != null">
+        catalog = #{catalog,jdbcType=CHAR},
+      </if>
+      <if test="iconUrl != null">
+        icon_url = #{iconUrl,jdbcType=CHAR},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=CHAR},
+         set_weight_time = now()
+      </if>
+      
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.platform.FKindModel">
+    update f_kind
+    set kind_name = #{kindName,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      parent_id = #{parent.id,jdbcType=INTEGER},
+      catalog = #{catalog,jdbcType=CHAR},
+      icon_url = #{iconUrl,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="queryAllKind" resultMap="BToCMap">
+      select id,kind_name,remark,catalog,icon_url,weight from f_kind order by weight limit 0,8
+  </select>
+  <select id="queryKindsByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from f_kind
+    where parent_id = #{id,jdbcType=INTEGER} and on_phone = 1
+  </select>
+  <select id="queryAllKindsForTreeByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap2">
+    select 
+    <include refid="Base_Column_List" />
+    from f_kind
+    where parent_id = #{id,jdbcType=INTEGER} and on_phone = 1 and is_enable = 1
+  </select>
+  <select id="queryAllFKind" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from f_kind <!-- where on_phone = 1 -->
+  </select>
+  
+  <select id="queryAllKindOnPhone" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from f_kind where on_phone = 1
+  </select>
+  <!-- pagination start -->
+  <select id="findWithPagination" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />,
+    (select a.catalog from f_kind a where a.id=b.parent_id) as parent_cata
+    from f_kind b
+	where b.parent_id = #{parent_id,jdbcType=INTEGER} and b.on_phone = 1
+    limit ${pageable.pageNumber},${pageable.pageSize}
+  </select>
+  <select id="queryCountByCondition" resultType="int">
+  	select count(0) from f_kind 
+	where parent_id = #{parent_id, jdbcType=INTEGER} and on_phone = 1
+  </select>
+   <select id="findChdKind" parameterType="java.lang.Integer" resultType="String">
+    select id from f_kind where FIND_IN_SET(parent_id,queryChildrenAreaInfo(#{0})); 
+  </select>
+  <!-- pagination end -->
+  
+  <!-- 获取一级id list -->
+  <select id="queryKindIdListByPId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select 
+      id 
+    from f_kind 
+    where parent_id = #{id,jdbcType=INTEGER} 
+    and on_phone = 1 
+    order by weight asc 
+  </select>
+  
+  <!-- 获取一级水果分类id -->
+  <select id="queryFirstCategoryId" resultType="java.lang.Integer">
+    select 
+      id 
+    from f_kind 
+    where parent_id = -1 
+    and on_phone = 1 
+    and catalog = 0 
+    order by weight desc 
+    limit 1 
+  </select>
+  
+  <!-- 根据父级id获取子分类 -->
+  <select id="queryFKindByPid" resultType="com.f2b2c.eco.model.bean.FkindBean" parameterType="java.lang.Integer">
+    select 
+      id, 
+      kind_name as kindName 
+    from f_kind 
+    where parent_id = #{pId}  
+    and on_phone = 1 
+    and catalog = 0 
+    and (is_enable = 1 or is_enable is null or is_enable = '') 
+    order by weight is null,
+    weight asc ,set_weight_time desc
+  </select>
+  
+  <!-- 根据父级id获取过滤三级分类 -->
+  <select id="queryFilterTCateById" resultType="com.f2b2c.eco.model.bean.FkindBean">
+    select 
+      DISTINCT(T1.id), 
+      T1.kind_name as kindName 
+    from f_kind T1 
+    INNER JOIN f_goods T2 ON T1.id = T2.kind_id 
+    <if test="params.type != null">
+     AND T2.type = #{params.type} 
+    </if> 
+    AND T2.deleted_time is null AND (T2.is_copy is null or T2.is_copy = '0')
+    where T1.parent_id = #{params.pId} 
+    and T1.on_phone = 1 
+    and T1.catalog = 0 
+    and (T1.is_enable = 1 or T1.is_enable is null or T1.is_enable = '') 
+    order by T1.weight asc ,T1.set_weight_time desc
+  </select>
+  
+  <!-- 获取一级分类 -->
+  <select id="queryFrontKindByPId" parameterType="java.lang.Integer" resultType="BKindToCModel">
+    select 
+      id,
+      kind_name as kindName,
+      catalog, 
+      parent_id as parentId 
+    from f_kind 
+    where parent_id = #{id,jdbcType=INTEGER} 
+    and on_phone = 1 
+    order by weight asc ,set_weight_time desc
+  </select>
+  
+  <!-- 获取二级分类-->
+  <select id="queryFrontSecondKindByPId" parameterType="java.lang.Integer" resultType="BKindToCModel">
+    select 
+      T2.id,
+      T2.kind_name as kindName,
+      T2.catalog,
+      T2.parent_id as parentId  
+    from f_kind T1 
+    left join f_kind T2 ON T1.id = T2.parent_id 
+    where T1.parent_id = #{id,jdbcType=INTEGER} 
+    and T2.on_phone = 1 
+    order by T2.weight asc ,T2.set_weight_time desc 
+  </select>
+  
+  <!-- 获取顶级水果分类 -->
+  <select id="selectParentKindByFruit" resultType="FKindModel">
+    select 
+      id,
+      kind_name as kindName,
+      icon_url as iconUrl 
+    from f_kind 
+    where parent_id = -1 
+    and catalog = 0 
+  </select>
+  <!-- 获取所有的平台水果分类 -->
+  <select id="getAllKinds" resultMap="BaseResultMap">
+	SELECT
+		id,
+		kind_name,
+		remark,
+		catalog,
+		weight,
+		icon_url,
+		on_phone
+	FROM
+		f_kind
+	WHERE
+		parent_id = (
+			SELECT
+				id
+			FROM
+				f_kind
+			WHERE
+				parent_id = - 1
+			AND catalog = '0'
+			AND on_phone = '1' 
+	    AND (is_enable = 1 or is_enable is null or is_enable = '') 
+		)
+	AND catalog = '0'
+	AND on_phone = '1'
+	AND (is_enable = 1 or is_enable is null or is_enable = '') 
+	order by weight is null,weight asc,set_weight_time desc
+  </select>
+  
+  <select id="getSubKindByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select id,kind_name,remark,catalog,weight,icon_url,on_phone from f_kind
+		where parent_id = #{kindId} and catalog = '0' and on_phone = '1' and (is_enable = 1 or is_enable is null or is_enable = '')   
+		order by weight is null,weight asc,set_weight_time desc
+  </select>
+  
+  <select id="getAllKindByParentId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select id,kind_name,remark,catalog,weight,icon_url,on_phone from f_kind
+		where parent_id = #{kindId} and on_phone = '1'
+  </select>
+  
+  <select id="findcatalogById" parameterType="java.lang.Integer" resultType="String">
+  	SELECT catalog FROM `f_kind` where id = #{0};
+  </select>
+  <!-- 启用禁用商品分类 -->
+   <update id="enable" >
+    update f_kind
+   	set is_enable = #{enable,jdbcType=INTEGER}
+    where id in
+   (<foreach collection="list" item="item" index="index" separator=","> 
+          #{item.id,jdbcType=INTEGER}
+      </foreach>)
+  </update>
+  
+  <!-- 根据ids批量删除分类 -->
+  <delete id="deleteBatchFKindByIds" parameterType="java.lang.String">
+    delete from 
+      f_kind 
+    where id in (
+       <foreach collection="list" item="item" index="index" separator=","> 
+          #{item}
+      </foreach>
+    )
+  </delete>
+  
+    <update id="updateFkindWeight" parameterType="java.lang.Integer">
+   		 update f_kind set weight = #{1} ,set_weight_time = now() where id = #{0} 
+    </update>
+  
+</mapper>
+
+
+
+
+
+
+
+

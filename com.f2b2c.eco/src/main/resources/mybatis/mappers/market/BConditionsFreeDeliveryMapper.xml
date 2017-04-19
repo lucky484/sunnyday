@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.market.BConditionsFreeDeliveryDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BConditionsFreeDeliveryModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="delivery_city" jdbcType="VARCHAR" property="deliveryCity" />
+    <result column="delivery_mode" jdbcType="CHAR" property="deliveryMode" />
+    <result column="condition_type" jdbcType="CHAR" property="conditionType" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="money" jdbcType="INTEGER" property="money" />
+    <result column="create_date" jdbcType="DATE" property="createDate" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="update_date" jdbcType="DATE" property="updateDate" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, delivery_city, delivery_mode, condition_type, quantity, money, create_date, create_user, 
+    update_date, update_user
+  </sql>
+  
+  <!-- 根据主键查询指定条件运费 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from b_conditions_free_delivery
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from b_conditions_free_delivery
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.market.BConditionsFreeDeliveryModel">
+    insert into b_conditions_free_delivery (id, delivery_city, delivery_mode, 
+      condition_type, quantity, money, 
+      create_date, create_user, update_date, 
+      update_user)
+    values (#{id,jdbcType=INTEGER}, #{deliveryCity,jdbcType=VARCHAR}, #{deliveryMode,jdbcType=CHAR}, 
+      #{conditionType,jdbcType=CHAR}, #{quantity,jdbcType=INTEGER}, #{money,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=DATE}, #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=DATE}, 
+      #{updateUser,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.market.BConditionsFreeDeliveryModel">
+    insert into b_conditions_free_delivery
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="deliveryCity != null">
+        delivery_city,
+      </if>
+      <if test="deliveryMode != null">
+        delivery_mode,
+      </if>
+      <if test="conditionType != null">
+        condition_type,
+      </if>
+      <if test="quantity != null">
+        quantity,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryCity != null">
+        #{deliveryCity,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryMode != null">
+        #{deliveryMode,jdbcType=CHAR},
+      </if>
+      <if test="conditionType != null">
+        #{conditionType,jdbcType=CHAR},
+      </if>
+      <if test="quantity != null">
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.BConditionsFreeDeliveryModel">
+    update b_conditions_free_delivery
+    <set>
+      <if test="deliveryCity != null">
+        delivery_city = #{deliveryCity,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryMode != null">
+        delivery_mode = #{deliveryMode,jdbcType=CHAR},
+      </if>
+      <if test="conditionType != null">
+        condition_type = #{conditionType,jdbcType=CHAR},
+      </if>
+      <if test="quantity != null">
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.BConditionsFreeDeliveryModel">
+    update b_conditions_free_delivery
+    set delivery_city = #{deliveryCity,jdbcType=VARCHAR},
+      delivery_mode = #{deliveryMode,jdbcType=CHAR},
+      condition_type = #{conditionType,jdbcType=CHAR},
+      quantity = #{quantity,jdbcType=INTEGER},
+      money = #{money,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=DATE},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

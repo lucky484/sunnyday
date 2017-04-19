@@ -1,0 +1,1063 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.BGoodsDao">
+    <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BGoodsModel">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="detail" property="detail" jdbcType="VARCHAR" />
+        <result column="logo_url" property="logoUrl" jdbcType="VARCHAR" />
+        <result column="goods_no" property="goodsNo" jdbcType="VARCHAR" />
+        <result column="unit" property="unit" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="sales" property="sales" jdbcType="INTEGER" />
+        <result column="remain" property="remain" jdbcType="INTEGER" />
+        <result column="allocate" property="allocate" jdbcType="INTEGER" />
+        <result column="is_hot" property="isHot" jdbcType="INTEGER" />
+        <result column="is_new" property="isNew" jdbcType="INTEGER" />
+        <result column="intro" property="intro" jdbcType="VARCHAR" />
+        <result column="is_commission" property="isCommission" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="click_times" property="clickTimes" jdbcType="INTEGER" />
+<!--         <result column="off_shelves_user" property="offShelvesUser" jdbcType="INTEGER" /> -->
+        <result column="version" property="version" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="release_time" property="releaseTime" jdbcType="TIMESTAMP" />
+        <result column="produce_place" property="producePlace" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="share_percent" property="sharePercent"  />
+        <result column="made_in_china" property="madeInChina"  />
+        <result column="unit_of_weight" property="unitOfWeight"  />
+        <result column="properties" property="properties"  />
+        <result column="parameter" property="parameter"  />
+        <result column="spec" property="spec"  />
+        <association property="shop" javaType="BShopInfoModel">
+            <id column="shop_id" property="id" jdbcType="INTEGER" />
+            <result column="shopName" property="shopName" jdbcType="VARCHAR" />
+        </association>
+        <association property="kind" javaType="FKindModel">
+            <id column="kind_id" property="id" jdbcType="INTEGER" />
+            <result column="kind_name" property="kindName" jdbcType="INTEGER" />
+        </association>
+        <!-- 
+        <association property="shop">
+            <id column="shop_id" property="id" jdbcType="INTEGER" />
+        </association>
+        <association property="updatedUser">
+            <id column="updated_user" property="id" jdbcType="INTEGER" />
+        </association>
+        <association property="approveUser">
+            <id column="approve_user" property="id" jdbcType="INTEGER" />
+        </association> -->
+    </resultMap>
+
+    <resultMap id="BGoodsToCMap" type="BGoodsToCModel">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="shop_name" jdbcType="VARCHAR" property="shopName" />
+        <result column="detail" jdbcType="VARCHAR" property="detail" />
+        <result column="sales" property="sales" />
+        <result column="status" property="status" />
+        <result column="goods_no" property="goodsNo" jdbcType="VARCHAR" />
+        <result column="logo_url" jdbcType="VARCHAR" property="logoUrl" />
+        <result column="price" jdbcType="DOUBLE" property="price" />
+        <result column="location_x" jdbcType="VARCHAR" property="locationX" />
+        <result column="location_y" jdbcType="VARCHAR" property="locationY" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+    </resultMap>
+    
+    <resultMap id="BGoodsInfoToCMap" type="BGoodsInfoToCModel">
+<id column="id"  property="id" />
+        <result column="name"  property="name" />
+        <result column="shopName"  property="shopName" />
+        <result column="detail" property="detail" />
+        <result column="logo_url" property="logoUrl" />
+        <result column="remain" property="remain" />
+        <result column="price"  property="price" />
+        <result column="sales"  property="sales" />
+        <result column="unit"  property="unit" />
+        <result column="shopId"  property="shopId" />
+        <result column="kind_id"  property="kindId" />
+        <result column="kind_name" property="kindName" />
+        <result column="produce_place" property="produce_place" />
+        <result column="intro" property="intro" />
+        <result column="goods_no" property="goodsNo" />
+            </resultMap>
+    
+
+    <!-- 模糊检索商品名称 -->
+    <select id="queryBGoodsByName" resultMap="BGoodsToCMap">
+        select
+        good.id,good.name,good.detail,good.logo_url,good.price
+        from b_goods good,b_kind kind where good.name like concat('%',#{name},'%')
+           and good.status = 1 and good.kind_id = kind.id and  kind.catalog not in(0)
+    </select>
+    
+    <!-- 模糊检索商品的记录数 -->
+    <select id="queryBGoodsByNameCount" resultType="int">
+        select count(1) from b_goods good,b_shop_info shop where good.name like
+        concat('%',#{name},'%')
+        and good.shop_id = shop.id and good.status = 1
+    </select>
+    
+    <!-- 查询所有商品 -->
+    <select id="queryAllBGoods" resultMap="BGoodsToCMap" parameterType="Integer">
+        select good.id,good.name,good.detail,good.logo_url,good.price,shop.shop_name as shopName
+        from b_goods good,b_shop_info shop where good.shop_id = shop.id and good.status = 1  ORDER BY good.sales DESC limit #{0},#{1}
+    </select>
+    <!-- 非水果：根据分类ID查询商品,按照销量排行 -->
+    <select id="queryBGoodsByKindId" resultType="BGoodsToCModel">
+        select good.id,good.name,good.detail,good.logo_url as logoUrl,good.price,shop.shop_name as shopName
+        from b_goods good,b_shop_info shop where good.shop_id = shop.id and good.status = 1 and good.kind_id=#{kindId}
+        <if test="idlist != null">
+            and good.kind_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                                        #{item}
+                          </foreach>
+         </if> ORDER BY good.sales DESC limit #{start},#{length}
+    </select>
+    <!-- 水果：根据分类ID查询商品,按照销量排行 -->
+    <select id="findGoodsByKindList" resultType="BGoodsToCModel">
+        select good.id,good.name,good.detail,good.logo_url as logoUrl,good.price,shop.shop_name as shopName
+        from b_goods good,b_shop_info shop where good.shop_id = shop.id and good.status = 1  and good.shop_id=#{shopId}
+        <if test="idlist != null">
+            and good.kind_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                                        #{item}
+                          </foreach>
+         </if> ORDER BY good.sales DESC limit #{start},#{length}   
+    </select>
+    
+    <!-- 水果：根据分类ID查询商品,按照销量排行 -->
+    <select id="findGoodsByKindListCount" resultType="int">
+        select count(0)
+        from b_goods good,b_shop_info shop where good.shop_id = shop.id and good.status = 1  and good.shop_id=#{shopId}
+        <if test="idlist != null">
+            and good.kind_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                                        #{item}
+                          </foreach>
+         </if> 
+    </select>
+    
+    <!-- 所有商品总记录数 -->
+    <select id="findAllBGoodsCount" resultType="java.lang.Integer">
+        select count(0)
+        from b_goods good,b_shop_info shop where good.shop_id = shop.id and good.status = 1  ORDER BY good.sales DESC 
+    </select>
+    <!-- 查询指定类型商品的总记录数 -->
+    <select id="findAllBGoodsByKindIdCount"  parameterType="Integer"  resultType="java.lang.Integer">
+        select count(0)
+        from b_goods good,b_shop_info shop where good.shop_id = shop.id and good.status = 1 and good.kind_id=#{kindId} 
+        <if test="idlist != null">
+            and good.kind_id in  <foreach item="item" index="index" collection="idlist" open="(" separator="," close=")">
+                                        #{item}
+                          </foreach>
+        </if> 
+    </select>
+    <!-- 根据商品ID获得商品详情 -->
+    <select id="select"  parameterType="Integer"  resultMap="BaseResultMap">
+        select     good.id,
+                good.name,
+                good.detail,
+                good.logo_url,
+                good.unit,
+                good.price,
+                good.sales,
+                good.remain,
+                good.allocate,
+                good.is_hot,
+                good.goods_no,
+                good.is_new,
+                good.intro,
+                good.click_times,
+                good.version,
+                good.updated_time,
+                good.produce_place,
+                good.remark,
+                good.reason,
+                good.is_commission,
+                good.share_percent,
+                shop.id as shop_id,
+                shop.shop_name as shop_name
+        from b_goods good ,b_shop_info shop where good.shop_id = shop.id and good.status = 1 and good.id=#{0} limit 1
+    </select>
+    <!-- 根据商品ID获得商品详情 -->
+    <select id="selectByGoodsNo"  parameterType="String" resultMap="BaseResultMap">
+        select     good.id,
+                good.name,
+                good.detail,
+                good.logo_url,
+                good.unit,
+                good.price,
+                good.sales,
+                good.remain,
+                good.allocate,
+                good.is_hot,
+                good.goods_no,
+                good.is_new,
+                good.intro,
+                good.click_times,
+                good.version,
+                good.updated_time,
+                good.produce_place,
+                good.remark,
+                good.reason,
+                good.share_percent,
+                shop.id as shop_id,
+                shop.shop_name as shop_name
+        from b_goods good ,b_shop_info shop where good.shop_id = shop.id  and good.goods_no=#{0} and is_copy = 0 limit 1
+    </select>
+    
+    <!-- 根据主键id更新销量 -->
+    <update id="updateSalesById"  parameterType="BGoodsModel">
+        update 
+          b_goods 
+        set sales = #{sales} 
+        where id = #{id}              
+    </update>
+    
+    <!-- resultType="java.util.List" -->
+    <select id="queryGoodsListByShopId" parameterType="Integer" resultMap="BGoodsInfoToCMap"> 
+        select     good.id,
+                good.name,
+                good.logo_url,
+                good.price,
+                good.sales,
+                good.kind_id,
+                good.goods_no,
+                kind.id as kind_id,
+                kind.kind_name
+        from b_goods good ,b_shop_info shop,b_kind kind where good.shop_id = shop.id and good.status = 1 and good.shop_id=#{0} and kind.id = good.kind_id  ORDER BY kind.catalog asc,kind.id desc
+    </select>
+    <!-- resultType="java.util.List" -->
+    <select id="queryGoodsListByShopIdAndKindId" parameterType="Integer" resultMap="BGoodsInfoToCMap"> 
+        select     good.id,
+                good.name,
+                good.logo_url,
+                good.price,
+                good.sales,
+                good.kind_id,
+                good.goods_no,
+                kind.id as kind_id,
+                kind.kind_name
+        from b_goods good,b_shop_info shop,b_kind kind where good.shop_id = shop.id and good.status = 1 and good.shop_id=#{0} and kind.id = good.kind_id and good.kind_id=#{1} ORDER BY kind.weight desc
+    </select>
+    <!-- 根据商品ID获得商品详情 -->
+    <select id="queryBGoodsInfoById"  parameterType="Integer"  resultMap="BGoodsInfoToCMap">
+        SELECT
+            good.id,
+            good.goods_no,
+            good. NAME,
+            shop.id AS shopId,
+            shop.shop_name AS shopName,
+            shop.b_user_id AS bUserId,
+            good.price,
+            good.remain,
+            good. STATUS,
+            good.allocate,
+            (
+                SELECT
+                    IFNULL(
+                        SUM(orderDetail.goods_qty),
+                        0
+                    )
+                FROM
+                    b_sales_order_details orderDetail 
+              Left JOIN b_sales_order T2 ON orderDetail.order_id = T2.id 
+                WHERE
+                    orderDetail.goods_id IN (
+                        SELECT
+                            T1.id
+                        FROM
+                            b_goods T1
+                        WHERE
+                            T1.goods_no = good.goods_no 
+                    )
+              AND T2.`status` in (1,3,4) 
+              
+            ) AS sales,
+            good.unit,
+            good.logo_url,
+            good.detail,
+            good.intro,
+            good.produce_place,
+            shop.id AS shopId
+        FROM
+            b_goods good,
+            b_shop_info shop
+        WHERE
+            good.shop_id = shop.id  
+            and good.id = #{0}
+    </select>
+    
+  <!-- 批量更新商品数量,这是减去库存 -->
+  <update id="updateBatchGoodsQuantity" parameterType="java.util.List" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update b_goods  
+        <set>
+            remain = (remain - ${item.goodsQty}),
+            allocate = (allocate + ${item.goodsQty}),
+        </set>
+        where id = ${item.goodsId}
+    </foreach> 
+  </update>
+  
+    <!-- 在删除订单的时候，要将库存还回去-->
+  <update id="updateBatchGoodsQuantityPlus" parameterType="java.util.List" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update b_goods  
+        <set>
+            remain = (remain + ${item.goodsQty}),
+            allocate = (allocate - ${item.goodsQty}),
+        </set>
+        where id = ${item.goodsId}
+    </foreach> 
+  </update>
+  
+    <!-- 确认订单的时候只更新锁定商品的数量,不需要在去更新库存 -->
+  <update id="updateBatchGoodsAllocate" parameterType="java.util.List" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update b_goods  
+        <set>
+            allocate = (allocate - ${item.goodsQty})
+        </set>
+        where id = ${item.goodsId}
+    </foreach> 
+  </update>
+  
+  <update id="updateStatus" parameterType="BGoodsModel">
+          update b_goods
+          <set>
+              <if test="status!=null and status!=''">
+                  status = #{status},
+              </if>
+              <if test="reason!=null and reason!=''">
+                  reason = #{reason},
+              </if>
+          </set>
+          where id = #{id}
+  </update>
+  
+  <select id="countWithMap" resultType="java.lang.Integer">
+          select count(0) from b_goods goods left join b_shop_info shop on goods.shop_id = shop.id 
+            where goods.deleted_time is null
+            <if test="goodsNo!=null and goodsNo!=''">
+                and goods.goods_no = #{goodsNo}
+            </if>
+            <if test="goodsName!=null and goodsName!=''">
+                and goods.name like concat('%',#{goodsName},'%')
+            </if>
+            and goods.status in(0,1,3)
+            <if test="bUserList != null and bUserList.size() > 0">
+              and goods.updated_user in
+              <foreach item="item" index="index" collection="bUserList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          </if>
+            order by goods.release_time desc
+  </select>
+  
+  <select id="findWithPagination" resultMap="BaseResultMap">
+          select goods.id,goods.goods_no,goods.name,goods.share_percent,goods.status,goods.updated_time,shop.shop_name as shopName
+            from b_goods goods left join b_shop_info shop on goods.shop_id = shop.id 
+                where goods.deleted_time is null 
+                <if test="goodsNo!=null and goodsNo!=''">
+                    and goods.goods_no like concat('%',#{goodsNo},'%')
+                </if>
+                <if test="goodsName!=null and goodsName!=''">
+                    and goods.name like concat('%',#{goodsName},'%')
+                </if>
+                <if test="shopName!=null and shopName!=''">
+                    and shop.shop_name like concat('%',#{shopName},'%')
+                </if>
+                <if test="goodsStatus !=null and goodsStatus !=''">
+                    and goods.status = #{goodsStatus}
+                </if>
+                and goods.status in(0,1,3)
+                <if test="bUserList != null and bUserList.size() > 0">
+                      and goods.updated_user in
+                      <foreach item="item" index="index" collection="bUserList" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                  </if>
+                order by FIELD(`status`,0) desc,updated_time desc limit ${pageable.pageNumber}, ${pageable.pageSize}
+  </select>
+  
+  <!-- 根据商品id获取商品信息 -->
+  <select id="getGoodsInfoById" parameterType="Integer" resultType="BGoodsToPurchaseOrderModel">
+           select
+             T1.id as goodsId,
+             T1.name as goodsName,
+             T1.goods_no as goodsNo,
+             T1.logo_url as logoUrl,
+             T1.unit,
+             T1.price,
+             T1.sales,
+             T1.remain,
+             T1.allocate,
+             T1.version,
+             T1.status,
+             T2.id as shopId,
+             T2.shop_name as shopName,
+             T3.id as bUserId,
+             T4.catalog 
+           from b_goods T1 
+           left join b_shop_info T2 ON T1.shop_id = T2.id 
+           left join b_user T3 ON T2.b_user_id = T3.id 
+           left join b_kind T4 ON T1.kind_id = T4.id 
+           where T1.id = #{id} 
+           limit 1 
+  </select>
+    <!-- 发布B端商品 -->
+  <insert id="insertBGoods" parameterType="BGoodsModel" >
+  <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+      insert into b_goods (
+                name,
+                goods_no,
+                detail,
+                logo_url,
+                unit,
+                price,
+                sales,
+                remain,
+                allocate,
+                is_hot,
+                is_new,
+                is_copy,
+                kind_id,
+                click_times,
+                shop_id,
+                version,
+                updated_user,
+                updated_time,
+                produce_place,
+                status,
+                share_percent,
+                spec,
+                made_in_china,
+                type,
+                intro,
+                unit_of_weight,
+                parameter
+            )
+            values
+                (
+                    #{name},
+                    #{goodsNo},
+                    #{detail},
+                    #{logoUrl},
+                    #{unit},
+                    #{price},
+                    0,
+                    #{remain},
+                    0,
+                    0,
+                    1,
+                    0,
+                    #{kind.id},
+                    0,
+                    #{shop.id},
+                    1,
+                    #{updatedUser.id},
+                    now(),
+                    #{producePlace},
+                    0,
+                    #{sharePercent},
+                    #{spec},
+                    #{madeInChina},
+                    #{type},
+                    #{intro},
+                    #{unitOfWeight},
+                    #{parameter}
+                )
+  </insert>
+  
+  <select id="findBgoodsByShopIdCount" resultType="java.lang.Integer">
+   select count(0) from b_goods good left join b_shop_info shop on good.shop_id = shop.id LEFT JOIN b_kind kind on good.kind_id = kind.id
+                        where 
+                        <if test="name != null and name != ''">
+                            good.name like concat('%',#{name},'%') and
+                        </if>
+                        <if test="kind != null and kind != ''">
+                            kind.id in(
+                            <foreach collection="kindIds" item="id" separator=",">
+                                #{id}
+                            </foreach>) and
+                        </if>
+                        <if test="productPlace != null and productPlace != ''">
+                            good.produce_place like concat('%',#{productPlace},'%') and
+                        </if>
+                        good.deleted_time is null
+                and good.shop_id =  #{shopId}
+                <if test="status != null and status != ''">
+                            and good.`status` = #{status}
+                        </if>
+            and good.is_copy = 0
+            order by good.release_time desc
+  </select>
+   <select id="findBgoodsByShopId" resultMap="BaseResultMap">
+             select     good.id,
+                        good.name,
+                        good.detail,
+                        good.logo_url,
+                        good.unit,
+                        good.price,
+                        (
+                            SELECT
+                                IFNULL(
+                                    SUM(orderDetail.goods_qty),
+                                    0
+                                )
+                            FROM
+                                b_sales_order_details orderDetail 
+                          Left JOIN b_sales_order T2 ON orderDetail.order_id = T2.id 
+                            WHERE
+                                orderDetail.goods_id IN (
+                                    SELECT
+                                        T1.id
+                                    FROM
+                                        b_goods T1
+                                    WHERE
+                                        T1.goods_no = good.goods_no 
+                                )
+                          AND T2.`status` in (1,3,4) 
+                          
+                        ) AS sales,            
+                        good.remain,
+                        good.allocate,
+                        good.is_hot,
+                        good.goods_no,
+                        good.is_new,
+                        good.intro,
+                        good.click_times,
+                        good.version,
+                        good.updated_time,
+                        good.produce_place,
+                        good.remark,
+                        good.reason,
+                        good.type,
+                        good.share_percent,
+                        shop.id as shop_id,
+                        kind.id as kind_id,
+                        good.status,
+                        kind.kind_name,
+                        shop.shop_name as shop_name from b_goods good left join b_shop_info shop on good.shop_id = shop.id  LEFT JOIN b_kind kind on good.kind_id = kind.id
+                        where 
+                        <if test="name != null and name != ''">
+                            good.name like concat('%',#{name},'%') and
+                        </if>
+                        <if test="kind != null and kind != ''">
+                            kind.id in(
+                            <foreach collection="kindIds" item="id" separator=",">
+                                #{id}
+                            </foreach>) and
+                        </if>
+                        <if test="productPlace != null and productPlace != ''">
+                            good.produce_place like concat('%',#{productPlace},'%') and
+                        </if>
+                        good.deleted_time is null
+                and good.shop_id =  #{shopId}
+                <if test="status != null and status != ''">
+                    and good.`status` = #{status}
+                </if>
+            and good.is_copy = 0
+            order by good.id desc limit #{start}, #{offset}
+  </select>
+  
+  
+  <select id="findBgoodsById" resultMap="BaseResultMap">
+             select     good.id,
+                        good.name,
+                        good.detail,
+                        good.logo_url,
+                        good.unit,
+                        good.price,
+                        good.sales,
+                        good.remain,
+                        good.allocate,
+                        good.is_hot,
+                        good.goods_no,
+                        good.is_new,
+                        good.intro,
+                        good.click_times,
+                        good.version,
+                        good.updated_time,
+                        good.produce_place,
+                        good.remark,
+                        good.reason,
+                        good.made_in_china,
+                        good.type,
+                        good.share_percent,
+                        shop.id as shop_id,
+                        kind.id as kind_id,
+                        kind.kind_name ,
+                        good.unit_of_weight,
+                        good.properties,
+                        good.parameter,
+                        good.spec,
+                        shop.shop_name as shop_name from b_goods good left join b_shop_info shop on good.shop_id = shop.id  LEFT JOIN b_kind kind on good.kind_id = kind.id
+                        where good.deleted_time is null
+                        and good.id =  #{0}
+            and good.is_copy = 0
+            order by good.release_time desc limit 1
+  </select>
+  
+  
+   <select id="findBgoodsInfoById" resultMap="BaseResultMap">
+             select     good.id,
+                        good.name,
+                        good.detail,
+                        good.logo_url,
+                        good.unit,
+                        good.price,
+                        good.sales,
+                        good.remain,
+                        good.allocate,
+                        good.is_hot,
+                        good.goods_no,
+                        good.is_new,
+                        good.intro,
+                        good.click_times,
+                        good.version,
+                        good.updated_time,
+                        good.produce_place,
+                        good.remark,
+                        good.reason,
+                        good.made_in_china,
+                        good.type,
+                        good.share_percent,
+                        shop.id as shop_id,
+                        kind.id as kind_id,
+                        kind.kind_name ,
+                        good.unit_of_weight,
+                        good.properties,
+                        good.parameter,
+                        good.spec,
+                        shop.shop_name as shop_name from b_goods good left join b_shop_info shop on good.shop_id = shop.id  LEFT JOIN b_kind kind on good.kind_id = kind.id
+                        where good.deleted_time is null
+                        and good.id =  #{0}
+            order by good.release_time desc limit 1
+  </select>
+  
+  
+    <update id="downBgoodsAndIsCopy" parameterType="BGoodsModel">
+          update b_goods  set status = 2 ,is_copy = 1 where id = #{id}
+  </update>
+  
+  <update id="modifybgoods">
+          update  b_goods set     
+                name=#{bGoodsModel.name},
+                goods_no=#{bGoodsModel.goodsNo},
+                detail=#{bGoodsModel.detail},
+                logo_url=#{bGoodsModel.logoUrl},
+                unit=#{bGoodsModel.unit},
+                price=#{bGoodsModel.price},
+                remain=#{bGoodsModel.remain},
+                kind_id=#{bGoodsModel.kind.id},
+                version=#{bGoodsModel.version},
+                updated_time=now(),
+                produce_place=#{bGoodsModel.producePlace},
+                status=0,
+                share_percent=#{bGoodsModel.sharePercent},
+                spec=#{bGoodsModel.spec},
+                made_in_china=#{bGoodsModel.madeInChina},
+                type=#{bGoodsModel.type},
+                intro=#{bGoodsModel.intro},
+                unit_of_weight=#{bGoodsModel.unitOfWeight},
+                parameter=#{bGoodsModel.parameter}
+                where id = #{id}
+  </update>
+  
+    <update id="nextshelfbgoods" parameterType="int" >
+          update b_goods  set status = 2  where id = #{id}
+  </update>
+  
+  <!-- 根据id列表获取名称 -->
+  <select id="getGoodsNameByIdList" parameterType="java.util.List" resultType="java.lang.String">
+     select 
+       GROUP_CONCAT(T1.name) 
+     from 
+       b_goods T1 
+    <if test="list != null and list != ''" >   
+    where T1.id in (
+    <foreach collection="list" item="item" index="index" separator=",">
+     ${item}  
+    </foreach> 
+    )
+    </if>
+  </select>
+  
+  <!-- 根据商品id列表获取店铺地址和水果分类 -->
+  <select id="getlocationByIdList" parameterType="java.util.List" resultType="BShopInfoModel">
+     select 
+       T2.location_x as locationX,
+       T2.location_y as locationY,
+       T2.shop_name as shopName 
+     from 
+       b_goods T1 
+     left join b_shop_info T2 ON T1.shop_id = T2.id 
+    <if test="list != null and list != ''" >   
+    where T1.id in (
+    <foreach collection="list" item="item" index="index" separator=",">
+     ${item}  
+    </foreach> 
+    ) 
+    </if>
+  </select>
+  <select id="queryGoodsByShopId" resultMap="BGoodsToCMap">
+      select goods.id,goods.name,goods.detail,goods.logo_url,goods.price from b_goods goods,b_kind kind where goods.kind_id = kind.id and name like concat('%',#{name},'%') and shop_id = #{shopId}
+      and status = 1 and kind.catalog = 0
+  </select>
+  
+  <!-- 根据店铺id获取商品数量 -->
+  <select id="selectGoodsCountByShopId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+     select 
+       count(T1.id) 
+     from b_goods T1 
+     where T1.shop_id = #{id} 
+     and T1.deleted_time is null 
+  </select>
+  
+  <!-- 根据店铺id下架该店铺下的所有商品 -->
+  <update id="updateGoodsByShopId" parameterType="java.lang.Integer">
+     update 
+       b_goods 
+     set status = 2 
+     where shop_id = #{shopId}  
+     and deleted_time is null 
+  </update>
+  
+   <select id="findHotGoodsByShopIdCount"  resultType="java.lang.Integer" parameterType="java.lang.Integer">
+   SELECT COUNT(0) FROM(
+        SELECT
+            *
+                FROM
+                    (
+                        SELECT
+                            good.id,
+                            good. name,
+                            good.detail,
+                            good.logo_url as logoUrl,
+                            good.price,
+                            good.sales,
+                            shop.shop_name as shopName
+                        FROM
+                            b_goods good
+                        LEFT JOIN b_shop_info shop ON good.shop_id = shop.id
+                        LEFT JOIN b_kind kind ON good.kind_id = kind.id
+                        where
+                            good. status = 1
+                        AND good.is_copy = 0
+                        AND kind.catalog = 0
+                        AND good.shop_id = #{shopId}
+                        ORDER BY
+                            good.sales DESC
+                    ) T1
+                UNION
+                    SELECT
+                        *
+                    from
+                        (
+                            select
+                                good.id,
+                                good. name,
+                                good.detail,
+                                good.logo_url as logoUrl,
+                                good.price,
+                                good.sales,
+                                shop.shop_name as shopName
+                            from
+                                b_goods good
+                            LEFT JOIN b_shop_info shop ON good.shop_id = shop.id
+                            LEFT JOIN b_kind kind ON good.kind_id = kind.id
+                            where
+                                good. status = 1
+                            AND good.is_copy = 0
+                            AND kind.catalog = 1
+                            ORDER BY
+                                good.sales DESC
+                        ) T2   
+                        ) T3
+  </select>
+  
+  <select id="findHotGoodsByShopId"  resultMap="BGoodsToCMap" parameterType="java.lang.Integer">
+  SELECT
+    *
+        FROM
+            (
+                SELECT
+                    good.id,
+                    good.name,
+                    good.logo_url as logoUrl,
+                    good.price,
+                    (select IFNULL(SUM(orderDetail.goods_qty),0) from b_sales_order_details orderDetail where orderDetail.goods_id = good.id) as sales,
+                    good.goods_no,
+                    shop.shop_name as shopName
+                FROM
+                    b_goods good
+                LEFT JOIN b_shop_info shop ON good.shop_id = shop.id
+                LEFT JOIN b_kind kind ON good.kind_id = kind.id
+                where
+                    good. status = 1
+                AND good.is_copy = 0
+                AND kind.catalog = 0
+                AND good.shop_id = #{shopId}
+                ORDER BY
+                sales DESC
+            ) T1
+        UNION
+            SELECT
+                *
+            from
+                (
+                    select
+                        good.id,
+                        good.name,
+                        good.logo_url as logoUrl,
+                        good.price,
+                        (select IFNULL(SUM(orderDetail.goods_qty),0) from b_sales_order_details orderDetail where orderDetail.goods_id = good.id) as sales,
+                        good.goods_no,
+                        shop.shop_name as shopName
+                    from
+                        b_goods good
+                    LEFT JOIN b_shop_info shop ON good.shop_id = shop.id
+                    LEFT JOIN b_kind kind ON good.kind_id = kind.id
+                    where
+                        good. status = 1
+                    AND good.is_copy = 0
+                    AND kind.catalog = 1
+                    ORDER BY
+                    sales DESC
+                ) T2 
+                 LIMIT #{start},#{length}
+  </select>
+  
+  <select id="findHotNotFruitCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+        select
+            count(0)
+        from
+            b_goods good
+        LEFT JOIN b_shop_info shop ON good.shop_id = shop.id
+        LEFT JOIN b_kind kind ON good.kind_id = kind.id
+        where
+                good. status = 1
+            AND good.is_copy = 0
+            AND kind.catalog = 1
+            ORDER BY
+                good.sales DESC
+  </select>
+  
+  <select id="findHotNotFruit"  resultMap="BGoodsToCMap" parameterType="java.lang.Integer">
+          select
+            good.id,
+            good. name,
+            good.logo_url as logoUrl,
+            good.price,
+            good.sales,
+            shop.shop_name as shopName
+        from
+            b_goods good
+        LEFT JOIN b_shop_info shop ON good.shop_id = shop.id
+        LEFT JOIN b_kind kind ON good.kind_id = kind.id
+        where
+            good. status = 1
+        AND good.is_copy = 0
+        AND kind.catalog = 1
+        ORDER BY
+            good.sales DESC
+         LIMIT #{start},#{length}
+  </select>
+  
+  <!-- 查询某个商店下的所有水果 -->
+  <select id="queryAllGoodsByShopId" resultMap="BaseResultMap">
+            select
+                goods.id,
+                goods.name,
+                goods.goods_no,
+                goods.logo_url,
+                goods.price,
+                goods.unit
+            from
+                b_goods goods,
+                b_kind kind
+            where
+                goods.kind_id = kind.id
+            and goods.status = 1
+            and goods.deleted_time is null
+            and kind.catalog = 0
+            and goods.shop_id = #{shopId}
+            <if test="kindId != null and kindId != ''">
+            and goods.kind_id = #{kindId}
+            </if>
+       union all
+                select
+                goods.id,
+                goods.name,
+                goods.goods_no,
+                goods.logo_url,
+                goods.price,
+                goods.unit
+            from
+                b_goods goods,
+                b_kind kind
+            where
+                goods.kind_id = kind.id
+            and goods.status = 1
+            and goods.deleted_time is null
+            and kind.catalog = 1
+            <if test="kindId != null and kindId != ''">
+            and goods.kind_id = #{kindId}
+            </if>
+            limit #{num},#{pageSize}
+  </select>
+  
+   <select id="queryAllGoodsCountByShopId" resultType="int">
+            select count(1) from (select
+                goods.id,
+                goods.name,
+                goods.goods_no,
+                goods.logo_url,
+                goods.price,
+                goods.unit,
+                goods.kind_id
+            from
+                b_goods goods,
+                b_kind kind
+            where
+                goods.kind_id = kind.id
+            and goods.status = 1
+            and goods.deleted_time is null
+            and kind.catalog = 0
+            and goods.shop_id = #{shopId}
+            <if test="kindId != null and kindId != ''">
+            and goods.kind_id = #{kindId}
+            </if>
+       union all
+                select
+                goods.id,
+                goods.name,
+                goods.goods_no,
+                goods.logo_url,
+                goods.price,
+                goods.unit,
+                goods.kind_id
+            from
+                b_goods goods,
+                b_kind kind
+            where
+                goods.kind_id = kind.id
+            and goods.status = 1
+            and goods.deleted_time is null
+            and kind.catalog = 1
+            <if test="kindId != null and kindId != ''">
+            and goods.kind_id = #{kindId}
+            </if>
+            ) goods
+  </select>
+  
+   <select id="queryAllGoods" resultMap="BaseResultMap">
+          select
+                goods.id,
+                goods.name,
+                goods.goods_no,
+                goods.logo_url,
+                goods.price,
+                goods.unit
+            from
+                b_goods goods,
+                b_kind kind
+            where
+                goods.kind_id = kind.id
+            and goods.status = 1
+            and goods.deleted_time is null
+            and kind.catalog = 1
+            <if test="kindId != null and kindId != ''">
+            and goods.kind_id = #{kindId} 
+            </if>
+            order by goods.release_time desc
+            limit #{num},#{pageSize}
+   </select>
+   
+   <select id="queryAllGoodsCount" resultType="int">
+          select count(1) from
+                b_goods goods,
+                b_kind kind
+            where
+                goods.kind_id = kind.id
+            and goods.status = 1
+            and goods.deleted_time is null
+            and kind.catalog = 1
+            <if test="kindId != null and kindId != ''">
+            and goods.kind_id = #{kindId} 
+            </if>
+   </select>
+     
+   <select id="bgoogsNoIsTrue" resultType="BGoodsModel">
+         SELECT id from b_goods where goods_no = #{0} and is_copy = 0 and `status`=1;
+   </select>
+   
+   
+   
+ <select id="queryFavoriteBgoodsCount"  resultType="int" parameterType="int">
+              SELECT
+                count(0)
+            FROM
+                c_favorite_goods favorite
+            LEFT JOIN b_goods goods ON favorite.goods_no = goods.goods_no
+            LEFT JOIN b_shop_info shop on goods.shop_id = shop.id
+            WHERE
+                shop.is_enable = 1
+            and favorite.user_id = #{0}  and goods.is_copy = 0
+            ORDER BY
+                favorite.id DESC
+    </select>
+    <select id="queryFavoriteBgoods"  resultMap="BGoodsToCMap" parameterType="int">
+           SELECT
+            goods.id,
+            goods. name,
+            goods.logo_url as logoUrl,
+            goods.price,
+            goods.sales,
+            goods.goods_no,
+            case 
+             WHEN goods.status != 1 THEN 0
+            WHEN shop.is_enable != 1 THEN 0
+            else 1 end  AS     
+            status,
+            shop.shop_name as shopName
+        FROM
+            c_favorite_goods favorite
+        LEFT JOIN b_goods goods ON favorite.goods_no = goods.goods_no
+        LEFT JOIN b_shop_info shop on goods.shop_id = shop.id
+        WHERE  favorite.user_id = #{userId} and goods.is_copy = 0
+        ORDER BY
+            favorite.id DESC LIMIT #{start},#{length}
+    </select>
+    <select id="isFavorite" resultType="int">
+        SELECT count(0) FROM c_favorite_goods where user_id = #{0} and 
+        goods_no = #{1}
+        </select>
+        
+       <update id="updateRemain" parameterType="java.util.Map">
+       UPDATE
+       	 b_goods
+		set 
+		 updated_time = NOW(),
+		 updated_user = #{userId},
+		 remain = #{remain} 
+		where
+		 id = #{goodsId}
+</update>
+
+ <select id="findGoodsCountByKindIdList" parameterType="java.util.List" resultType="int">
+ 	SELECT count(0) FROM `f_goods` 
+ 	 <if test="kindidlists != null and kindidlists.size() > 0">
+                      where kind_id  in
+                      <foreach item="item" index="index" collection="kindidlists" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                  </if>;
+ 	
+ </select>
+</mapper>

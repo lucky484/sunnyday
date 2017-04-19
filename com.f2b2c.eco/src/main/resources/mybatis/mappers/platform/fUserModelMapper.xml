@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FUserDao">
+	<resultMap id="BaseResultMap" type="FUserModel">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="account_name" jdbcType="VARCHAR" property="accountName" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="real_name" jdbcType="VARCHAR" property="realName" />
+		<result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="email" jdbcType="VARCHAR" property="email" />
+		<result column="sex" jdbcType="INTEGER" property="sex" />
+		<result column="identity_id" jdbcType="VARCHAR" property="identityId" />
+		<result column="is_active" jdbcType="INTEGER" property="isActive" />
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+		<result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+		<result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="areaId" jdbcType="INTEGER" property="areaId" />
+		<result column="provinceid" jdbcType="INTEGER" property="provinceid" />
+		<result column="cityid" jdbcType="INTEGER" property="cityid" />
+		<result column="share_profit_per" property="shareProfitPer" />
+		<result column="balance" property="balance" />
+		<result column="role_id" property="roleId" />
+		<association property="createdUser"
+			javaType="com.f2b2c.eco.model.platform.FUserModel">
+			<id column="create_user" jdbcType="INTEGER" property="id" />
+			<result column="created_real_name" jdbcType="VARCHAR"
+				property="realName" />
+		</association>
+		<association property="updatedUser"
+			javaType="com.f2b2c.eco.model.platform.FUserModel">
+			<id column="updated_user" jdbcType="INTEGER" property="id" />
+			<result column="updated_real_name" jdbcType="VARCHAR"
+				property="realName" />
+		</association>
+		<association property="fRoleModel" javaType="com.f2b2c.eco.model.platform.FRoleModel">
+			 <id column="role_id" jdbcType="INTEGER" property="id" /> 
+			<result column="role_name" jdbcType="VARCHAR" property="roleName" /> <!-- <result column="role_type" jdbcType="INTEGER" property="roleType" /> -->
+		 </association>
+	</resultMap>
+	<select id="findWithPagination" resultMap="BaseResultMap">
+		select
+		c.*, d.id as
+		update_user,e.role_name,
+		d.real_name as updated_user_name
+		from
+		(
+		select
+		a.*, b.id as
+		create_user,
+		b.real_name as created_real_name
+		from
+		f_user a
+		left join
+		f_user b on a.created_user = b.id
+		having a.deleted_time is null
+		) c
+		left
+		join f_user d on c.created_user = d.id
+		left join
+		f_role e on c.role_id = e.id
+		<where>
+			<if test="userList != null and userList.size() > 0">
+      		 c.id in 
+	      		<foreach item="item" index="index" collection="userList" open="("
+				separator="," close=")">
+					#{item}
+				</foreach>
+    		</if>
+		</where>
+		order by c.updated_time desc
+		limit #{start},#{offset}
+	</select>
+	<select id="queryCountByCondition" resultType="int">
+		select count(0)
+		from f_user where deleted_time is null
+		<if test="userList != null and userList.size() > 0">
+      		and id in 
+      		<foreach item="item" index="index" collection="userList" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+    	</if>
+	</select>
+
+	<insert id="insert" parameterType="FUserModel">
+		<selectKey keyProperty="id" resultType="int">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into f_user (id,
+		account_name, password,
+		real_name, nick_name,
+		phone,
+		email, sex,
+		identity_id,
+		is_active, created_user, created_time,
+		updated_user,
+		updated_time, deleted_time,
+		address, remark, areaId,share_profit_per,cityid,provinceid,role_id)
+		values
+		(#{id,jdbcType=INTEGER}, #{accountName,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{realName,jdbcType=VARCHAR},
+		#{nickName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER},
+		#{identityId,jdbcType=VARCHAR},
+		#{isActive,jdbcType=INTEGER},
+		#{createdUser.id,jdbcType=INTEGER},
+		#{createdTime,jdbcType=TIMESTAMP},
+		#{updatedUser.id,jdbcType=INTEGER}, #{updatedTime,jdbcType=TIMESTAMP},
+		#{deletedTime,jdbcType=TIMESTAMP},
+		#{address,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{areaId,jdbcType=INTEGER},#{shareProfitPer},#{cityid},#{provinceid},#{roleId})
+	</insert>
+	<insert id="insertSelective" parameterType="FUserModel">
+		insert into f_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="accountName != null">
+				account_name,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="realName != null">
+				real_name,
+			</if>
+			<if test="nickName != null">
+				nick_name,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="email != null">
+				email,
+			</if>
+			<if test="sex != null">
+				sex,
+			</if>
+			<if test="identityId != null">
+				identity_id,
+			</if>
+			<if test="isActive != null">
+				is_active,
+			</if>
+			<if test="createdUser != null">
+				created_user,
+			</if>
+			<if test="createdTime != null">
+				created_time,
+			</if>
+			<if test="updatedUser != null">
+				updated_user,
+			</if>
+			<if test="updatedTime != null">
+				updated_time,
+			</if>
+			<if test="deletedTime != null">
+				deleted_time,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="areaId != null">
+				areaId,
+			</if>
+			<if test="shareProfitPer != null">
+				share_profit_per,
+			</if>
+			<if test="balance != null">
+				balance,
+			</if>
+			<if test="cityid != null">
+				cityid,
+			</if>
+			<if test="provinceid != null">
+				provinceid,
+			</if>
+			<if test="roleId != null">
+				role_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="accountName != null">
+				#{accountName,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				#{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="nickName != null">
+				#{nickName,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=INTEGER},
+			</if>
+			<if test="identityId != null">
+				#{identityId,jdbcType=VARCHAR},
+			</if>
+			<if test="isActive != null">
+				#{isActive,jdbcType=INTEGER},
+			</if>
+			<if test="createdUser != null">
+				#{createdUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="createdTime != null">
+				#{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatedUser != null">
+				#{updatedUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="updatedTime != null">
+				#{updatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="deletedTime != null">
+				#{deletedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="areaId != null">
+				#{areaId,jdbcType=INTEGER},
+			</if>
+			<if test="shareProfitPer != null">
+				#{shareProfitPer},
+			</if>
+			<if test="balance != null">
+				#{balance},
+			</if>
+			<if test="cityid != null">
+				#{cityid},
+			</if>
+			<if test="provinceid != null">
+				#{provinceid},
+			</if>
+			<if test="roleId != null">
+				#{roleId},
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="FUserModel">
+		update f_user
+		<set>
+			<if test="accountName != null">
+				account_name = #{accountName,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null and password != ''">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				real_name = #{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="nickName != null">
+				nick_name = #{nickName,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=INTEGER},
+			</if>
+			<if test="identityId != null">
+				identity_id = #{identityId,jdbcType=VARCHAR},
+			</if>
+			<if test="isActive != null">
+				is_active = #{isActive,jdbcType=INTEGER},
+			</if>
+			<if test="createdTime != null">
+				created_time = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatedUser != null">
+				updated_user = #{updatedUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="updatedTime != null">
+				updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="deletedTime != null">
+				deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="areaId != null">
+				areaId = #{areaId,jdbcType=INTEGER},
+			</if>
+			<if test="shareProfitPer != null">
+				share_profit_per = #{shareProfitPer},
+			</if>
+			<if test="balance != null">
+				balance = #{balance},
+			</if>
+			<if test="cityid != null">
+				cityid = #{cityid},
+			</if>
+			<if test="provinceid != null">
+				provinceid = #{provinceid},
+			</if>
+			<if test="roleId != null">
+				role_id = #{roleId},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="findOne" parameterType="FUserModel" resultType="FUserModel">
+		select u.id,
+		u.account_name as accountName,
+		u.password,
+		u.real_name as
+		realName,
+		u.nick_name as nickName,
+		u.phone,
+		u.email,
+		u.sex,
+		u.identity_id as identityId,
+		u.is_active as isActive,
+		u.address,
+		u.remark,
+		u.areaId,
+		u.share_profit_per as shareProfitPer,
+		r.id as `fRoleModel.id`,
+		r.role_name `fRoleModel.roleName`,
+		r.role_type
+		`fRoleModel.roleType`
+		from f_user u,f_role r,f_user_to_role ur
+		where
+		account_name = #{accountName,jdbcType=VARCHAR}
+		AND
+		password = #{password,jdbcType=VARCHAR}
+		AND
+		u.id=ur.user_id
+		AND
+		r.id=ur.role_id
+		AND
+		u.deleted_time is NULL
+	</select>
+
+	<select id="select" resultType="FUserModel">
+		select id,
+		account_name as
+		accountName, password,
+		real_name as realName, nick_name as nickName,
+		phone,
+		email, sex,
+		identity_id as identityId,
+		is_active as isActive,
+		created_user as `createdUser.id`, created_time as createdTime,
+		updated_user as `updatedUser.id`,
+		updated_time as updatedTime,
+		deleted_time as deletedTime,
+		address, remark, areaId,provinceid,cityid,role_id as roleId,share_profit_per as shareProfitPer,balance from f_user where
+		id=#{userId}
+	</select>
+
+	<update id="delete">
+		update f_user set deleted_time = sysdate() where
+		id=#{userId}
+	</update>
+
+	<select id="queryUserByAccountName" resultType="FUserModel">
+		select id,
+		account_name as accountName, password,
+		real_name as realName, nick_name
+		as nickName, phone,
+		email, sex,
+		identity_id as identityId,
+		is_active as
+		isActive, created_user as `createdUser.id`, created_time as
+		createdTime,
+		updated_user as `updatedUser.id`,
+		updated_time as
+		updatedTime, deleted_time as deletedTime,
+		address, remark, areaId,provinceid,cityid,role_id as roleId,share_profit_per as shareProfitPer,balance from
+		f_user where account_name=#{accountName} and deleted_time is null
+	</select>
+
+	<select id="findOneById" resultType="FUserModel" parameterType="java.lang.Integer">
+		select id,password from f_user where deleted_time is null and id =
+		#{id}
+	</select>
+
+	<select id="getCreateUserInfoByShopId" resultType="FUserModel">
+		select id,
+		account_name as accountName, password,
+		real_name as realName, nick_name
+		as nickName, phone,
+		email, sex,
+		identity_id as identityId,
+		is_active as
+		isActive, created_user as `createdUser.id`, created_time as
+		createdTime,
+		updated_user as `updatedUser.id`,
+		updated_time as
+		updatedTime, deleted_time as deletedTime,
+		address, remark, areaId from
+		f_user where id=(select created_user from f_auth_code where
+		code=(select auth_code from b_shop_info where id=#{shopId})) and
+		deleted_time is null
+	</select>
+	
+	<select id="checkPartner" resultType="Integer">
+		select count(*) from
+		f_user u left join f_user_to_role r on u.id=r.user_id where 
+		<if test="provinceid != null">
+		provinceid = #{provinceid} and
+		</if>
+		<if test="cityid != null">
+		cityid = #{cityid} and
+		</if>
+		<if test="areaid != null">
+		areaid = #{areaid} and
+		</if>
+		r.role_id = #{roleId} and
+		deleted_time is null
+	</select>
+	
+	<select id="getUserByAreaId" resultMap="BaseResultMap">
+		select id,account_name,share_profit_per,areaid,cityid,provinceid from f_user 
+			where areaid = #{areaId} and role_id = #{roleId} and deleted_time is null limit 1
+	</select>
+	
+	<select id="getUserByCityId" resultMap="BaseResultMap">
+		select id,account_name,share_profit_per,areaid,cityid,provinceid from f_user 
+			where cityid = #{cityId} and role_id = #{roleId} and deleted_time is null limit 1
+	</select>
+	
+	<select id="getUserByProvinceId" resultMap="BaseResultMap">
+		select id,account_name,share_profit_per,areaid,cityid,provinceid from f_user 
+			where provinceid = #{provinceId} and role_id = #{roleId} and deleted_time is null limit 1
+	</select>
+	
+	<select id="getCityIdByAreaId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select city.id from area,city where area.citycode = city.code and area.id = #{areaId} limit 1
+	</select>
+	
+	<select id="getProvinceIdByAreaId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select province.id from (select city.id,city.provincecode from area,city where area.citycode = city.code and area.id = #{areaId}) as city,province
+			where city.provincecode = province.code limit 1
+	</select>
+	<select id="queryUserIdByAreaId" resultType="int">
+	    select id from f_user where 
+	            provinceid in  
+	       <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+		            #{item}
+      	   </foreach>
+	            or (cityid in 
+           <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+		            #{item}
+      	   </foreach>)
+   	            or( areaid in 
+           <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+		            #{item}
+   	       </foreach>)
+	</select>
+	<select id="queryUserId" resultType="int">
+		select id from f_user where created_user in
+		 <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+		            #{item}
+   	     </foreach>
+	</select>
+</mapper>

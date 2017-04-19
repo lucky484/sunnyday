@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.BSalesOrderDao" >
+ <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BSalesOrderModel" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
+    <result column="receiver_telephone" property="receiverTelephone" jdbcType="VARCHAR" />
+    <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR" />
+    <result column="receiver_postal_code" property="receiverPostalCode" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="total" property="total" jdbcType="INTEGER" />
+    <result column="pay_type" property="payType" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="deleted_time" property="deletedTime" jdbcType="TIMESTAMP" />
+    <result column="freight" property="freight" jdbcType="INTEGER" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="catalog" property="catalog" jdbcType="INTEGER" />
+    <result column="receive_order" property="receiveOrder" jdbcType="INTEGER" />
+    <result column="reveiver_mobile" property="reveiverMobile" jdbcType="VARCHAR" />
+    <result column="return_status" property="returnStatus" jdbcType="INTEGER" />
+    <result column="real_pay" property="realPay" jdbcType="INTEGER" />
+    <collection property="details" resultMap="OrderDetailMap"/>
+  </resultMap>
+   <resultMap id="OrderDetailMap" type="BSalesOrderDetailsModel">
+        <id column="detail_id" property="id" jdbcType="INTEGER"/>
+        <result column="goods_version" jdbcType="INTEGER" property="goodsVersion" />
+        <result column="goods_qty" jdbcType="INTEGER" property="goodsQty" />
+        <result column="price" jdbcType="INTEGER" property="price" />
+        <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    </resultMap>
+  
+  <resultMap id="orderAllMap" type="BToCOrderModel">
+      <id column="id" property="id" jdbcType="VARCHAR" />
+      <result column="user_id" property="userId" jdbcType="INTEGER" />
+      <result column="order_no" property="orderNo" jdbcType="INTEGER" />
+      <result column="status" property="status" jdbcType="INTEGER" />
+      <result column="goods_qty" property="quantity" jdbcType="INTEGER" />
+      <result column="total" property="total" jdbcType="INTEGER" />
+      <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+      <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+      <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
+      <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR" />
+      <result column="reveiver_mobile" property="reveiverMobile" jdbcType="VARCHAR" />
+      <result column="b_user_id" property="bUserId" jdbcType="INTEGER" />
+      <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+      <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+      <result column="logistics_code" property="logisticsCode" jdbcType="VARCHAR" />
+      <result column="waybill_number" property="waybillNumber" jdbcType="VARCHAR" />
+      <result column="pay_type" property="payType" jdbcType="INTEGER" />
+      <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+      <result column="receive_time" property="receiveTime" jdbcType="TIMESTAMP" />
+      <result column="catalog" property="catalog" jdbcType="INTEGER" />
+      <result column="freight" property="freight" jdbcType="INTEGER" />
+      <result column="account_balance" property="accountBalance" jdbcType="INTEGER" />
+      <result column="receive_order" property="receiveOrder" jdbcType="INTEGER" />
+      <result column="receive_order_time" property="receiveOrderTime" jdbcType="TIMESTAMP" />
+      <result column="real_pay" property="realPay" jdbcType="INTEGER" />
+      <result column="is_enable" property="isEnable" jdbcType="VARCHAR" />
+      <collection property="list" resultMap="BGoodsToCMap" />
+  </resultMap>
+  <resultMap id="BGoodsToCMap" type="BGoodsToCModel">
+      <id column="goods_id" property="id" jdbcType="INTEGER" />
+      <result column="order_details_id" property="orderDetailsId" jdbcType="VARCHAR" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="logo_url" property="logoUrl" jdbcType="VARCHAR" />
+      <result column="goods_qty" property="quantity" jdbcType="VARCHAR" />
+      <result column="goods_status" property="goodsStatus" jdbcType="INTEGER" />
+      <result column="price" property="price" jdbcType="DOUBLE" />
+      <result column="is_status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <!-- 所有已完成的订单，包含分页 -->
+  <select id="queryAllOrder" resultMap="orderAllMap">
+           select
+				sales_order.id,
+				sales_order.order_no,
+				order_details.order_details_id,
+				order_details.goods_id,
+				order_details.price,
+				order_details.logo_url,
+				order_details.goods_qty,
+				order_details.goods_status,
+				order_details.shop_name,
+				order_details.name,
+				order_details.id as shop_id,
+				(select sum(order_details.goods_qty) from b_sales_order_details order_details where sales_order.id = order_details.order_id) as goods_count,
+				sales_order.total, 
+				sales_order.status,
+				sales_order.catalog,
+				sales_order.receive_order,
+				sales_order.freight,
+				sales_order.real_pay,
+				date_format(sales_order.created_time,'%Y-%m-%d %H:%i:%s') as created_time,
+				date_format(sales_order.receive_order_time,'%Y-%m-%d %H:%i:%s') as receive_order_time,
+				(select balance.account_balance from c_user_balance balance where sales_order.user_id = balance.c_user_id) as account_balance
+			from
+				 (select * from b_sales_order where user_id = #{userId} and deleted_time is null
+				 <if test="status != null and status != ''">
+				 and status = #{status}
+				 </if>
+				 <if test="returnStatus != null and returnStatus != ''">
+				 and return_status in (1,2)
+				 </if>
+				 <if test="returnStatus != null and returnStatus != ''">
+				 and return_status in (1,2)
+				 </if>
+				 order by created_time desc
+				 limit #{num},#{pageSize} 
+				 )sales_order
+			left join (
+				select
+				    order_details.order_id,
+					order_details.id as order_details_id,
+					order_details.goods_qty,
+					order_details.goods_status,
+					goods.id as goods_id,
+					goods.name,
+					goods.logo_url,
+					goods.price,
+					shop.shop_name,
+					shop.id
+				from
+					b_sales_order_details order_details,
+					b_goods goods,
+					b_shop_info shop
+				where
+					order_details.goods_id = goods.id
+				and goods.shop_id = shop.id
+				and order_details.deleted_time is null
+			) order_details on sales_order.id = order_details.order_id
+  </select>
+  <select id="queryAllOrderCount" resultType="int">
+       select count(1) from b_sales_order sales_order where sales_order.user_id = #{userId} and sales_order.deleted_time is null
+        <if test="status != null and status != ''">
+		 and sales_order.status = #{status}
+	    </if>
+	    <if test="returnStatus != null and returnStatus != ''">
+	     and return_status in (1,2)
+	    </if>
+  </select>
+  
+  <select id="queryEvaluateOrderDetails" resultMap="BGoodsToCMap">
+         select
+                order_details.id as order_details_id,
+				order_details.goods_id,
+				order_details.goods_name as name,
+				order_details.goods_qty,
+				order_details.price,
+				goods.logo_url
+			from
+			  b_sales_order sales_order,
+				b_sales_order_details order_details,
+				b_goods goods
+			where
+			    sales_order.id = order_details.order_id
+			and	order_details.goods_id = goods.id
+			and sales_order.status = 1
+			and (sales_order.receive_order<![CDATA[ != ]]> 2 or receive_order is null)
+			and sales_order.user_id = #{userId}
+			and sales_order.deleted_time is null
+			and order_details.is_comment is null
+			and order_details.deleted_time is null
+			order by order_details.created_time desc
+			limit #{num},#{pageSize}
+  </select>
+  <select id="queryEvaluateOrderDetailsCount" resultType="int">
+        select count(1)
+			from
+			  b_sales_order sales_order,
+			  b_sales_order_details order_details
+			where
+			    sales_order.id = order_details.order_id
+			and sales_order.status = 1
+			and (sales_order.receive_order<![CDATA[ != ]]> 2 or receive_order is null)
+			and sales_order.user_id = #{userId}
+			and sales_order.deleted_time is null
+			and order_details.is_comment is null
+			and order_details.deleted_time is null
+  </select>
+<!-- 查询订单详情 -->
+   <select id="queryAllOrderDetail" resultMap="orderAllMap">
+			  select
+				sales_order.id,
+				sales_order.order_no,
+				sales_order.user_id,
+				sales_order.b_user_id,
+				order_details.goods_id,
+				order_details.logo_url,
+				order_details.goods_qty,
+				order_details.shop_name,
+				order_details.name,
+				order_details.id as shop_id,
+				order_details.price,
+				order_details.goods_status,
+				order_details.is_status,
+				order_details.is_enable,
+				sales_order.catalog,
+				sales_order.goods_count,
+				sales_order.total, 
+				sales_order.freight,
+				sales_order.status,
+				sales_order.receiver_name,
+				sales_order.receiver_address,
+				sales_order.reveiver_mobile,
+				sales_order.pay_type,
+				(select name from c_logistics_code where code = sales_order.logistics_code) as logistics_code,
+				sales_order.waybill_number,
+				date_format(sales_order.created_time,'%Y-%m-%d %H:%i:%s') as created_time,
+				sales_order.pay_time,
+				sales_order.real_pay,
+				sales_order.receive_time,
+				date_format(sales_order.receive_order_time,'%Y-%m-%d %H:%i:%s') as receive_order_time
+			from
+				 (select * from b_sales_order where id = #{orderId})sales_order
+			left join (
+				select
+					order_details.order_id,
+					order_details.goods_id,
+					order_details.goods_qty,
+					order_details.goods_status,
+					goods.name,
+					goods.price,
+					goods.logo_url,
+					goods.status as is_status,
+					shop.shop_name,
+					shop.id,
+					shop.is_enable
+				from
+					b_sales_order_details order_details,
+					b_goods goods,
+					b_shop_info shop
+				where
+					order_details.goods_id = goods.id
+				and goods.shop_id = shop.id
+			) order_details on sales_order.id = order_details.order_id
+  </select> 
+  <!-- 删除订单，假删除 -->
+  <update id="deleteOrderById" parameterType="String">
+        update b_sales_order set deleted_time = now(),updated_time = now() where id = #{id}
+  </update>
+  <!-- 修改订单状态 -->
+  <update id="updateStatusById" parameterType="BSalesOrderModel">
+        update b_sales_order set status = #{status},updated_time = #{updatedTime}
+        <if test="receiveOrder != null">
+          ,receive_order = #{receiveOrder}
+        </if>
+         <if test="realPay != null">
+          ,real_pay = real_pay - #{realPay}
+        </if>
+        <if test="receiveOrderTime != null">
+          ,receive_order_time = #{receiveOrderTime}
+        </if>
+        <if test="receiveTime != null">
+          ,receive_time = #{receiveTime}
+        </if>
+        <if test="deliverTime != null">
+          ,deliver_time = #{deliverTime}
+        </if> 
+        where id = #{id}
+  </update>
+  <select id="queryOrderDetailById" resultMap="BaseResultMap">
+      select id,order_no,receiver_name,total,status,remark from b_sales_order where id = #{id}
+  </select>
+   <!-- 批量插入订单 -->
+  <insert id="insertBatchOrder" parameterType="java.util.List"> 
+      insert into b_sales_order(id,order_no,merge_order_no,user_id,b_user_id,created_time,reveiver_mobile,receiver_name,receiver_telephone,receiver_address,receiver_postal_code,total,pay_type,status,remark,updated_time,catalog,freight,real_pay)
+  		values
+  	    <foreach collection="list" item="item" index="index" separator="," > 
+        (#{item.id},#{item.orderNo},#{item.mergeOrderNo},#{item.userId},#{item.bUserId},#{item.createdTime},#{item.receiverPhone},#{item.receiverName},#{item.receiverTelephone},
+        #{item.receiverAddress},#{item.receiverPostalCode},#{item.total},#{item.payType},#{item.status},#{item.remark},#{item.updatedTime},#{item.catalog},#{item.freight},#{item.realPay}) 
+      </foreach>
+  </insert>
+  
+  <!-- 根据合并订单号获取订单 --> 
+  <select id="selectSalesOrderByMergeNo" resultType="BSalesOrderModel">
+    select 
+      T1.id,
+      T1.order_no as orderNo,
+      T1.status,
+      T1.catalog,
+      T1.b_user_id as bUserId
+    from b_sales_order T1 
+    where  T1.deleted_time is null  
+    <if test="params.mergeOrderNo != null and params.mergeOrderNo !=''">
+      and T1.merge_order_no = #{params.mergeOrderNo} 
+    </if>
+    <if test="params.orderNo != null and params.orderNo !=''">
+      and T1.order_no = #{params.orderNo} 
+    </if> 
+  </select>
+  
+  <!-- 根据合并订单号修改订单状态 -->
+  <update id="updateOrderStatusByMergeNo" parameterType="String">
+     update 
+       b_sales_order 
+     set 
+       status = 3,
+       pay_time = now() 
+      where merge_order_no = #{mergeOrderNo} 
+      and deleted_time is null 
+  </update>
+  
+    <!-- 根据订单号修改订单状态 -->
+  <update id="updateOrderStatusByOrderNo" parameterType="String">
+     update 
+       b_sales_order 
+     set 
+       status = 3,
+       pay_time = now()  
+      where order_no = #{orderNo} 
+      and deleted_time is null 
+  </update>
+  
+  <!-- 根据订单号修改订单状态 -->
+  <update id="updateLogisticByOrderNo" parameterType="BSalesOrderModel">
+     update 
+       b_sales_order 
+     set 
+      logistics_code = #{logisticsCode},
+      waybill_number = #{waybillNumber},
+      status = #{status},
+      deliver_time = #{deliverTime} 
+      where order_no = #{orderNo} 
+  </update>
+  
+  <select id="queryTradInfo" resultMap="BaseResultMap" parameterType="int"> 
+      select
+			created_time,
+			total
+		from
+			b_sales_order sales_order
+		where
+			sales_order.status in (1, 5)
+		and sales_order.user_id = #{userId}
+		limit #{num},#{pageSize}
+  </select>
+  <select id="queryTradInfoCount" resultType="int" parameterType="int">
+        select count(1)
+		from
+			b_sales_order sales_order
+		where
+			sales_order.status in (1, 5)
+		and sales_order.user_id = #{userId}
+  </select>
+  <!-- 店家销售单 -->
+  <select id="queryAllSalesOrder" resultMap="orderAllMap">
+           select
+				sales_order.id,
+				sales_order.order_no,
+				order_details.price,
+				order_details.logo_url,
+				order_details.goods_qty,
+				order_details.name,
+				order_details.id as shop_id,
+				sales_order.goods_count,
+				sales_order.total, 
+				sales_order.status,
+				date_format(sales_order.created_time,'%Y-%m-%d %H:%i:%s') as created_time
+			from
+				 (select * from b_sales_order where b_user_id = #{userId} and deleted_status is null
+				 <if test="status != null and status != ''">
+				 and status = #{status}
+				 </if>
+				 order by created_time desc
+				 limit #{num},#{pageSize} 
+				 )sales_order
+			left join (
+				select
+					order_details.order_id,
+					order_details.goods_qty,
+					goods.name,
+					goods.logo_url,
+					goods.price,
+					shop.id
+				from
+					b_sales_order_details order_details,
+					b_goods goods,
+					b_shop_info shop
+				where
+					order_details.goods_id = goods.id
+				and goods.shop_id = shop.id
+				and order_details.deleted_status is null
+				order by order_details.order_id
+			) order_details on sales_order.id = order_details.order_id
+  </select>
+  <select id="queryAllSalesOrderCount" resultType="int">
+       select count(1) from b_sales_order sales_order where sales_order.b_user_id = #{userId} and sales_order.deleted_status is null
+        <if test="status != null and status != ''">
+		 and sales_order.status = #{status}
+	   </if> 
+  </select>
+    <!-- 删除销售单，假删除 -->
+  <update id="deleteSalesOrderById" parameterType="String">
+        update b_sales_order set deleted_status = now(),updated_time = now() where id = #{id}
+  </update>
+  
+  <select id="findExpiredOrder" resultMap="BaseResultMap">
+  	SELECT 
+	bs.id,
+	bsd.id as detail_id,
+	bsd.goods_version,
+	bsd.goods_qty,
+	bsd.goods_id
+	FROM b_sales_order bs
+	LEFT JOIN b_sales_order_details bsd
+	ON bs.id=bsd.order_id
+	WHERE bs.`status`=2 AND TIMESTAMPDIFF(SECOND,bs.created_time,NOW())>1800
+  </select>
+  
+  <update id="deleteBatchOrders">
+  	UPDATE b_sales_order
+	SET deleted_status =NOW(),
+	deleted_time=NOW()
+	WHERE b_sales_order.id IN (
+	<foreach collection="list" item="item" index="index" separator=",">
+	#{item.id}
+	</foreach>
+	)
+  </update>
+  
+  <!-- 15分钟未付款的水果订单，自动取消 -->
+  <select id="queryUnPayOrder" resultMap="BaseResultMap">
+      select id,order_no from b_sales_order where status = 2 and catalog = 0 and ((unix_timestamp(#{date}) - unix_timestamp(created_time))/60 > #{time}) and deleted_time is null and deleted_status is null
+  </select>
+  
+  <!-- 15分钟付款店家未接单的订单，自动取消 -->
+  <select id="queryPayUnReceiveOrder" resultMap="BaseResultMap">
+      select id,order_no from b_sales_order where status = 3 and receive_order is null and catalog = 0 and ((unix_timestamp(#{date}) - unix_timestamp(pay_time))/60 > #{time}) and deleted_time is null and deleted_status is null
+  </select>
+  
+  <!-- 一天之内未付款的非水果订单，自动取消 -->
+  <select id="queryFeFruitUnPayOrder" resultMap="BaseResultMap">
+      select id,order_no from b_sales_order where status = 2 and catalog = 1 and ((unix_timestamp(#{date}) - unix_timestamp(created_time))/60 > #{time}) and deleted_time is null and deleted_status is null
+  </select>
+  
+  <!-- 2小时以外已发货并且没有退货的水果订单 -->
+  <select id="queryFruitPayOrder" resultMap="BaseResultMap">
+      select id,order_no from b_sales_order where status = 4 and catalog = 0 and ((unix_timestamp(#{date}) - unix_timestamp(deliver_time))/60 > #{time}) and return_status is null and deleted_time is null and deleted_status is null
+  </select>
+  
+  <!-- 审核后超过1小时的的水果订单 -->
+  <select id="queryCheckOrder" resultMap="BaseResultMap">
+      select id,order_no from b_sales_order where status = 4 and catalog = 0 and ((unix_timestamp(#{date}) - unix_timestamp(return_time))/60 > #{time}) and return_status = 2 and deleted_time is null and deleted_status is null
+  </select>
+  
+  <!-- 查询发货时间超过10天的并且没有退货流程的非水果订单 -->
+  <select id="queryFeFruitPayOrder" resultMap="BaseResultMap">
+      select id,order_no from b_sales_order where status = 4 and catalog = 1 and ((unix_timestamp(#{date}) - unix_timestamp(deliver_time))/60 > #{time}) and return_status is null and deleted_time is null and deleted_status is null
+  </select>
+  
+  <!-- 查询审核时间超过2天的非水果订单 -->
+  <select id="queryCheckFeFruitOrder" resultMap="BaseResultMap">
+      select id,order_no from b_sales_order where status = 4 and catalog = 1 and ((unix_timestamp(#{date}) - unix_timestamp(return_time))/60 > #{time}) and return_status = 2 and deleted_time is null and deleted_status is null
+  </select>
+  
+  <update id="deleteTimeoutOrder">
+      update b_sales_order set status = #{status},updated_time = now()
+      <if test="receiveTime != null">
+          ,receive_time = #{receiveTime}
+      </if>
+      <if test="cancelTime != null">
+          ,cancel_time = #{cancelTime}
+      </if>
+      where id in(
+      <foreach collection="list" item="item" index="index" separator=",">
+			#{item.id}
+	  </foreach>)
+  </update>
+  
+  <update id="deleteTimeoutOrderDetails">
+      update b_sales_order_details set deleted_time = now(),deleted_status = now() where order_id in(
+      <foreach collection="list" item="item" index="index" separator=",">
+			#{item.id}
+	  </foreach>)
+  </update>
+  
+   <!-- 根据订单号获取物流信息 --> 
+  <select id="selectLogisticsByOrderNo" parameterType="String" resultType="BSalesOrderModel">
+    select 
+      T1.id,
+      T1.logistics_code as logisticsCode,
+      T1.waybill_number as waybillNumber 
+    from b_sales_order T1 
+    where T1.id = #{orderNo} 
+  </select>
+  
+   <select id="querySaleOrderByBUserId" resultMap="BaseResultMap">
+       select
+			id,
+			order_no,
+			created_time,
+			receiver_name,
+			receiver_address,
+			reveiver_mobile,
+			user_id,
+			catalog,
+			receive_order,
+			total,
+			freight,
+			real_pay,
+			status,
+			pay_type,
+			pay_time,
+			return_status
+		from
+			b_sales_order
+		where
+			deleted_status is null
+		and b_user_id = #{userId}
+		<if test="orderNo != null and orderNo != ''">
+		    and upper(order_no) like concat('%',upper(#{orderNo}),'%')
+		</if>
+		<if test="receiverName != null and receiverName != ''">
+		    and upper(receiver_name) like concat('%',upper(#{receiverName}),'%')
+		</if>
+		<if test="catalog != null">
+		    and catalog = #{catalog}
+		</if>
+		<if test="payType != null">
+			<if test="payType == 0">
+			    and pay_time is not null
+			</if>
+			<if test="payType == 1">
+			    and pay_time is null
+			</if>
+		</if>
+		<if test="status != null">
+		    and status = #{status}
+		</if>
+		order by created_time desc
+		limit #{num},#{pageSize}
+  </select>
+  
+  <select id="querySaleOrderByBUserIdCount" resultType="int">
+       select count(1) from
+			b_sales_order
+		where
+			deleted_status is null
+		and b_user_id = #{userId}
+		<if test="orderNo != null and orderNo != ''">
+		    and upper(order_no) like concat('%',upper(#{orderNo}),'%')
+		</if>
+		<if test="receiverName != null and receiverName != ''">
+		    and upper(receiver_name) like concat('%',upper(#{receiverName}),'%')
+		</if>
+		<if test="catalog != null">
+		    and catalog = #{catalog}
+		</if>
+		<if test="payType != null">
+			<if test="payType == 0">
+			    and pay_time is not null
+			</if>
+			<if test="payType == 1">
+			    and pay_time is null
+			</if>
+		</if>
+		<if test="status != null">
+		    and status = #{status}
+		</if>
+  </select>
+  
+  <update id="updateOrderReturnStatus">
+      update b_sales_order set return_status = #{returnStatus},updated_time = now(),return_time = now() where id = #{orderId}
+  </update>
+  
+  <!-- 跟新订单的总价 -->
+  <update id="updateTotalById" parameterType="BSalesOrderModel">
+      update b_sales_order
+      set 
+      <if test="realPay != null">
+      	real_pay = real_pay - #{realPay},
+      </if>
+      <if test="returnStatus != null">
+      return_status = #{returnStatus},
+      </if>
+      return_time = #{returnTime}
+      where id = #{id}
+  </update>
+  
+  <!-- 根据订单id查询订单信息 -->
+  <select id="selectOrderById" parameterType="java.lang.Integer" resultType="BSalesOrderModel">
+    select
+      id,
+      total,
+      user_id  as userId 
+    from
+      b_sales_order 
+    where deleted_time is null 
+    and id = #{id} 
+    limit 1
+  </select>
+  
+    <!-- 查询商家未处理的订单 -->
+  <select id="queryUnDealOrderByUserId" resultType="int" parameterType="int">
+       select count(1) from b_sales_order where status = 3 and b_user_id = #{userId}
+  </select>
+  
+  <!-- 查询还在退货中或者还在退款中的订单详情 -->
+  <select id="queryReturnCount" resultType="int" parameterType="String">
+       select count(1) from b_sales_order_details where goods_status in(1,2) and order_id = #{orderId}
+  </select>
+  
+  <select id="queryOrderById" resultMap="BaseResultMap" parameterType="String">
+      select id,order_no,status,pay_type,catalog,return_status from b_sales_order where id = #{orderId}
+  </select>
+</mapper>

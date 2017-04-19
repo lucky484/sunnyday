@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FRoleDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FRoleModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <!-- <result column="created_user" jdbcType="INTEGER" property="createdUser.id" /> -->
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+  <!--   <result column="updated_user" jdbcType="INTEGER" property="updatedUser.id" /> -->
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="role_type" jdbcType="INTEGER" property="roleType"/>
+    
+    <association property="createdUser" javaType="com.f2b2c.eco.model.platform.FUserModel">
+			<id column="created_user" jdbcType="INTEGER" property="id" />
+	</association>
+    
+      <association property="updatedUser" javaType="com.f2b2c.eco.model.platform.FUserModel">
+			<id column="updated_user" jdbcType="INTEGER" property="id" />
+	</association>
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, role_name, created_user, created_time, updated_user, updated_time, deleted_time, 
+    remark,role_type
+  </sql>
+  
+  <select id="findAll" resultMap="BaseResultMap">
+  		select id, role_name, created_user, created_time, updated_user, updated_time, deleted_time, 
+    		remark,role_type from f_role where deleted_time is null
+				order by created_time desc
+  </select>
+  
+  
+  <select id="countWithMap" resultType="java.lang.Integer">
+  		select count(0) from f_role where deleted_time is null
+			order by created_time desc
+  </select>
+  
+  <select id="findWithPagination" resultMap="BaseResultMap">
+  		select id, role_name, created_user, created_time, updated_user, updated_time, deleted_time, 
+    		remark,role_type from f_role where deleted_time is null
+				order by created_time desc limit ${pageable.pageNumber}, ${pageable.pageSize}
+  </select>
+  
+  <select id="findOneByUserId" parameterType="string" resultMap="BaseResultMap">
+  	select f_role.*
+  	from f_role
+  	left join f_user_to_role
+  	on f_role.id=f_user_to_role.role_id
+  	where f_user_to_role.user_id=#{userId}
+  </select>
+  
+   <!-- 查询当前用户能访问的所有的菜单 -->
+  	<select id="queryAllUrlByUserId" resultType="String">
+		select menu.href
+			from
+			f_user u,
+			f_user_to_role ur,
+			f_role role,
+			f_role_to_menu rm,
+			f_menu menu
+			where
+			u.id = ur.user_id
+			and ur.role_id = role.id
+			and role.id = rm.role_id
+			and rm.menu_id = menu.id
+			and u.id = #{userId}
+			order by menu.weight
+	</select>
+	
+  	<select id="queryAllUrl" resultType="String">
+		select menu.href
+			from
+			f_user u,
+			f_user_to_role ur,
+			f_role role,
+			f_role_to_menu rm,
+			f_menu menu
+			where
+			u.id = ur.user_id
+			and ur.role_id = role.id
+			and role.id = rm.role_id
+			and rm.menu_id = menu.id
+			order by menu.weight
+	</select>
+	
+</mapper>

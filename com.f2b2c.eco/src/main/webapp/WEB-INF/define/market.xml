@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <!-- here is a test configuration start -->
+    <definition name="market/index" extends="market_layout">
+        <put-attribute name="title" value="测试布局" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/admin/index.jsp" />
+        <put-attribute name="modal" value="" />
+        <put-attribute name="style" value="" />
+        <put-attribute name="script" value="" />
+    </definition>
+    <definition name="market/publishGoods" extends="market_layout">
+        <put-attribute name="title" value="发布商品" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/bgoods/publishgoods/index.jsp" />
+        <put-attribute name="modal" value="" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/market/bgoods/publishgoods/style.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/market/bgoods/publishgoods/script.jsp"/>
+    </definition>
+    <definition name="market/bgoodslist" extends="market_layout">
+        <put-attribute name="title" value="商品列表" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/bgoods/bgoodslist/index.jsp" />
+        <put-attribute name="modal" value="" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/market/bgoods/bgoodslist/style.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/market/bgoods/bgoodslist/script.jsp"/>
+    </definition>
+    <definition name="market/bgoodsdetail" extends="market_layout">
+        <put-attribute name="title" value="商品详情" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/bgoods/bgoodsdetail/index.jsp" />
+        <put-attribute name="modal" value="" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/market/bgoods/bgoodsdetail/style.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/market/bgoods/bgoodsdetail/script.jsp"/>
+    </definition>
+    <definition name="market/modifybgoods" extends="market_layout">
+        <put-attribute name="title" value="修改商品" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/bgoods/goodsmodify/index.jsp" />
+        <put-attribute name="modal" value="" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/market/bgoods/goodsmodify/style.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/market/bgoods/goodsmodify/script.jsp"/>
+    </definition>
+    
+     <definition name="market/borderlist" extends="market_layout">
+        <put-attribute name="title" value="订单管理" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/order/orderlist/index.jsp" />
+        <put-attribute name="modal" value="/WEB-INF/tiles/views/market/order/orderlist/index_modal.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/market/order/orderlist/script.jsp"/>
+    </definition>
+    
+    <definition name="market/orderdetail" extends="market_layout">
+        <put-attribute name="title" value="订单详情" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/order/orderdetail/index.jsp" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/market/order/orderdetail/style.jsp"/>
+    </definition>
+    
+    <definition name="market/returnborderlist" extends="market_layout">
+        <put-attribute name="title" value="退款订单" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/returnorder/index.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/market/returnorder/script.jsp"/>
+    </definition>
+     
+    <definition name="market/freight/index" extends="market_layout">
+        <put-attribute name="title" value="运费设置" />
+        <put-attribute name="content" value="/WEB-INF/tiles/views/market/freight/index.jsp" />
+        <put-attribute name="modal" value="" />
+        <put-attribute name="style" value="/WEB-INF/tiles/views/market/freight/style.jsp" />
+        <put-attribute name="script" value="/WEB-INF/tiles/views/market/freight/script.jsp"/>
+    </definition>
+    <definition name="market/myQrcode" extends="iframe_layout">
+        <put-attribute name="title" value="我的二维码" />
+        <put-attribute name="content" value="/WEB-INF/jsp/market/myQrcode.jsp" />
+        <put-attribute name="modal" value=""/>
+        <put-attribute name="style" value=""/>
+        <put-attribute name="script" value=""/>
+    </definition>
+     <definition name="market/regist" extends="iframe_layout">
+        <put-attribute name="title" value="好享吃注册账户" />
+        <put-attribute name="content" value="/WEB-INF/jsp/market/cRegist.jsp" />
+        <put-attribute name="modal" value=""/>
+        <put-attribute name="style" value=""/>
+        <put-attribute name="script" value=""/>
+    </definition>
+</tiles-definitions>

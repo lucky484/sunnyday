@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.UserBrowerRecordDao">
+   	<resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BGoodsModel">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="logo_url" property="logoUrl" jdbcType="VARCHAR" />
+		<result column="goods_no" property="goodsNo" jdbcType="VARCHAR" />
+		<result column="unit" property="unit" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<association property="kind" javaType="FKindModel">
+			<id column="kind_id" property="id" jdbcType="INTEGER" />
+			<result column="kind_name" property="kindName" jdbcType="INTEGER" />
+		</association>
+	</resultMap>
+     
+   	<!-- 插入浏览记录 -->
+    <insert id="insertBrowerRecord" parameterType="UserBrowerRecordModel" keyProperty="id" useGeneratedKeys="true">
+        insert into user_browse_record (
+            goods_id,
+            user_id,
+            created_user,
+            created_time,
+            updated_user,
+            updated_time
+        )values(
+            #{goodsId},
+            #{userId},
+            #{createdUser},
+            #{createdTime},
+            #{updatedUser},
+            #{updatedTime}
+        )
+    </insert>
+    
+    <!-- 查询商品是否存在 -->
+    <select id="queryGoodsIsExists" resultType="int" parameterType="int">
+        select count(1) from user_browse_record where goods_id = #{goodsId}
+    </select>
+    
+    <!-- 修改商品 -->
+    <update id="updateBrowerRecord" parameterType="UserBrowerRecordModel">
+        update user_browse_record set updated_time = #{updatedTime} where goods_id = #{goodsId}
+    </update>
+    
+    <!-- 删除100条以后的数据 -->
+    <delete id="deleteBrowerRecord" parameterType="java.util.Map">
+        delete from user_browse_record where user_id = #{userId} order by updated_time limit #{totalCount}
+    </delete>
+    <!-- 根据用户id查询浏览过的商品 -->
+    <select id="queryBrowerRecordByUserId" resultMap="BaseResultMap">
+        select
+			goods.id,
+			goods.name,
+			goods.price,
+			goods.logo_url,
+			goods.goods_no
+		from
+			user_browse_record r,
+			b_goods goods,
+			b_kind kind
+		where
+			r.goods_id = goods.id
+		and goods.status = 1
+		and goods.deleted_time is null
+		and r.user_id = #{userId}
+		<if test="kindId != null and kindId != ''">
+		and goods.kind_id = #{kindId}
+		</if>
+    </select>
+    
+     <select id="queryBrowerRecordCountByUserId" resultType="int">
+        select count(1) from
+			user_browse_record r
+		where r.user_id = #{userId}
+    </select>
+    
+    <!-- 推荐商品的分页查询 -->
+    <select id="queryAllBrowerRecord" resultMap="BaseResultMap">
+                 select distinct
+						goods1.id,
+						goods1.name,
+						goods1.price,
+						goods1.logo_url,
+						goods1.goods_no
+					from (select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 0
+							and r.user_id  = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods1,
+						(select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+								b_goods goods,
+								b_kind kind
+							where
+								goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 0
+							and goods.shop_id = #{shopId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods2
+					where
+						goods1.kind_id = goods2.kind_id
+			    union
+			         select distinct
+						goods1.id,
+						goods1.name,
+						goods1.price,
+						goods1.logo_url,
+						goods1.goods_no
+					from (select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and r.user_id  = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods1,
+						(select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+								b_goods goods,
+								b_kind kind
+							where
+								goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and goods.shop_id = #{shopId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods2
+					where
+						goods1.kind_id = goods2.kind_id
+						limit #{num},#{pageSize}
+    </select>
+    
+    <select id="queryAllBrowerRecordCount" resultType="int">
+         select count(1) from (select distinct
+						goods1.id,
+						goods1.name,
+						goods1.price,
+						goods1.logo_url
+					from (select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 0
+							and r.user_id  = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods1,
+						(select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+								b_goods goods,
+								b_kind kind
+							where
+								goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 0
+							and goods.shop_id = #{shopId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods2
+					where
+						goods1.kind_id = goods2.kind_id
+			    union
+			         select distinct
+						goods1.id,
+						goods1.name,
+						goods1.price,
+						goods1.logo_url
+					from (select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and r.user_id  = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods1,
+						(select
+								goods.id,
+								goods. name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+								b_goods goods,
+								b_kind kind
+							where
+								goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and goods.shop_id = #{shopId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+						) goods2
+					where
+						goods1.kind_id = goods2.kind_id) goods
+    </select>
+    <!-- 附近有商店和浏览记录中没匹配上数据的查询 -->
+    <select id="queryShopGoods" resultMap="BaseResultMap">
+                        select
+							    goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.goods_no
+							from
+								b_goods goods,
+								b_kind kind
+							where
+								goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 0
+                            and goods.shop_id = #{shopId}
+                            <if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+                     union
+					      select distinct 
+					             goods1.id,
+					             goods1.name,
+								 goods1.price,
+								 goods1.logo_url,
+								 goods1.goods_no
+			             from ( select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and r.user_id  = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods1,
+							(select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+								b_goods goods,
+								b_kind kind
+							where goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods2
+							where goods1.kind_id = goods2.kind_id
+                    limit #{num},#{pageSize}
+    </select>
+    
+    <select id="queryShopGoodsCount" resultType="int">
+                        select count(1) from (
+                           select
+							    goods.id,
+								goods. name,
+								goods.price,
+								goods.logo_url
+							from
+								b_goods goods,
+								b_kind kind
+							where
+								goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 0
+                            and goods.shop_id = #{shopId}
+                            <if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+                     union
+					       select distinct 
+					             goods1.id,
+					             goods1.name,
+								 goods1.price,
+								 goods1.logo_url
+			             from ( select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and r.user_id  = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods1,
+							(select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+								b_goods goods,
+								b_kind kind
+							where goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods2
+							where goods1.kind_id = goods2.kind_id) goods
+    </select>
+    <!-- 查询所有和浏览记录类型匹配的商品 -->
+    <select id="queryAllFeFruit" resultMap="BaseResultMap">
+                   select distinct 
+					             goods1.id,
+					             goods1.name,
+								 goods1.price,
+								 goods1.logo_url,
+								 goods1.goods_no
+			             from ( select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and r.user_id  = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods1,
+							(select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id,
+								goods.goods_no
+							from
+								b_goods goods,
+								b_kind kind
+							where goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods2
+							where goods1.kind_id = goods2.kind_id
+							limit #{num},#{pageSize}
+    </select>
+    
+    <select id="queryAllFeFruitCount" resultType="int">
+                        select count(1) from (select distinct 
+					             goods1.id,
+					             goods1.name,
+								 goods1.price,
+								 goods1.logo_url,
+								 goods1.kind_id
+			             from ( select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+							    user_browse_record r,
+								b_goods goods,
+								b_kind kind
+							where r.goods_id = goods.id
+							and	goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							and r.user_id = #{userId}
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods1,
+							(select
+								goods.id,
+								goods.name,
+								goods.price,
+								goods.logo_url,
+								goods.kind_id
+							from
+								b_goods goods,
+								b_kind kind
+							where goods.status = 1
+							and goods.deleted_time is null
+							and goods.kind_id = kind.id
+							and kind.catalog = 1
+							<if test="kindId != null and kindId != ''">
+							and goods.kind_id = #{kindId}
+							</if>
+							) goods2
+							where goods1.kind_id = goods2.kind_id) goods
+    </select>
+    
+    <select id="queryFeFruit" resultMap="BaseResultMap">
+		select
+			goods.id,
+			goods.name,
+			goods.price,
+			goods.logo_url,
+			goods.goods_no
+		from
+			b_goods goods,
+			b_kind kind
+		where goods.status = 1
+		and goods.deleted_time is null
+		and goods.kind_id = kind.id
+		and kind.catalog = 1
+		<if test="kindId != null and kindId != ''">
+	    and goods.kind_id = #{kindId}
+		</if>
+		limit #{num},#{pageSize}
+    </select>
+    
+    <select id="queryFeFruitCount" resultType="int">
+		select count(1) from
+			b_goods goods,
+			b_kind kind
+		where goods.status = 1
+		and goods.deleted_time is null
+		and goods.kind_id = kind.id
+		and kind.catalog = 1
+		<if test="kindId != null and kindId != ''">
+	    and goods.kind_id = #{kindId}
+		</if>
+    </select>
+    
+</mapper>

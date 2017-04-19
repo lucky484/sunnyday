@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.market.BCityFreightDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BCityFreightModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="delivery_city" jdbcType="VARCHAR" property="deliveryCity" />
+    <result column="first" jdbcType="INTEGER" property="first" />
+    <result column="first_freight" jdbcType="INTEGER" property="firstFreight" />
+    <result column="continue_quantity" jdbcType="INTEGER" property="continueQuantity" />
+    <result column="continue_freight" jdbcType="INTEGER" property="continueFreight" />
+    <result column="is_default" jdbcType="CHAR" property="isDefault" />
+    <result column="freight_template_id" jdbcType="INTEGER" property="freightTemplateId" />
+    <result column="delivery_mode" jdbcType="CHAR" property="deliveryMode" />
+    <result column="create_date" jdbcType="DATE" property="createDate" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="update_date" jdbcType="DATE" property="updateDate" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, delivery_city, first, first_freight, continue_quantity, continue_freight, is_default, 
+    freight_template_id, delivery_mode, create_date, create_user, update_date, update_user
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from b_city_freight
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from b_city_freight
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.market.BCityFreightModel">
+    insert into b_city_freight (id, delivery_city, first, 
+      first_freight, continue_quantity, continue_freight, 
+      is_default, freight_template_id, delivery_mode, 
+      create_date, create_user, update_date, 
+      update_user)
+    values (#{id,jdbcType=INTEGER}, #{deliveryCity,jdbcType=VARCHAR}, #{first,jdbcType=INTEGER}, 
+      #{firstFreight,jdbcType=INTEGER}, #{continueQuantity,jdbcType=INTEGER}, #{continueFreight,jdbcType=INTEGER}, 
+      #{isDefault,jdbcType=CHAR}, #{freightTemplateId,jdbcType=INTEGER}, #{deliveryMode,jdbcType=CHAR}, 
+      #{createDate,jdbcType=DATE}, #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=DATE}, 
+      #{updateUser,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.market.BCityFreightModel">
+    insert into b_city_freight
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="deliveryCity != null">
+        delivery_city,
+      </if>
+      <if test="first != null">
+        first,
+      </if>
+      <if test="firstFreight != null">
+        first_freight,
+      </if>
+      <if test="continueQuantity != null">
+        continue_quantity,
+      </if>
+      <if test="continueFreight != null">
+        continue_freight,
+      </if>
+      <if test="isDefault != null">
+        is_default,
+      </if>
+      <if test="freightTemplateId != null">
+        freight_template_id,
+      </if>
+      <if test="deliveryMode != null">
+        delivery_mode,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryCity != null">
+        #{deliveryCity,jdbcType=VARCHAR},
+      </if>
+      <if test="first != null">
+        #{first,jdbcType=INTEGER},
+      </if>
+      <if test="firstFreight != null">
+        #{firstFreight,jdbcType=INTEGER},
+      </if>
+      <if test="continueQuantity != null">
+        #{continueQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="continueFreight != null">
+        #{continueFreight,jdbcType=INTEGER},
+      </if>
+      <if test="isDefault != null">
+        #{isDefault,jdbcType=CHAR},
+      </if>
+      <if test="freightTemplateId != null">
+        #{freightTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryMode != null">
+        #{deliveryMode,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.BCityFreightModel">
+    update b_city_freight
+    <set>
+      <if test="deliveryCity != null">
+        delivery_city = #{deliveryCity,jdbcType=VARCHAR},
+      </if>
+      <if test="first != null">
+        first = #{first,jdbcType=INTEGER},
+      </if>
+      <if test="firstFreight != null">
+        first_freight = #{firstFreight,jdbcType=INTEGER},
+      </if>
+      <if test="continueQuantity != null">
+        continue_quantity = #{continueQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="continueFreight != null">
+        continue_freight = #{continueFreight,jdbcType=INTEGER},
+      </if>
+      <if test="isDefault != null">
+        is_default = #{isDefault,jdbcType=CHAR},
+      </if>
+      <if test="freightTemplateId != null">
+        freight_template_id = #{freightTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryMode != null">
+        delivery_mode = #{deliveryMode,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.BCityFreightModel">
+    update b_city_freight
+    set delivery_city = #{deliveryCity,jdbcType=VARCHAR},
+      first = #{first,jdbcType=INTEGER},
+      first_freight = #{firstFreight,jdbcType=INTEGER},
+      continue_quantity = #{continueQuantity,jdbcType=INTEGER},
+      continue_freight = #{continueFreight,jdbcType=INTEGER},
+      is_default = #{isDefault,jdbcType=CHAR},
+      freight_template_id = #{freightTemplateId,jdbcType=INTEGER},
+      delivery_mode = #{deliveryMode,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=DATE},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

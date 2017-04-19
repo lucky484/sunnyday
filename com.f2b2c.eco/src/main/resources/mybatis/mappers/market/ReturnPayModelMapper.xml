@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.ReturnPayDao" >
+     
+    <insert id="insertReturnPay" parameterType="ReturnPayModel" keyProperty="id" useGeneratedKeys="true">
+        insert into return_pay(
+	          order_detail_id,
+	          receive_type,
+	          return_type,
+	          return_reason,
+	          return_amount,
+	          return_remark,
+	          created_time,
+	          updated_time
+        )values(
+	           #{orderDetailId},
+	           #{receiveType},
+	           #{returnType},
+	           #{returnReason},
+	           #{returnAmount},
+	           #{returnRemark},
+	           #{createdTime},
+	           #{updatedTime}
+        )
+    </insert>
+    
+    <!-- 根据主键查询退款或者退货表 -->
+    <select id="selectByDetailId" parameterType="java.lang.String" resultType="java.lang.Integer">
+      select 
+        sum(return_amount) 
+      from return_pay 
+      where order_detail_id = #{orderDetailId} 
+    </select>
+</mapper>

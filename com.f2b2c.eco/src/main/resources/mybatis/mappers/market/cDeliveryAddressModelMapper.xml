@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CDeliveryAddressDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.CDeliveryAddressModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="consignee" property="consignee" jdbcType="VARCHAR" />
+    <result column="area_id" property="areaId" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="is_default" property="isDefault" jdbcType="CHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="created_user" property="createdUser" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_user" property="updatedUser" jdbcType="INTEGER" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" />
+    <result column="province_id" property="provinceId" />
+    <result column="latitude" property="latitude" />
+    <result column="area_name" property="areaName" />
+    <result column="city_name" property="cityName" />
+    <result column="province_name" property="provinceName" />
+    <result column="deleted_time" property="deletedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <!-- 根据主键删除收货地址表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from c_delivery_address
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入收货地址表 -->
+  <insert id="insert" parameterType="com.f2b2c.eco.model.market.CDeliveryAddressModel" >
+    insert into c_delivery_address (consignee, area_id, 
+      address, mobile, telephone, 
+      email, is_default, user_id, created_user, 
+      created_time, updated_user, updated_time, 
+      deleted_time,longitude,latitude,city_id,province_id)
+    values (#{consignee,jdbcType=VARCHAR}, #{areaId,jdbcType=INTEGER}, 
+      #{address,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{isDefault,jdbcType=CHAR}, #{isDefault,jdbcType=CHAR}, 
+      #{userId,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedUser,jdbcType=INTEGER},
+      #{updatedTime,jdbcType=TIMESTAMP}, #{deletedTime,jdbcType=TIMESTAMP},#{longitude},#{latitude},#{cityId},#{provinceId}) 
+  </insert>
+  
+  <!-- 插入可选的收货地址表 -->
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.market.CDeliveryAddressModel" >
+    insert into c_delivery_address
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="consignee != null" >
+        consignee,
+      </if>
+      <if test="areaId != null" >
+        area_id,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="isDefault != null" >
+        is_default,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="createdUser != null" >
+        created_user,
+      </if>
+      <if test="createdTime != null" >
+        created_time,
+      </if>
+      <if test="updatedUser != null" >
+        updated_user,
+      </if>
+      <if test="updatedTime != null" >
+        updated_time,
+      </if>
+      <if test="deletedTime != null" >
+        deleted_time,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="consignee != null" >
+        #{consignee,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null" >
+        #{isDefault,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdUser != null" >
+        #{createdUser,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedUser != null" >
+        #{updatedUser,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedTime != null" >
+        #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latitude != null" >
+        #{latitude},
+      </if>
+      <if test="longitude != null" >
+        #{longitude},
+      </if>
+       <if test="cityId != null" >
+       #{cityId},
+      </if>
+      <if test="provinceId != null" >
+       #{provinceId},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的收货地址表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.CDeliveryAddressModel" >
+    update c_delivery_address
+    <set >
+      <if test="consignee != null" >
+        consignee = #{consignee,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        area_id = #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null" >
+        is_default = #{isDefault,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdUser != null" >
+        created_user = #{createdUser,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null" >
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedUser != null" >
+        updated_user = #{updatedUser,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null" >
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedTime != null" >
+        deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude},
+      </if>
+      <if test="cityId != null" >
+       city_id = #{cityId},
+      </if>
+      <if test="provinceId != null" >
+       province_id = #{provinceId},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新收货地址表 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.CDeliveryAddressModel" >
+    update c_delivery_address
+    set consignee = #{consignee,jdbcType=VARCHAR},
+      area_id = #{areaId,jdbcType=INTEGER},
+      address = #{address,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      is_default = #{isDefault,jdbcType=CHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      created_user = #{createdUser,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      updated_user = #{updatedUser,jdbcType=INTEGER},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      longitude = #{longitude},
+      latitude = #{latitude},
+      city_id = #{cityId},
+      province_id = #{provinceId},
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据用户外键查询收货地址表 -->
+  <select id="selectDeliveryAddressByUserId" resultMap="BaseResultMap">
+    select 
+      T1.id,
+      T1.mobile,
+      T1.address,
+      T1.telephone,
+      T1.email,
+      T1.consignee,
+      T1.user_id as userId,
+      T1.latitude,
+      T1.longitude,
+      T1.province_id,
+      T1.city_id,
+      T1.area_id,
+      T2.name as area_name,
+      T3.name as city_name,
+      T4.name as province_name,
+      T1.is_default as isDefault 
+    from c_delivery_address T1 
+    left join area T2 ON T1.area_id = T2.id 
+    left join city T3 ON T1.city_id = T3.id 
+    left join province T4 ON T1.province_id = T4.id 
+    where T1.deleted_time is null 
+    <if test="params.userId">
+      and T1.user_id = #{params.userId}
+    </if>
+    <if test="params.isDefault">
+      and T1.is_default = #{params.isDefault}
+    </if>
+  </select>
+  
+  <select id="select" resultMap="BaseResultMap">
+    select 
+      T1.id,
+      T1.mobile,
+      T1.address,
+      T1.telephone,
+      T1.email,
+      T1.user_id as userId,
+      T1.consignee,
+      T1.latitude,
+      T1.longitude,
+      T1.province_id,
+      T1.city_id,
+      T1.area_id,
+      T2.name as area_name,
+      T3.name as city_name,
+      T4.name as province_name,
+      T1.is_default as isDefault 
+    from c_delivery_address T1 
+    left join area T2 ON T1.area_id = T2.id 
+    left join city T3 ON T1.city_id = T3.id 
+    left join province T4 ON T1.province_id = T4.id 
+    where T1.deleted_time is null and T1.id=#{id}
+  </select>
+  
+  <select id="getDefaultDeliveryAddress" resultMap="BaseResultMap">
+    select 
+      T1.id,
+      T1.mobile,
+      T1.address,
+      T1.telephone,
+      T1.email,
+      T1.user_id as userId,
+      T1.consignee,
+      T1.latitude,
+      T1.longitude,
+      T1.province_id,
+      T1.city_id,
+      T1.area_id,
+      T1.longitude,
+      T1.latitude,
+      T2.name as area_name,
+      T3.name as city_name,
+      T4.name as province_name,
+      T1.is_default as isDefault 
+    from c_delivery_address T1 
+    left join area T2 ON T1.area_id = T2.id 
+    left join city T3 ON T1.city_id = T3.id 
+    left join province T4 ON T1.province_id = T4.id 
+    where T1.deleted_time is null and T1.is_default = '1' and T1.user_id = #{params.userId} limit 1
+  </select>
+  
+  <!-- 插入可选的收货地址表 -->
+  <insert id="insertDeliveryAddress" parameterType="com.f2b2c.eco.model.market.InsertCDeliveryAddressModel" useGeneratedKeys="true" keyProperty="id">
+    insert into c_delivery_address
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="consignee != null" >
+        consignee,
+      </if>
+      <if test="areaId != null" >
+        area_id,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="isDefault != null" >
+        is_default,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="createdUser != null" >
+        created_user,
+      </if>
+      <if test="createdTime != null" >
+        created_time,
+      </if>
+      <if test="updatedUser != null" >
+        updated_user,
+      </if>
+      <if test="updatedTime != null" >
+        updated_time,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+       <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="consignee != null" >
+        #{consignee,jdbcType=VARCHAR},
+      </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null" >
+        #{isDefault,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createdUser != null" >
+        #{createdUser,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedUser != null" >
+        #{updatedUser,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="longitude != null" >
+        #{longitude},
+      </if>
+      <if test="latitude != null" >
+        #{latitude},
+      </if>
+      <if test="cityId != null" >
+       #{cityId},
+      </if>
+      <if test="provinceId != null" >
+       #{provinceId},
+      </if>
+    </trim>
+  </insert>
+    
+   <!-- 根据主键更新可选的收货地址表 -->
+  <update id="updateDeliveryAddressById" parameterType="com.f2b2c.eco.model.market.InsertCDeliveryAddressModel" >
+    update c_delivery_address 
+        <set>
+        is_default = #{isDefault,jdbcType=CHAR}
+        </set>
+    where id = #{id,jdbcType=INTEGER} 
+    and deleted_time is null 
+  </update>
+  
+  <!-- 根据用户外键取消默认地址 -->
+  <update id="updateDeliveryAddressByUserId" parameterType="com.f2b2c.eco.model.market.InsertCDeliveryAddressModel">
+      update c_delivery_address 
+      <set>
+        is_default = #{isDefault,jdbcType=CHAR} 
+      </set>
+      where user_id = #{userId,jdbcType=INTEGER} 
+      and deleted_time is null 
+  </update>
+</mapper>

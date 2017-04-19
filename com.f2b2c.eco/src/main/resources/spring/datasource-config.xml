@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Application context definition for PetClinic Datasource. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/jdbc
+         http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+     
+    <!-- ========================= DATASOURCE DEFINITION ========================= -->
+	<!-- 
+		Configurer that replaces ${...} placeholders with values from a properties file 
+		e.g. data-access.properties
+	-->
+	<!-- (in this case, JDBC-related settings for the dataSource definition below) -->
+     <!-- 
+     	<context:property-placeholder>标签提供了一种优雅的外在化参数配置的方式，不过该标签在Spring配置文件中只能存在一份！！！
+     	Spring容器是采用反射扫描的发现机制，通过标签的命名空间实例化实例，当Spring探测到容器中有一个org.springframework.beans.factory.config.PropertyPlaceholderCVonfigurer的Bean就会停止对剩余PropertyPlaceholderConfigurer的扫描，即只能存在一个实例！
+     	
+     	<context:property-placeholder   
+	        location=""  
+	        file-encoding=""  
+	        ignore-resource-not-found=""  
+	        ignore-unresolvable=""  
+	        properties-ref=""  
+	        local-override=""  
+	        system-properties-mode=""  
+	        order=""  
+		/> 
+		location：表示属性文件位置，多个之间通过如逗号/分号等分隔； 
+		file-encoding：文件编码； 
+		ignore-resource-not-found：如果属性文件找不到，是否忽略，默认false，即不忽略，找不到将抛出异常 
+		ignore-unresolvable：是否忽略解析不到的属性，如果不忽略，找不到将抛出异常 
+		properties-ref：本地java.util.Properties配置 
+		local-override：是否本地覆盖模式，即如果true，那么properties-ref的属性将覆盖location加载的属性 
+		system-properties-mode：系统属性模式，ENVIRONMENT（默认），NEVER，OVERRIDE 
+		ENVIRONMENT：将使用Spring 3.1提供的PropertySourcesPlaceholderConfigurer，其他情况使用Spring 3.1之前的PropertyPlaceholderConfigurer 
+		OVERRIDE： PropertyPlaceholderConfigurer使用，因为在spring 3.1之前版本是没有Enviroment的，所以OVERRIDE是spring 3.1之前版本的Environment 
+		NEVER：只查找properties-ref、location； 
+		order：当配置多个<context:property-placeholder/>时的查找顺序
+     -->
+	
+	<context:property-placeholder location="classpath:spring/data-access.properties"
+		system-properties-mode="OVERRIDE" ignore-unresolvable="true" />
+		
+	<beans profile="dev">
+	<!-- ComboPooledDataSource提供了一个用于关闭数据源的close()方法，这样我们就可以保证Spring容器关闭时数据源能够成功释放。  -->
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<!-- ${xxx}不要有空格，要不然会被一起解析进去 -->
+			<property name="driverClass" value="${mysql.jdbc.driverClassName}" />
+			<property name="jdbcUrl" value="${mysql.jdbc.url}" />
+			<property name="user" value="${mysql.jdbc.username}" />
+			<property name="password" value="${mysql.jdbc.password}" />
+			<property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+			<property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+			<property name="initialPoolSize" value="${c3p0.initialPoolSize}" />
+		</bean>
+		<!-- mysql is not needed to init everytime -->
+		<!-- <jdbc:initialize-database data-source="dataSource">
+			<jdbc:script location="${mysql.jdbc.initLocation}" encoding="UTF-8" />
+			<jdbc:script location="${mysql.jdbc.dataLocation}" encoding="UTF-8" />
+		</jdbc:initialize-database> -->
+	</beans>
+ </beans>

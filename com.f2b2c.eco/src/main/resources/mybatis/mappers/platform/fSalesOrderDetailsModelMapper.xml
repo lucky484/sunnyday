@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FSalesOrderDetailsDao">
+  <resultMap id="fSalesOrderDetailsMap" type="FSalesOrderDetailsModel">
+      <id column="id" property="id" jdbcType="VARCHAR"/>
+      <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+      <result column="goods_version" property="goodsVersion" jdbcType="INTEGER"/>
+      <result column="goods_qty" property="goodsQty" jdbcType="INTEGER"/>
+      <result column="price" property="price" jdbcType="INTEGER"/>
+      <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+  </resultMap>
+  <!-- 批量插入订单详情 -->
+  <insert id="insertBatchOrderDetail" parameterType="java.util.List"> 
+      insert into f_sales_order_details(id,order_id,goods_id,goods_version,goods_qty,price,goods_name,logo_url,created_time,created_user,updated_time,updated_user)
+  		values
+  	    <foreach collection="list" item="item" index="index" separator="," > 
+        (#{item.id},#{item.order.id},#{item.goodsId},#{item.goodsVersion},#{item.goodsQty},#{item.price},#{item.goodsName},#{item.logoUrl},now(),#{item.createdUser},now(),#{item.updateUser}) 
+      </foreach>
+  </insert>
+  
+  <!-- 批量更新商品数量 -->
+  <update id="updateBatchGoodsQuantity" parameterType="java.util.List" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update f_goods  
+        <set>
+            remain = (remain - ${item.goodsQty}),
+            allocate = (allocate + ${item.goodsQty}),
+        </set>
+        where id = ${item.goodsId}
+    </foreach> 
+  </update>
+  
+  <select id="queryAllOrderDetailsByOrderId" parameterType="String" resultMap="fSalesOrderDetailsMap">
+      select goods_id,goods_version,goods_qty,price,goods_name from f_sales_order_details where deleted_time is null and order_id = #{orderId}
+  </select>
+  
+   <!-- 批量更新商品数量 -->
+  <update id="updateBatchGoodsQuantityPlus" parameterType="java.util.List" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update f_goods  
+        <set>
+            remain = (remain + ${item.goodsQty}),
+            allocate = (allocate - ${item.goodsQty})
+        </set>
+        where id = ${item.goodsId}
+    </foreach> 
+  </update>
+  
+  <!-- 根据商品id查询订单详情 -->
+  
+  <select id="queryOrderDetailByGoodsId" resultType="int">
+      select count(1) from f_sales_order_details where goods_id = #{goodsId} and order_id = #{orderId} and deleted_time is null
+  </select>
+  <!-- 根据商品的id修改商品的数量 -->
+  <update id="updateGoodsQtyByGoodsId" parameterType="FSalesOrderDetailsModel">
+      update f_sales_order_details set goods_qty = goods_qty + #{goodsQty},updated_time = #{updatedTime} where goods_id = #{goodsId}
+  </update>
+  
+  <!-- 新增订单详情 -->
+  <insert id="insertOrderDetail" parameterType="FSalesOrderDetailsModel"> 
+      insert into f_sales_order_details(id,order_id,goods_id,goods_name,logo_url,goods_version,goods_qty,price,created_time,created_user,updated_time,updated_user)
+  		values
+       (#{id},#{order.id},#{goodsId},#{goodsName},#{logoUrl},#{goodsVersion},#{goodsQty},#{price},now(),#{createdUser},now(),#{updateUser}) 
+  </insert>
+</mapper>

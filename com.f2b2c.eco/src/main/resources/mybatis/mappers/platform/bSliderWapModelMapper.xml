@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.BSliderWapDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FSliderWapsModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="wap_img_url" jdbcType="VARCHAR" property="wapImgUrl" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="create_user" jdbcType="VARCHAR" property="createName" />
+    <result column="update_user" jdbcType="INTEGER" property="updateName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="type" jdbcType="CHAR"  property="type" />
+    <result column="content"  jdbcType="VARCHAR" property="content" />
+  </resultMap>
+  
+  <sql id="Base_Column_List"> 
+    id, wap_img_url, status, create_user, update_user,create_time,update_time
+  </sql>
+  
+  <select id="queryCountByCondition" resultType="int">
+  	select count(0) from b_slider_waps 
+  </select>
+  <select id="findWithPagination" parameterType="java.lang.String" resultMap="BaseResultMap" >
+  	select * from b_slider_waps order by update_time desc limit ${pageable.pageNumber},${pageable.pageSize}
+  </select>
+  <select id="querySliderWapById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select 
+  	id, wap_img_url, status, create_user, update_user,create_time,update_time,type,content
+  	from b_slider_waps
+  	where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FSliderWapsModel">
+  	insert into b_slider_waps(id,wap_img_url,create_time,create_user,update_time,status,type,content)
+  	values(#{id,jdbcType=INTEGER},
+  			#{wapImgUrl,jdbcType=VARCHAR},
+  			#{createTime,jdbcType=TIMESTAMP},
+  			#{createName,jdbcType=VARCHAR},
+  			#{updateTime,jdbcType=TIMESTAMP},
+  			#{status,jdbcType=CHAR},
+  			#{type},
+  			#{content})
+  </insert>
+  
+  <update id="update" parameterType="com.f2b2c.eco.model.platform.FSliderWapsModel">
+  	update b_slider_waps
+  	<set>
+  		<if test="id != null">
+  			id = #{id,jdbcType=INTEGER},
+  		</if>
+  		<if test="createTime != null">
+  			create_time = #{createTime,jdbcType=TIMESTAMP},
+  		</if>
+  		<if test="wapImgUrl != null">
+  			wap_img_url = #{wapImgUrl,jdbcType=VARCHAR},
+  		</if>
+  		<if test="updateName != null">
+  			update_user = #{updateName,jdbcType=VARCHAR},
+  		</if>
+  		<if test="updateTime != null">
+  			update_time = #{updateTime,jdbcType=TIMESTAMP},
+  		</if>
+  		<if test="status != null">
+  			status = #{status,jdbcType=CHAR},
+  		</if>
+  		<if test="type != null">
+  			type = #{type,jdbcType=VARCHAR},
+  		</if>
+  		<if test="content != null">
+  			content = #{content,jdbcType=VARCHAR}
+  		</if>
+  	</set>
+  	where id =#{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delete" parameterType="java.lang.Integer">
+  	delete from b_slider_waps where id =#{id,jdbcType=INTEGER}
+  </delete>
+<!--   <select id="queryAllSliderWap" resultMap="BaseResultMap"> -->
+<!--       select id, wap_img_url from b_slider_waps where status = 1 and delete_time is null -->
+<!--   </select> -->
+  
+  <!-- APP上wap Mozzie改-->
+  <select id="queryAllSliderWap" resultMap="BaseResultMap">
+      select id, wap_img_url ,content,type from b_slider_waps order by create_time desc
+  </select>
+</mapper>

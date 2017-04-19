@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.market.BFreightTemplateDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BFreightTemplate">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="b_user_id" jdbcType="INTEGER" property="bUserId" />
+    <result column="baby_address" jdbcType="INTEGER" property="babyAddress" />
+    <result column="delivery_time" jdbcType="VARCHAR" property="deliveryTime" />
+    <result column="is_free_delivery" jdbcType="CHAR" property="isFreeDelivery" />
+    <result column="valuation_method" jdbcType="CHAR" property="valuationMethod" />
+    <result column="is_conditions_free_delivery" jdbcType="CHAR" property="isConditionsFreeDelivery" />
+    <result column="create_date" jdbcType="DATE" property="createDate" />
+    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="update_date" jdbcType="DATE" property="updateDate" />
+    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+  </resultMap>
+  
+  <!-- 运费模板Map -->
+  <resultMap id="FreightTemplateMap" type="com.f2b2c.eco.model.market.BFreightTemplate">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="b_user_id" jdbcType="INTEGER" property="bUserId" />
+    <result column="baby_address" jdbcType="INTEGER" property="babyAddress" />
+    <result column="delivery_time" jdbcType="VARCHAR" property="deliveryTime" />
+    <result column="is_free_delivery" jdbcType="CHAR" property="isFreeDelivery" />
+    <result column="valuation_method" jdbcType="CHAR" property="valuationMethod" />
+    <result column="is_conditions_free_delivery" jdbcType="CHAR" property="isConditionsFreeDelivery" />
+    <collection property="cityFreightList" resultMap="CityFreightTemplate" />
+  </resultMap>
+  
+  <!-- 城市运费模板 -->
+  <resultMap id="CityFreightTemplate" type="com.f2b2c.eco.model.market.BCityFreightModel">
+    <id column="city_freight_id" jdbcType="INTEGER" property="id" />
+    <result column="freight_template_id" jdbcType="INTEGER" property="freightTemplateId" />
+    <result column="delivery_city" jdbcType="VARCHAR" property="deliveryCity" />
+    <result column="first" jdbcType="VARCHAR" property="first" />
+    <result column="first_freight" jdbcType="VARCHAR" property="firstFreight" />
+    <result column="continue_quantity" jdbcType="VARCHAR" property="continueQuantity" />
+    <result column="continue_freight" jdbcType="VARCHAR" property="continueFreight" />
+    <result column="delivery_mode" jdbcType="VARCHAR" property="deliveryMode" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, name, b_user_id, baby_address, delivery_time, is_free_delivery, valuation_method, 
+    is_conditions_free_delivery, create_date, create_user, update_date, update_user
+  </sql>
+  
+  <!-- 根据主键查询 -->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from b_freight_template
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除运费模板 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from b_freight_template
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入运费模板 -->
+  <insert id="insert" parameterType="com.f2b2c.eco.model.market.BFreightTemplate">
+    insert into b_freight_template (id, name, b_user_id, 
+      baby_address, delivery_time, is_free_delivery, 
+      valuation_method, is_conditions_free_delivery, create_date, 
+      create_user, update_date, update_user
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{bUserId,jdbcType=INTEGER}, 
+      #{babyAddress,jdbcType=INTEGER}, #{deliveryTime,jdbcType=VARCHAR}, #{isFreeDelivery,jdbcType=CHAR}, 
+      #{valuationMethod,jdbcType=CHAR}, #{isConditionsFreeDelivery,jdbcType=CHAR}, #{createDate,jdbcType=DATE}, 
+      #{createUser,jdbcType=INTEGER}, #{updateDate,jdbcType=DATE}, #{updateUser,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.market.BFreightTemplate">
+    insert into b_freight_template
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="bUserId != null">
+        b_user_id,
+      </if>
+      <if test="babyAddress != null">
+        baby_address,
+      </if>
+      <if test="deliveryTime != null">
+        delivery_time,
+      </if>
+      <if test="isFreeDelivery != null">
+        is_free_delivery,
+      </if>
+      <if test="valuationMethod != null">
+        valuation_method,
+      </if>
+      <if test="isConditionsFreeDelivery != null">
+        is_conditions_free_delivery,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="bUserId != null">
+        #{bUserId,jdbcType=INTEGER},
+      </if>
+      <if test="babyAddress != null">
+        #{babyAddress,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryTime != null">
+        #{deliveryTime,jdbcType=VARCHAR},
+      </if>
+      <if test="isFreeDelivery != null">
+        #{isFreeDelivery,jdbcType=CHAR},
+      </if>
+      <if test="valuationMethod != null">
+        #{valuationMethod,jdbcType=CHAR},
+      </if>
+      <if test="isConditionsFreeDelivery != null">
+        #{isConditionsFreeDelivery,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的运费模板字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.BFreightTemplate">
+    update b_freight_template
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="bUserId != null">
+        b_user_id = #{bUserId,jdbcType=INTEGER},
+      </if>
+      <if test="babyAddress != null">
+        baby_address = #{babyAddress,jdbcType=INTEGER},
+      </if>
+      <if test="deliveryTime != null">
+        delivery_time = #{deliveryTime,jdbcType=VARCHAR},
+      </if>
+      <if test="isFreeDelivery != null">
+        is_free_delivery = #{isFreeDelivery,jdbcType=CHAR},
+      </if>
+      <if test="valuationMethod != null">
+        valuation_method = #{valuationMethod,jdbcType=CHAR},
+      </if>
+      <if test="isConditionsFreeDelivery != null">
+        is_conditions_free_delivery = #{isConditionsFreeDelivery,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=DATE},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=DATE},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新运费模板 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.BFreightTemplate">
+    update b_freight_template
+    set name = #{name,jdbcType=VARCHAR},
+      b_user_id = #{bUserId,jdbcType=INTEGER},
+      baby_address = #{babyAddress,jdbcType=INTEGER},
+      delivery_time = #{deliveryTime,jdbcType=VARCHAR},
+      is_free_delivery = #{isFreeDelivery,jdbcType=CHAR},
+      valuation_method = #{valuationMethod,jdbcType=CHAR},
+      is_conditions_free_delivery = #{isConditionsFreeDelivery,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=DATE},
+      create_user = #{createUser,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=DATE},
+      update_user = #{updateUser,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 根据主键查询运费模板 -->
+  <select id="selectFreightTemplateByUserId" parameterType="java.lang.Integer" resultMap="FreightTemplateMap">
+    select 
+      T1.id,
+      T1.name,
+      T1.b_user_id,
+      T1.baby_address,
+      T1.delivery_time,
+      T1.is_free_delivery,
+      T1.valuation_method,
+      T1.is_conditions_free_delivery,
+      T1.create_date,
+      T1.create_user,
+      T1.update_date,
+      T1.update_user,
+      T2.freight_template_id,
+      T2.id as city_freight_id,
+      T2.delivery_city,
+      T2.first,
+      T2.first_freight,
+      T2.continue_quantity,
+      T2.continue_freight,
+      T2.delivery_mode 
+    from b_freight_template T1 
+    inner join b_city_freight T2 ON T1.id = T2.freight_template_id 
+    where b_user_id = #{userId,jdbcType=INTEGER} 
+  </select>
+</mapper>

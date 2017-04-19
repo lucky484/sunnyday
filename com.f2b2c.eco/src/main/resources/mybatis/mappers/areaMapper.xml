@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.common.AreaDao" >
+   <resultMap id="ProvinceModelMap" type="com.f2b2c.eco.model.common.ProvinceModel" >
+    <id column="id" property="id"/>
+    <result property="code" column="code"/>
+    <result property="name" column="name"/>
+    <collection property="cityModelList" resultMap="CityModelMap"></collection>
+  </resultMap>
+  
+  <resultMap id="CityModelMap" type="com.f2b2c.eco.model.common.CityModel">
+	<id property="id" column="cityId"/>
+	<result property="code" column="city_code"/>
+	<result property="name" column="city_name"/>
+	<result property="provinceCode" column="c_province_code"/>
+	<collection property="areaModelList" resultMap="AreaModelMap"></collection>
+  </resultMap>
+  
+  <resultMap id="AreaModelMap" type="com.f2b2c.eco.model.common.AreaModel">
+	<id property="id" column="areaId"/>
+	<result property="code" column="area_code"/>
+	<result property="name" column="area_name"/>
+	<result property="cityCode" column="a_city_code"></result>
+  </resultMap>
+  
+ <select id="findAll" resultMap="ProvinceModelMap">
+  	 select pp.*,a.id as areaId, a.code as area_code, a.name as area_name, a.citycode as a_city_code from (select p.id,p.code,p.name,c.id as cityId,c.code as city_code,c.`name` as city_name,c.provincecode as c_province_code from province p left join city c on p.code=c.provincecode) pp left join area a on pp.city_code=a.citycode
+  </select>
+  
+  <select id="query" resultType="ProvinceModel">
+  	 select p.id,p.name,c.id as cityId,c.province_id ,c.`name` as city_name from province p left join city c on p.id=c.province_id where p.id=#{id}
+  </select>
+  
+  <select id="getAreaByCode" parameterType="java.lang.Integer" resultType="AreaModel">
+  	select id,code,name,citycode from
+	  	area where id = #{areaId} limit 1
+  </select>
+  
+  <select id="findArea" parameterType="string" resultType="string">
+  	SELECT CONCAT(province.`name`,'-',city.`name`,'-',area.`name`)
+	FROM area
+	LEFT JOIN city
+	ON city.`code`=area.citycode
+	LEFT JOIN province
+	ON provincecode=province.`code`
+	WHERE area.`code`=#{areaCode}
+  </select>
+  <select id="queryCityIdByProvinceId" parameterType="int" resultType="int">
+      select city.id from province province left join city city on province.code = city.provincecode where province.id = #{provinceId}
+  </select>
+  
+  <select id="queryAreaIdByCityId" resultType="int">
+      select area.id from city city left join area area on city.code = area.citycode where city.id in
+        <foreach collection="list" item="item" index="index"
+            open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+  </select>
+</mapper>

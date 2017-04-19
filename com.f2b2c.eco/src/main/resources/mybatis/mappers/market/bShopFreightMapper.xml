@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.BShopFreightDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BShopFreightModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="province_id" property="provinceId" jdbcType="INTEGER" />
+    <result column="shop_id" property="shopId" jdbcType="VARCHAR" />
+    <result column="freight" property="freight" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, province_id, shop_id, freight, create_time
+  </sql>
+  
+  <!-- 根据主键查询店铺运费表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from b_shop_freight
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除店铺运费表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from b_shop_freight
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入店铺运费表 -->
+  <insert id="insert" parameterType="com.f2b2c.eco.model.market.BShopFreightModel" >
+    insert into b_shop_freight (id, province_id, shop_id, 
+      freight, create_time)
+    values (#{id,jdbcType=INTEGER}, #{provinceId,jdbcType=INTEGER}, #{shopId,jdbcType=VARCHAR}, 
+      #{freight,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 插入可选字段的店铺运费表 -->
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.market.BShopFreightModel" >
+    insert into b_shop_freight
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+      <if test="shopId != null" >
+        shop_id,
+      </if>
+      <if test="freight != null" >
+        freight,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="provinceId != null" >
+        #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        #{shopId,jdbcType=VARCHAR},
+      </if>
+      <if test="freight != null" >
+        #{freight,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 根据主键更新可选的店铺运费表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.BShopFreightModel" >
+    update b_shop_freight
+    <set >
+      <if test="provinceId != null" >
+        province_id = #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="shopId != null" >
+        shop_id = #{shopId,jdbcType=VARCHAR},
+      </if>
+      <if test="freight != null" >
+        freight = #{freight,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新店铺运费表 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.BShopFreightModel" >
+    update b_shop_freight
+    set province_id = #{provinceId,jdbcType=INTEGER},
+      shop_id = #{shopId,jdbcType=VARCHAR},
+      freight = #{freight,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据店铺Id获取运费 -->
+  <select id="selectFreightByShopId" parameterType="java.lang.Integer" resultType="com.f2b2c.eco.model.bean.BFreightBean">
+     SELECT  
+       T1.name as provinceName,
+       T1.id as provinceId,
+       T2.id,
+       (FORMAT(T2.freight/100,2)) as freight,
+       T2.create_time as createTime  
+     FROM 
+     province T1 left join 
+     b_shop_freight T2 ON T1.id = T2.province_id AND T2.shop_id = #{shopId} 
+  </select>
+  
+  <!-- 更新运费设置 -->
+  <update id="updateBatchFreight" parameterType="java.util.List" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update b_shop_freight
+        <set>
+          <if test="item.provinceId != null" >
+            province_id = #{item.provinceId,jdbcType=INTEGER},
+          </if>
+          <if test="item.shopId != null" >
+            shop_id = #{item.shopId,jdbcType=VARCHAR},
+          </if>
+          <if test="item.freight != null" >
+            freight = #{item.freight},
+          </if>
+          <if test="item.createTime != null" >
+            create_time = #{item.createTime,jdbcType=TIMESTAMP},
+          </if>
+        </set>
+        where id = #{item.id,jdbcType=INTEGER} 
+    </foreach> 
+  </update>
+  
+  <!-- 批量插入店铺运费表 -->
+  <insert id="insertBatchFreight" useGeneratedKeys="true" parameterType="java.util.List" >
+    <selectKey resultType="long" keyProperty="id" order="AFTER">  
+        SELECT  
+        LAST_INSERT_ID()  
+    </selectKey>  
+      insert into b_shop_freight ( province_id, shop_id, freight, create_time) 
+      values
+     <foreach collection="list" item="item" index="index" separator="," >  
+     (#{item.provinceId,jdbcType=INTEGER}, #{item.shopId,jdbcType=VARCHAR}, 
+      #{item.freight}, #{item.createTime,jdbcType=TIMESTAMP}) 
+      </foreach>
+  </insert>
+  
+  <!-- 根据店铺id和省id获取运费 -->
+  <select id="getFreightByShopIdAndPId" resultType="java.lang.Integer">
+     select 
+       freight 
+     from b_shop_freight 
+     where province_id = #{params.provinceId} 
+     and shop_id = #{params.shopId} 
+     limit 1 
+  </select>
+</mapper>

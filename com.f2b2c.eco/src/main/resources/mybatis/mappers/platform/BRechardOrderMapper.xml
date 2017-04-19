@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.platform.BRechardOrderDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.BRechardOrderModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="pay_type" property="payType" jdbcType="VARCHAR" />
+    <result column="total_fee" property="totalFee" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_no, pay_type, total_fee, status, create_time, user_id
+  </sql>
+  
+  <!-- 根据主键查询充值记录表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from b_rechard_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除充值记录表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from b_rechard_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入表 -->
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.BRechardOrderModel" >
+    insert into b_rechard_order (id, order_no, pay_type, 
+      total_fee, status, create_time, 
+      user_id)
+    values (#{id,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR}, #{payType,jdbcType=VARCHAR}, 
+      #{totalFee,jdbcType=INTEGER}, #{status,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{userId,jdbcType=INTEGER})
+  </insert>
+  
+  <!-- 插入可选字段的充值记录表 -->
+  <insert id="insertSelective" useGeneratedKeys="true" parameterType="com.f2b2c.eco.model.platform.BRechardOrderModel" >
+    <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+        SELECT LAST_INSERT_ID() AS id
+    </selectKey> 
+    insert into b_rechard_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="payType != null" >
+        pay_type,
+      </if>
+      <if test="totalFee != null" >
+        total_fee,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null" >
+        #{totalFee,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选字段的表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.platform.BRechardOrderModel" >
+    update b_rechard_order
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null" >
+        pay_type = #{payType,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null" >
+        total_fee = #{totalFee,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键更新表 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.platform.BRechardOrderModel" >
+    update b_rechard_order
+    set order_no = #{orderNo,jdbcType=VARCHAR},
+      pay_type = #{payType,jdbcType=VARCHAR},
+      total_fee = #{totalFee,jdbcType=INTEGER},
+      status = #{status,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据商户订单号查询充值订单表信息 -->
+  <select id="selectByOutTradeNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from b_rechard_order
+    where order_no = #{outTradeNo} 
+    limit 1 
+  </select>
+  
+  <!-- 根据充值订单号更新充值记录表 -->
+  <update id="updateByOrderNo" parameterType="com.f2b2c.eco.model.platform.BRechardOrderModel">
+    update b_rechard_order
+    <set>
+       status = #{status,jdbcType=CHAR} 
+    </set>
+    where order_no = #{orderNo} 
+  </update>
+  
+  <!-- 根据用户id获取充值记录 -->
+  <select id="selectRechardRecordByUserId" resultType="com.f2b2c.eco.model.platform.BRechardOrderModel">
+    select 
+      id, 
+      order_no, 
+      pay_type as payType, 
+      total_fee as totalFee, 
+      status, 
+      date_format(create_time,'%Y-%m-%d %H:%i:%s') as strCreateDate,
+      user_id as userId 
+    from b_rechard_order 
+    where user_id = #{params.userId}  
+    order by create_time desc 
+    limit #{start},#{length} 
+  </select>
+</mapper>

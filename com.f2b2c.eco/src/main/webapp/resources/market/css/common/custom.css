@@ -1,0 +1,38 @@
+@CHARSET "UTF-8";
+table{border:1px solid #d4d2d2;}th{border:1px solid #d4d2d2 !important;}tr{border:1px solid #d4d2d2!important;}td{border:1px solid #d4d2d2!important;}
+thead th td{word-break: keep-all;white-space:nowrap;}
+body{-webkit-font-smoothing: antialiased;}
+::-webkit-scrollbar {width: 5px;height: 5px;}
+.text-primary{color:#177bbb}
+.text-primary-lt{color:#1a8ad2}
+.text-primary-lter{color:#2198e4}
+.text-primary-dk{color:#146ca4}
+.text-primary-dker{color:#115d8e}
+.text-info{color:#1ccacc}
+.text-info-lt{color:#21dee1}
+.text-info-lter{color:#37e2e4}
+.text-info-dk{color:#19b4b6}
+.text-info-dker{color:#169e9f}
+.text-success{color:#1aae88}
+.text-success-lt{color:#1dc499}
+.text-success-lter{color:#21daab}
+.text-success-dk{color:#179877}
+.text-success-dker{color:#138265}
+.text-warning{color:#fcc633}
+.text-warning-lt{color:#fccd4c}
+.text-warning-lter{color:#fdd465}
+.text-warning-dk{color:#fcbf1a}
+.text-warning-dker{color:#f8b704}
+.text-danger{color:#e33244}
+.text-danger-lt{color:#e64858}
+.text-danger-lter{color:#e95f6d}
+.text-danger-dk{color:#dd1e32}
+.text-danger-dker{color:#c71b2d}
+.text-dark{color:#222733}
+.text-dark-lt{color:#2c3342}
+.text-dark-lter{color:#363e52}
+.text-dark-dk{color:#181b24}
+.text-dark-dker{color:#0e1014}
+.text-black{color:#000;color:rgba(0,0,0,.8)}
+.text-white{color:#fff;color:rgba(255,255,255,.8)}
+.text-muted{color:#a1a8ac}

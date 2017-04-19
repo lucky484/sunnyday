@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FAuthCodeDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FAuthCodeModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="is_used" jdbcType="INTEGER" property="isUsed" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <association property="createdUser" javaType="com.f2b2c.eco.model.platform.FUserModel">
+			<id column="created_user" jdbcType="INTEGER" property="id" />
+			<result column="preal_name" jdbcType="VARCHAR"
+				property="realName" />
+	</association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, created_user, created_time, is_used, code
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from f_auth_code
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="findAllByFUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from f_auth_code
+    where created_user = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from f_auth_code
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FAuthCodeModel">
+    insert into f_auth_code (id, created_user, created_time, 
+      is_used, code)
+    values (#{id,jdbcType=INTEGER}, #{createdUser.id,jdbcType=INTEGER}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{isUsed,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.platform.FAuthCodeModel">
+    insert into f_auth_code
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="createdUser != null">
+        created_user,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="isUsed != null">
+        is_used,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="createdUser != null">
+        #{createdUser.id,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isUsed != null">
+        #{isUsed,jdbcType=CHAR},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.platform.FAuthCodeModel">
+    update f_auth_code
+    <set>
+      <if test="createdUser != null">
+        created_user = #{createdUser.id,jdbcType=INTEGER},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isUsed != null">
+        is_used = #{isUsed,jdbcType=INTEGER},
+      </if>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.platform.FAuthCodeModel">
+    update f_auth_code
+    set created_user = #{createdUser.id,jdbcType=INTEGER},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      is_used = #{isUsed,jdbcType=INTEGER},
+      code = #{code,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByCode" parameterType="string">
+    update f_auth_code
+    set 
+      is_used = 1 
+    where code = #{code,jdbcType=VARCHAR}
+  </update> 
+  <select id="findWithPagination" resultMap="BaseResultMap">
+	select 
+    auth.id, auth.created_user, auth.created_time, auth.is_used, auth.code,user.real_name as preal_name
+    from f_auth_code auth left join f_user user on auth.created_user = user.id
+    <where>
+    	<if test="userList != null and userList.size() > 0">
+      		auth.created_user in 
+      		<foreach item="item" index="index" collection="userList" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+    	</if>
+    </where>
+    order by auth.is_used
+	limit ${pageable.pageNumber},${pageable.pageSize}
+	</select>
+	
+	<select id="queryCountByCondition" resultType="int">
+		select count(0) from f_auth_code     
+		<where>
+	    	<if test="userList != null and userList.size() > 0">
+	      		created_user in 
+	      		<foreach item="item" index="index" collection="userList" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+	    	</if>
+	    </where>
+	</select>
+	
+	<!-- 根据用户id和验证码去查询当前验证码是否存在或者是否有效 -->
+	<select id="getAuthCodeWithUserId" resultMap="BaseResultMap"> 
+		select 
+	    <include refid="Base_Column_List" />
+	    from f_auth_code
+	    where code = #{authCode} and created_user = #{userId} limit 1
+	</select>
+	<!-- 验证授权码 -->
+	<select id="queryCodeIsUser" resultMap="BaseResultMap" parameterType="String">
+	    select <include refid="Base_Column_List" /> from f_auth_code where code = #{code} and is_used = 0
+	</select>
+</mapper>

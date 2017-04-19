@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FLogisticsDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FLogisticsModel">
+  
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="user_id" property="userId.id" jdbcType="INTEGER"/>
+    <result column="create_time" property="createdTime" />
+    <result column="updateuser_id" property="updatedId.id" jdbcType="INTEGER"/>
+    <result column="update_time" property="updatedTime" />
+    
+  </resultMap>
+  
+  <select id="findWithPagination" parameterType="java.lang.String" resultMap="BaseResultMap" >
+  	select * from f_logistics f limit ${pageable.pageNumber},${pageable.pageSize}
+  </select>
+  <select id="queryLogisticsCount" resultType="int">
+  	select count(0) from f_logistics f
+  </select>
+  <select id="queryLogisticsById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	select f.id, f.name from f_logistics f where f.id=#{id}
+  </select>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FLogisticsModel">
+  	insert into f_logistics (id,name) 
+  	values(#{id,jdbcType=INTEGER},#{name,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.f2b2c.eco.model.platform.FLogisticsModel">
+  	update f_logistics 
+  	<set>
+  		<if test="id != null">
+  			id = #{id,jdbcType=INTEGER},
+  		</if>
+  		<if test="name != null">
+  			name = #{name,jdbcType=VARCHAR},
+  		</if>
+  	</set>
+  	where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delete" parameterType="java.lang.Integer">
+  	delete from f_logistics where id =#{id,jdbcType=INTEGER}
+  </delete>
+</mapper>

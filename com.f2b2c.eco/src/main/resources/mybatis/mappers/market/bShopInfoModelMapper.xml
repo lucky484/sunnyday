@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.BShopInfoDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BShopInfoModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="identity_id" property="identityId" jdbcType="VARCHAR" />
+    <result column="location_x" property="locationX" jdbcType="VARCHAR" />
+    <result column="location_y" property="locationY" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="auth_code" property="authCode" jdbcType="VARCHAR" />
+    <result column="deleted_time" property="deletedTime" jdbcType="TIMESTAMP" />
+    <result column="details" property="details" jdbcType="VARCHAR" />
+    <result column="is_enable" property="isEnable" jdbcType="VARCHAR" />
+    <result column="province_code" property="provinceCode" jdbcType="VARCHAR" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="city_code" property="cityCode" jdbcType="VARCHAR" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <!-- 关联的用户对象 -->
+    <association property="user" javaType="BUserModel">
+       <id property="id" column="b_user_id"/>
+       <result property="realName" column="b_user_name"/>
+       <result property="nickame" column="nick_name"/>
+       <result property="phone" column="phone"/>
+    </association>
+    <association property="area" javaType="AreaModel">
+    	<id property="id" column="area_id"/>
+       <result property="code" column="code"/>
+    </association>
+    
+    <!-- 关联的专属用户对象 -->
+    <association property="createdUser" javaType="FUserModel">
+       <id property="id" column="created_user"/>
+       <result property="realName" column="f_user_name"/>
+    </association>
+    
+     <!-- 关联的专属用户对象 -->
+    <association property="updatedUser" javaType="FUserModel">
+       <id property="id" column="updated_user"/>
+       <result property="realName" column="f_user_name"/>
+    </association>
+    
+  </resultMap>
+
+	<!-- 查询店铺的数量 -->
+   <select id="countWithMap" resultType="Integer">
+    	select
+			count(0)
+		from
+			b_shop_info shop
+		left join f_user user on shop.created_user = user .id
+		left join b_user buser on shop.b_user_id = buser.id
+		where
+		user.is_active = 0 and user.deleted_time is null and shop.deleted_time is null
+		and shop.shop_name like concat(
+			'%',
+		#{name},'%')
+		<if test="userList != null and userList.size() > 0">
+      		and shop.created_user in 
+      		<foreach item="item" index="index" collection="userList" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+    	</if>
+		 order by shop.created_time desc
+    </select>
+    
+    <!-- 分页查询店铺 -->
+    <select id="findWithPagination" resultMap="BaseResultMap">
+    	select
+			shop.id,
+			shop.shop_name,
+			shop.address,
+			shop.auth_code,
+			shop.created_time,
+			shop.is_enable,
+			buser.id as b_user_id,
+			buser.real_name as b_user_name,
+			user .real_name as f_user_name
+		from
+			b_shop_info shop
+		left join f_user user on shop.created_user = user .id
+		left join b_user buser on shop.b_user_id = buser.id
+		where
+		user.is_active = 0 and user.deleted_time is null and shop.deleted_time is null
+		and shop.shop_name like concat(
+			'%',
+		#{name},'%') 
+		<if test="userList != null and userList.size() > 0">
+     		and shop.created_user in 
+     		<foreach item="item" index="index" collection="userList" open="("
+			separator="," close=")">
+			#{item}
+			</foreach>
+    	</if>
+		order by shop.created_time desc limit ${pageable.pageNumber}, ${pageable.pageSize}
+    </select>
+    
+    <!-- 添加店铺 -->
+    <insert id="insert" parameterType="BShopInfoModel">
+    	insert into b_shop_info(b_user_id,shop_name,location_x,location_y,address,created_time,created_user,auth_code,area_code,is_enable)
+    		values(#{user.id},#{shopName},#{locationX},#{locationY},#{address},NOW(),#{createdUser.id},#{authCode},#{areaId},#{isEnable})
+    </insert>
+    
+    <!-- 修改店铺 -->
+    <update id="update" parameterType="BShopInfoModel">
+    	update b_shop_info 
+    	<set>
+    		<if test="user.id != null">
+    			user_id = #{user.id},
+    		</if>
+    		<if test="address != null and address != ''">
+    			address = #{address},
+    		</if>
+    		<if test="authCode != null and authCode != ''">
+    			auth_code = #{authCode},
+    		</if>
+    		<if test="identityId != null">
+    			identity_id = #{identityId},
+    		</if>
+    		<if test="locationX != null">
+    			location_x = #{locationX},
+    		</if>
+    		<if test="locationY != null">
+    			location_y = #{locationY},
+    		</if>
+    		<if test="shopName != null and shopName !=''">
+    			shop_name = #{shopName},
+    		</if>
+    		<if test="details != null and details !=''">
+    			details = #{details},
+    		</if>
+    		<if test="userName != null and userName !=''">
+    			user_name = #{userName},
+    		</if>
+    		<if test="updatedUser.id != null">
+    			updated_user = #{updatedUser.id},
+    		</if>
+    		updated_time = NOW()
+    	</set>
+    	where id = #{id}
+    </update>
+    
+    <!-- 删除店铺，假删除 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+    	update b_shop_info set deleted_time = NOW() where id = #{id}
+    </delete>
+  
+  <!--  根据主键返回商店信息 -->
+    <select id="queryShopInfo" resultType="BShopInfoToCModel">
+    	SELECT
+			shop.id,
+			shop.shop_name as shopName,
+			shop.address,
+			user.phone,
+			location_x as locationX,
+			location_y as locationY
+		FROM
+			b_shop_info shop LEFT JOIN
+    	  b_user user on shop.b_user_id = user.id
+		where shop.id = #{0}
+    </select>
+    
+  	<!-- 根据id查询店铺的基本信息 -->
+  	<select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  		select id,user_id,shop_name,user_name,identity_id,location_x,location_y,address,details,created_time,auth_code,created_user,
+  			updated_time,updated_user from b_shop_info where id = #{id} and deleted_time is null limit 1
+  	</select>
+  
+    <!--查询所有店铺 -->
+  	<select id="queryAllShop" resultType="BShopInfoToCModel">
+  		SELECT
+			shop.id,
+			shop.shop_name as shopName,
+			shop.address,
+			user.phone,
+			shop.location_x as locationX,
+			shop.location_y as locationY
+		FROM
+			b_shop_info shop LEFT JOIN
+     	    b_user user on shop.b_user_id = user.id
+     	    where shop.is_enable = 1
+  	</select>
+  <!--查询所有店铺 -->
+  	<select id="findShopInfoByUserId" resultMap="BaseResultMap">
+  		SELECT
+			shop.id,
+			shop.shop_name,
+			area.id as area_id,
+			area_code,
+			area.`code`
+		FROM
+			b_shop_info shop LEFT JOIN
+     	 b_user user on shop.b_user_id = user.id
+		LEFT JOIN area
+		ON area_code = area.`code`
+     	  where shop.b_user_id = #{0}
+  	</select> 
+  	
+  <!-- 获取商户信息以及位置 -->
+  <select id="selectBShopInfoByBUserId" parameterType="java.lang.Integer" resultType="FShopToShopCartModel">
+     select 
+       T1.id,
+       T1.shop_name as shopName,
+       T1.address,
+       T2.phone,
+       T2.real_name as realName,
+       T2.email,
+       T1.location_x as locationX,
+       T1.location_y as locationY,
+       T3.id as areaId,
+       T3.name as areaName,
+       T4.id as cityId,
+       T4.name as cityName,
+       T5.id as provinceId,
+       T5.name as provinceName 
+     from b_shop_info T1 
+     left join b_user T2 ON T1.b_user_id = T2.id 
+     left join area T3 ON T1.area_code = T3.code 
+     left join city T4 ON T3.citycode = T4.code 
+     left join province T5 ON T4.provincecode = T5.code  
+     where T1.b_user_id = #{userId} 
+     limit 1 
+  </select>
+  
+  <!-- 启用禁用门店 -->
+  <update id="enable" parameterType="java.lang.String">
+     update 
+       b_shop_info 
+     set is_enable = #{1} 
+     where id = #{0}  
+  </update>
+  <select id="selectEnableByUserId" parameterType="java.lang.Integer" resultType="int">
+ 	 select is_enable from b_shop_info where b_user_id = #{userId}
+  </select>
+  
+    <!-- add start by jane.hui -->
+  <!-- 获取店铺list -->
+  <select id="selectBShopInfoList" parameterType="java.lang.Integer" resultType="BShopInfoBean">
+     select 
+       T1.id,
+       T1.shop_name as shopName,
+       T1.location_x as locationX,
+       T1.location_y as locationY,
+       T1.auth_code as authCode,
+       T1.remark,
+       T1.address,
+       T1.area_code as areaCode,
+       T3.code as cityCode,
+       T4.code as provinceCode,
+       T2.name as areaName,
+       T3.name as cityName,
+       T4.name as provinceName,
+       T5.real_name as fUserName,
+       T6.real_name as bUserName,
+       T6.phone  
+     from b_shop_info T1 
+     left join area T2 ON T1.area_code = T2.code 
+     left join city T3 ON T2.citycode = T3.code 
+     left join province T4 ON T3.provincecode = T4.code 
+     left join f_user T5 ON T1.created_user = T5.id 
+     left join b_user T6 ON T1.b_user_id = T6.id 
+     where T1.deleted_time is null 
+     and T1.id = #{id} 
+     limit 1 
+  </select>
+  
+  <!-- 获取省 -->
+  <select id="selectProvinceList" resultType="Province">
+     select 
+       T1.id,
+       T1.code,
+       T1.name 
+     from province T1 
+  </select>
+  
+  <!-- 获取市-->
+  <select id="selectCityList" resultType="City">
+     select 
+       T1.id,
+       T1.code,
+       T1.name 
+     from city T1 
+     where T1.provincecode = #{provincecode} 
+  </select>
+  
+  <!-- 获取区域-->
+  <select id="selectAreaList" resultType="Area">
+     select 
+       T1.id,
+       T1.code,
+       T1.name 
+     from area T1 
+     where T1.citycode = #{citycode} 
+  </select>
+  
+  <!-- 修改店铺 -->
+  <update id="modifyShopById" parameterType="BShopInfoBean">
+      update b_shop_info 
+      <set>
+          <if test="address != null and address != ''">
+              address = #{address},
+          </if>
+          <if test="locationX != null">
+              location_x = #{locationX},
+          </if>
+          <if test="locationY != null">
+              location_y = #{locationY},
+          </if>
+          <if test="shopName != null and shopName !=''">
+              shop_name = #{shopName},
+          </if>
+          <if test="remark != null and remark !=''">
+              remark = #{remark},
+          </if>
+          <if test="areaCode != null and areaCode !=''">
+              area_code = #{areaCode},
+          </if>
+          updated_time = now() 
+      </set>
+      where id = #{id}
+  </update>
+  
+  <!-- 根据店铺id获取用户id-->
+  <select id="selectBUserIdBySId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+     select 
+       T1.b_user_id 
+     from b_shop_info T1 
+     where T1.id = #{id}  
+  </select>
+ <!-- add end by jane.hui -->
+ <select id="queryBUserIdByList" resultType="java.lang.Integer">
+ 	select b_user_id
+ 		from b_shop_info where created_user in 
+ 		<foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+		            #{item}
+   	     </foreach>
+ </select>
+ 
+ <select id="queryFavoriteBgoodsCount" resultType="int">
+    	SELECT
+				count(0)
+			FROM
+				c_favorite_shop favorite
+			LEFT JOIN b_shop_info shop on favorite.shop_id = shop.id
+			WHERE 
+				favorite.user_id = #{0}
+			ORDER BY
+				favorite.id DESC
+    </select>
+    
+     <select id="queryFavoriteShop" resultType="BShopInfoBean">
+    	 SELECT
+			shop.id,
+			shop.shop_name as shopName,
+			shop.address,
+			user.phone,
+			case 
+			WHEN shop.is_enable != 1 THEN 0
+			else 1 end  AS 	
+			status
+		FROM
+			c_favorite_shop favorite
+		LEFT JOIN b_shop_info shop on favorite.shop_id = shop.id
+		LEFT JOIN
+    	  b_user user on shop.b_user_id = user.id
+		WHERE  favorite.user_id = #{0}
+		ORDER BY
+			favorite.id DESC LIMIT #{1},#{2}
+    </select>
+    
+    <select id="isFavorite" resultType="int">
+		SELECT count(0) FROM c_favorite_shop where user_id = #{0} and 
+		shop_id = #{1}
+	</select>
+	
+     <select id="queryShopNameByUserId" parameterType="int" resultMap="BaseResultMap">
+        select
+				shop.shop_name,
+				buser.phone,
+				buser.nick_name,
+				buser.real_name as b_user_name,
+				province.code as province_code,
+				province.name as province_name,
+				city.name as city_name,
+				city.code as city_code
+			from
+				b_shop_info shop
+				left join area area on shop.area_code = area.code
+				left join city city on area.citycode = city.code
+				left join province province on city.provincecode = province.code,
+				b_user buser
+			where shop.b_user_id = buser.id
+			      and shop.b_user_id = #{userId}
+			
+    </select>
+		
+		
+</mapper>

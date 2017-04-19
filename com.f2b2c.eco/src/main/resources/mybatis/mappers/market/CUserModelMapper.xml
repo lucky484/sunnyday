@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CUserDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.CUserModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="account_name" property="accountName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="pay_password" property="payPassword" jdbcType="VARCHAR" />
+    <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="CHAR" />
+    <result column="register_time" property="registerTime" jdbcType="TIMESTAMP" />
+    <result column="updated_user" property="updatedUser" jdbcType="INTEGER" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="deleted_time" property="deletedTime" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+    <result column="recommend_type" property="recommendType" jdbcType="INTEGER" />
+    <result column="recommend_user" property="recommendUser" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.f2b2c.eco.model.market.CUserModel" extends="BaseResultMap" >
+    <result column="recommend_url" property="recommendUrl" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <resultMap id="personInfoMap" type="CUserModel">
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+      <result column="phone" property="phone"/>
+      <result column="account_balance" property="accountBalance" jdbcType="INTEGER" />
+      <result column="wait_pay" property="waitPay" jdbcType="INTEGER" />
+      <result column="wait_send" property="waitSend" jdbcType="INTEGER" />
+      <result column="wait_receive" property="waitReceive" jdbcType="INTEGER" />
+      <result column="wait_evaluate" property="waitEvaluate" jdbcType="INTEGER" />
+      <result column="return_status_count" property="returnStatusCount" jdbcType="INTEGER" />
+      <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, account_name, password, nick_name, phone, email, sex, register_time, updated_user, 
+    updated_time, deleted_time, remark, recommend_type, recommend_user, pic_url, pay_password 
+  </sql>
+  <sql id="Blob_Column_List" >
+    recommend_url
+  </sql>
+  <select id="select" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from c_user 
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="login" resultMap="ResultMapWithBLOBs" parameterType="String" >
+    select 
+    <include refid="Base_Column_List" />
+    from c_user
+    where phone=#{phone}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from c_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.market.CUserModel" >
+    insert into c_user (account_name, password, 
+      nick_name, phone, email,
+      sex, register_time, updated_user, 
+      updated_time, deleted_time, remark, 
+      recommend_type, recommend_url,pic_url)
+    values (#{accountName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{nickName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=CHAR}, #{registerTime,jdbcType=TIMESTAMP}, #{updatedUser,jdbcType=INTEGER}, 
+      #{updatedTime,jdbcType=TIMESTAMP}, #{deletedTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
+      #{recommendType,jdbcType=INTEGER}, #{recommendUrl,jdbcType=LONGVARCHAR}, #{picUrl,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.market.CUserModel" keyProperty="id" useGeneratedKeys="true">
+    insert into c_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accountName != null" >
+        account_name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="nickName != null" >
+        nick_name,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="registerTime != null" >
+        register_time,
+      </if>
+      <if test="updatedUser != null" >
+        updated_user,
+      </if>
+      <if test="updatedTime != null" >
+        updated_time,
+      </if>
+      <if test="deletedTime != null" >
+        deleted_time,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+       <if test="recommendUser != null" >
+        recommend_user,
+      </if>
+      <if test="recommendType != null" >
+        recommend_type,
+      </if>
+      <if test="recommendUrl != null" >
+        recommend_url,
+      </if>
+      <if test="picUrl != null" >
+        pic_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accountName != null" >
+        #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="registerTime != null" >
+        #{registerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedUser != null" >
+        #{updatedUser,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedTime != null" >
+        #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="recommendUser != null" >
+         #{recommendUser,jdbcType=INTEGER},
+      </if>
+      <if test="recommendType != null" >
+        #{recommendType,jdbcType=INTEGER},
+      </if>
+      <if test="recommendUrl != null" >
+        #{recommendUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picUrl != null" >
+        #{picUrl,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.CUserModel" >
+    update c_user
+    <set >
+      <if test="accountName != null" >
+        account_name = #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="payPassword != null" >
+        pay_password = #{payPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="registerTime != null" >
+        register_time = #{registerTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedUser != null" >
+        updated_user = #{updatedUser,jdbcType=INTEGER},
+      </if>
+      <if test="updatedTime != null" >
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedTime != null" >
+        deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="recommendType != null" >
+        recommend_type = #{recommendType,jdbcType=INTEGER},
+      </if>
+      <if test="recommendUrl != null" >
+        recommend_url = #{recommendUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picUrl != null" >
+        pic_url = #{picUrl,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.f2b2c.eco.model.market.CUserModel" >
+    update c_user
+    set account_name = #{accountName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      register_time = #{registerTime,jdbcType=TIMESTAMP},
+      updated_user = #{updatedUser,jdbcType=INTEGER},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      recommend_type = #{recommendType,jdbcType=INTEGER},
+      recommend_url = #{recommendUrl,jdbcType=LONGVARCHAR},
+      pic_url = #{picUrl,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.CUserModel" >
+    update c_user
+    set account_name = #{accountName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      register_time = #{registerTime,jdbcType=TIMESTAMP},
+      updated_user = #{updatedUser,jdbcType=INTEGER},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      pic_url = #{picUrl,jdbcType=LONGVARCHAR},
+      recommend_type = #{recommendType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updatePassword" parameterType="CUserModel">
+      update c_user set password = #{password},updated_time = now() where phone = #{phone}
+  </update>
+  
+  <!-- 个人中心初始化的一些信息 -->
+   <select id="queryInfoById" parameterType="int" resultMap="personInfoMap">
+       select
+            user.id,
+            user.nick_name,
+            user.pic_url,
+            user.phone,
+            balance.account_balance,
+            (select count(1) from b_sales_order sales_order where user.id = sales_order.user_id and sales_order. status = 2 and sales_order.deleted_time is null) as wait_pay,
+            (select count(1) from b_sales_order sales_order where user.id = sales_order.user_id and sales_order. status = 3 and sales_order.deleted_time is null) as wait_send,
+            (select count(1) from b_sales_order sales_order where user.id = sales_order.user_id and sales_order. status = 4 and sales_order.deleted_time is null) as wait_receive,
+            (select count(1)
+			from
+			  b_sales_order sales_order,
+			  b_sales_order_details order_details
+			where
+			    sales_order.id = order_details.order_id
+			and sales_order.status = 1
+			and (sales_order.receive_order<![CDATA[ != ]]> 2 or receive_order is null)
+			and sales_order.user_id = #{userId}
+			and sales_order.deleted_time is null
+			and order_details.is_comment is null
+			and order_details.deleted_time is null) as wait_evaluate,
+            (select count(1) from b_sales_order sales_order where user.id = sales_order.user_id and sales_order.return_status in(1,2) and sales_order.status = 4 and sales_order.deleted_time is null) as return_status_count
+        from
+            c_user user left join c_user_balance balance on user.id = balance.c_user_id
+        where 
+            user.id = #{userId}
+   </select>
+   
+   <select id="getCUserByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+           select 
+        <include refid="Base_Column_List" />
+        from c_user
+        where phone = #{phone}
+   </select>
+   
+   <!-- 主页统计 -->
+   <select id="findAllCUserCount" resultType="java.lang.Integer">
+       select count(*) from c_user 
+   </select>
+   
+   <!-- 根据主键id获取我的粉丝 -->
+   <select id="selectMyFanById"  resultType="com.f2b2c.eco.model.bean.CUserBean"> 
+      select 
+        id, 
+        account_name as accountName, 
+        password, 
+        nick_name as nickName, 
+        phone, 
+        date_format(register_time,'%Y-%m-%d %H:%i:%s') as registerTime, 
+        pic_url as picUrl,
+        recommend_type as recommendType 
+      from c_user 
+      where recommend_user = #{params.userId} 
+      and recommend_type = #{params.type} 
+      limit #{start},#{length}  
+    </select> 
+    
+   <!-- 根据主键id获取我的粉丝 -->
+   <select id="selectMyFanByIdCount" parameterType="java.lang.Integer" resultType="java.lang.Integer"> 
+      select 
+        count(id) 
+      from c_user 
+      where recommend_user = #{0} 
+      and recommend_type = #{1} 
+    </select> 
+    
+    
+    
+     <select id="findAllShopFanByIdCount" parameterType="java.util.Map" resultType="java.lang.Integer"> 
+      select 
+        count(id) 
+      from c_user 
+      where recommend_user = #{userId} 
+      and recommend_type = 1
+    </select> 
+    
+    <select id="findAllShopFanById" parameterType="java.util.Map" resultType="com.f2b2c.eco.model.bean.CUserBean"> 
+		     select
+					pic_url as picUrl,
+					nick_name as nickName,
+					register_time as registerTime
+				from
+					c_user
+				where
+					recommend_type = 1
+				and recommend_user = #{userId}
+				 limit #{start},#{length}  
+    </select> 
+</mapper>

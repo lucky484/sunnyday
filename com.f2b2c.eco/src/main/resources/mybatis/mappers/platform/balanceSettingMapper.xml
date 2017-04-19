@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.BalanceSettingDao">
+  <resultMap id="BaseResultMap" type="BalanceSettingModel">
+    <id column="id" property="id" />
+    <result column="province" property="province" />
+    <result column="city" property="city" />
+    <result column="area" property="area" />
+    <result column="not_fruit" property="notFruit" />
+    <result column="platform" property="platform" />
+    <result column="other" property="other" />
+  </resultMap>
+  
+  <select id="find" parameterType="int" resultMap="BaseResultMap">
+  	SELECT *
+  	FROM balance_setting
+  	WHERE id=#{id}
+  	LIMIT 1
+  </select>
+  
+  <select id="findFirst" resultMap="BaseResultMap">
+  	SELECT *
+  	FROM balance_setting
+  	LIMIT 1
+  </select>
+  
+  <insert id="insert" parameterType="BalanceSettingModel">
+  	INSERT INTO balance_setting(province,city,area,not_fruit,platform,other)
+  	VALUES(#{province},#{city},#{area},#{notFruit},#{platform},#{other})
+  </insert>
+  
+  <update id="update" parameterType="BalanceSettingModel">
+  	UPDATE balance_setting
+  	<set>
+		<if test="province != null">
+			province = #{province},
+		</if>
+		<if test="city != null">
+			city = #{city},
+		</if>
+		<if test="area != null">
+			area = #{area},
+		</if>
+		<if test="notFruit != null">
+			not_fruit = #{notFruit},
+		</if>
+		<if test="platform != null">
+			platform = #{platform},
+		</if>
+		<if test="province != null">
+			other = #{other},
+		</if>
+	</set>
+	WHERE  id=#{id}
+  </update>
+  
+</mapper>

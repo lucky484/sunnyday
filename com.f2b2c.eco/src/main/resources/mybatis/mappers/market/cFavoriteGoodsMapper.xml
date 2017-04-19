@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CFavoriteGoodsDao" >
+<resultMap id="BaseResultMap" type="CFavoriteGoods" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+  	<result column="goods_no" property="goodsNo" />
+  	<result column="create_time" property="createTime" />
+    <result column="user_id" property="userId" />
+</resultMap>
+
+<insert id="insertFavoriteGoods" parameterType="java.util.Map" >
+	INSERT INTO C_FAVORITE_GOODS (USER_ID,GOODS_NO,CREATE_TIME)VALUES(#{userId},#{goodsNo},NOW())
+</insert>
+<delete id="deleteFavoriteGoods" parameterType="java.util.Map" >
+		DELETE FROM C_FAVORITE_GOODS WHERE USER_ID=#{userId} and GOODS_NO = #{goodsNo}
+</delete>
+
+
+</mapper>

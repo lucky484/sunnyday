@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FDiffenceDao">
+    <insert id="insert" parameterType="FDiffenceModel"> 
+        insert into f_order_diffence
+        (id,
+         order_no,
+         diffence_type,
+         diffence_cause,
+         diffence_amount,
+         status,
+         remark,
+         created_time,
+         updated_time
+         )
+         values(
+         #{id},
+         #{orderNo},
+         #{diffenceType},
+         #{diffenceCause},
+         #{diffenceAmount},
+         #{status},
+         #{remark},
+         #{createdTime},
+         #{updatedTime}
+         )
+    </insert>
+        
+    <!-- 根据差价id查询数据 -->
+    <select id="selectOrderDiffenceById" parameterType="java.lang.String" resultType="FDifferentOrderBean">
+       SELECT 
+         T1.id,
+         T1.order_no as orderNo,
+         T1.diffence_type as diffenceType,
+         T1.diffence_cause as diffenceCause,
+         T1.diffence_amount as diffenceAmount,
+         T1.remark,
+         T1.status,
+         T2.id as orderId,
+         T2.total as orderPrice,
+         T2.real_pay as realPay,
+         T3.real_name as realName 
+       FROM f_order_diffence T1 
+       LEFT JOIN f_sales_order T2 ON T1.order_no= T2.order_id   
+       LEFT JOIN b_user T3 ON T2.user_id = T3.id 
+       WHERE T1.id = #{id} 
+    </select>
+    
+    <!-- 更新订单状态 -->
+    <update id="updateDiffOrderStatus" parameterType="FDifferentOrderBean">
+       update 
+         f_order_diffence 
+       set 
+         status = #{status} 
+       where id = #{id} 
+    </update>
+</mapper>

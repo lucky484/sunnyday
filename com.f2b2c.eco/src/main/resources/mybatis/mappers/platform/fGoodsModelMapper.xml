@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FGoodsDao">
+	<resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FGoodsModel">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="logo_url" jdbcType="VARCHAR" property="logoUrl" />
+		<result column="price" jdbcType="INTEGER" property="price" />
+		<result column="remain" jdbcType="INTEGER" property="remain" />
+		<result column="allocate" jdbcType="INTEGER" property="allocate" />
+		<result column="is_hot" jdbcType="INTEGER" property="isHot" />
+		<result column="is_new" jdbcType="INTEGER" property="isNew" />
+		<result column="is_copy" jdbcType="INTEGER" property="isCopy" />
+		<result column="unit" property="unit" />
+		<result column="intro" jdbcType="VARCHAR" property="intro" />
+		<result column="click_times" property="clickTimes" />
+		<result column="release_time" property="releaseTime" />
+		<result column="off_shelves_time" property="offShelvesTime" />
+		<result column="version" property="version" />
+		<result column="updated_time" property="updatedTime" />
+		<result column="produce_place" property="producePlace" />
+		<result column="remark" property="remark" />
+		<result column="share_percent" property="sharePercent" />
+		<result column="type" property="type" />
+		<result column="spec" property="spec" />
+		<result column="properties" property="properties" />
+		<result column="made_in_china" property="madeInChina" />
+		<result column="goods_no" property="goodsNo" />
+		<result column="city_id" property="cityId" />
+		<result column="weight" property="weight" />
+		<result column="detail" jdbcType="LONGVARCHAR" property="detail" />
+		<result column="sell_qty" property="sell_qty" />
+		<result column="status" property="status" />
+		<result column="cityName" property="cityName" />
+		<result column="provinceName" property="provinceName" />
+		<result column="provinceId" property="provinceId" />
+		<result column="weight" property="weight" />
+		<association property="kind" javaType="FKindModel">
+			<id column="kind_id" property="id" />
+			<result column="kind_name" property="kindName" />
+			<result column="is_enable" property="isEnable" />
+			
+		</association>
+		<association property="releaseUser" javaType="FUserModel">
+			<id column="release_id" property="id" />
+		</association>
+	</resultMap>
+
+	<!-- <sql id="Base_Column_List"> id, name, logo_url, unit, price, remain, 
+		allocate, is_hot, is_new, kind_id, intro, click_times, release_user, release_time, 
+		off_shelves_user, off_shelves_time, version, updated_user, updated_time, 
+		produce_place, remark, share_percent,is_copy,type,spec,properties,made_in_china, 
+		goods_no,city_id </sql> <sql id="Blob_Column_List"> detail, sell_qty </sql> 
+		<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap"> 
+		select <include refid="Base_Column_List" /> , <include refid="Blob_Column_List" 
+		/> from f_goods where id = #{id,jdbcType=INTEGER} </select> <select id="queryAllFGoods" 
+		parameterType="java.lang.Integer" resultMap="BaseResultMap"> select <include 
+		refid="Base_Column_List" /> , <include refid="Blob_Column_List" /> from f_goods 
+		where is_copy = 0 order by release_time desc limit #{start},#{length} </select> -->
+	<select id="findAllFGoodsCount" resultType="java.lang.Integer">
+		select count(*) from
+		f_goods where is_copy = 0
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		f_goods
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="FGoodsModel">
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		insert into f_goods (name, logo_url,
+		unit, price, remain,
+		kind_id,
+		intro, click_times,
+		release_user, release_time, off_shelves_user,
+		off_shelves_time, version, updated_user,
+		updated_time, produce_place,
+		remark,
+		share_percent, detail,
+		is_copy,type,spec,properties,made_in_china,
+		goods_no,city_id,weight,sell_qty,is_hot,is_new,allocate,status
+		)
+		values
+		(#{name,jdbcType=VARCHAR}, #{logoUrl,jdbcType=CLOB},
+		#{unit,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER},
+		#{remain,jdbcType=INTEGER},
+		#{kind.id,jdbcType=INTEGER},
+		#{intro,jdbcType=VARCHAR},
+		0,
+		#{releaseUser.id},
+		#{releaseTime,jdbcType=TIMESTAMP},
+		#{offShelvesUser.id,jdbcType=INTEGER},
+		#{offShelvesTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER},
+		#{releaseUser.id,jdbcType=INTEGER},
+		now(), #{producePlace},
+		#{remark,jdbcType=VARCHAR},
+		#{sharePercent},
+		#{detail,jdbcType=LONGVARCHAR}, #{isCopy},
+		#{type},#{spec},#{properties},#{madeInChina},#{goodsNo},#{cityId},#{weight},0,0,1,0,1
+		)
+	</insert>
+
+	<insert id="insertSelective" parameterType="FGoodsModel">
+		insert into f_goods
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				name,
+			</if>
+			<if test="logoUrl != null">
+				logo_url,
+			</if>
+			<if test="unit != null">
+				unit,
+			</if>
+			<if test="price != null">
+				price,
+			</if>
+			<if test="remain != null">
+				remain,
+			</if>
+			<if test="allocate != null">
+				allocate,
+			</if>
+			<if test="isHot != null">
+				is_hot,
+			</if>
+			<if test="isNew != null">
+				is_new,
+			</if>
+			<if test="kind != null">
+				kind_id,
+			</if>
+			<if test="intro != null">
+				intro,
+			</if>
+			<if test="clickTimes != null">
+				click_times,
+			</if>
+			<if test="releaseUser.id != null">
+				release_user,
+			</if>
+			<if test="releaseTime != null">
+				release_time,
+			</if>
+			<if test="offShelvesUser != null">
+				off_shelves_user,
+			</if>
+			<if test="offShelvesTime != null">
+				off_shelves_time,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+			<if test="updatedUser != null">
+				updated_user,
+			</if>
+			<if test="updatedTime != null">
+				updated_time,
+			</if>
+			<if test="producePlace != null">
+				produce_place,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="sharePercent != null">
+				share_percent,
+			</if>
+			<if test="detail != null">
+				detail,
+			</if>
+			<if test="sell_qty != null">
+				sell_qty,
+			</if>
+			<if test="isCopy != null">
+				is_copy,
+			</if>
+			<if test="spec != null">
+				spec,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="properties != null">
+				properties,
+			</if>
+			<if test="madeInChina != null">
+				made_in_china,
+			</if>
+			<if test="goodsNo != null">
+				goods_no,
+			</if>
+			<if test="cityId != null">
+				city_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="logoUrl != null">
+				#{logoUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="unit != null">
+				#{unit,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=INTEGER},
+			</if>
+			<if test="remain != null">
+				#{remain,jdbcType=INTEGER},
+			</if>
+			<if test="allocate != null">
+				#{allocate,jdbcType=INTEGER},
+			</if>
+			<if test="isHot != null">
+				#{isHot,jdbcType=INTEGER},
+			</if>
+			<if test="isNew != null">
+				#{isNew,jdbcType=INTEGER},
+			</if>
+			<if test="kind != null">
+				#{kind.id,jdbcType=INTEGER},
+			</if>
+			<if test="intro != null">
+				#{intro,jdbcType=VARCHAR},
+			</if>
+			<if test="clickTimes != null">
+				#{clickTimes,jdbcType=BIGINT},
+			</if>
+			<if test="releaseUser != null">
+				#{releaseUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="releaseTime != null">
+				#{releaseTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="offShelvesUser != null">
+				#{offShelvesUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="offShelvesTime != null">
+				#{offShelvesTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=INTEGER},
+			</if>
+			<if test="updatedUser != null">
+				#{updatedUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="updatedTime != null">
+				#{updatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="producePlace != null">
+				#{producePlace,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sharePercent != null">
+				#{sharePercent,jdbcType=INTEGER},
+			</if>
+			<if test="detail != null">
+				#{detail,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="sell_qty != null">
+				#{sell_qty,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="isCopy != null">
+				#{isCopy},
+			</if>
+			<if test="spec != null">
+				#{spec},
+			</if>
+			<if test="type != null">
+				#{type},
+			</if>
+			<if test="properties != null">
+				#{properties},
+			</if>
+			<if test="madeInChina != null">
+				#{madeInChina},
+			</if>
+			<if test="goodsNo != null">
+				#{goodsNo},
+			</if>
+			<if test="cityId != null">
+				#{cityId},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.platform.FGoodsModel">
+		update f_goods
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="logoUrl != null">
+				logo_url = #{logoUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="unit != null">
+				unit = #{unit,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				price = #{price,jdbcType=INTEGER},
+			</if>
+			<if test="remain != null">
+				remain = #{remain,jdbcType=INTEGER},
+			</if>
+			<if test="allocate != null">
+				allocate = #{allocate,jdbcType=INTEGER},
+			</if>
+			<if test="isHot != null">
+				is_hot = #{isHot,jdbcType=INTEGER},
+			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=INTEGER},
+			</if>
+			<if test="kind != null">
+				kind_id = #{kind.id,jdbcType=INTEGER},
+			</if>
+			<if test="intro != null">
+				intro = #{intro,jdbcType=VARCHAR},
+			</if>
+			<if test="clickTimes != null">
+				click_times = #{clickTimes,jdbcType=BIGINT},
+			</if>
+			<if test="releaseUser != null">
+				release_user = #{releaseUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="releaseTime != null">
+				release_time = #{releaseTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="offShelvesUser != null">
+				off_shelves_user = #{offShelvesUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="offShelvesTime != null">
+				off_shelves_time = #{offShelvesTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=INTEGER},
+			</if>
+			<if test="updatedUser != null">
+				updated_user = #{updatedUser.id,jdbcType=INTEGER},
+			</if>
+			<if test="updatedTime != null">
+				updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="producePlace != null">
+				produce_place = #{producePlace,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sharePercent != null">
+				share_percent = #{sharePercent,jdbcType=INTEGER},
+			</if>
+			<if test="detail != null">
+				detail = #{detail,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="sell_qty != null">
+				sell_qty = #{sell_qty,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="isCopy != null">
+				is_copy = #{isCopy},
+			</if>
+			<if test="spec != null">
+				spec = #{spec},
+			</if>
+			<if test="type != null">
+				type = #{type},
+			</if>
+			<if test="properties != null">
+				properties = #{properties},
+			</if>
+			<if test="madeInChina != null">
+				made_in_china = #{madeInChina},
+			</if>
+			<if test="goodsNo != null">
+				goods_no = #{goodsNo},
+			</if>
+			<if test="cityId != null">
+				city_id = #{cityId},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.f2b2c.eco.model.platform.FGoodsModel">
+		update
+		f_goods
+		set name = #{name,jdbcType=VARCHAR},
+		logo_url =
+		#{logoUrl,jdbcType=VARCHAR},
+		unit = #{unit,jdbcType=VARCHAR},
+		price =
+		#{price,jdbcType=INTEGER},
+		remain = #{remain,jdbcType=INTEGER},
+		allocate = #{allocate,jdbcType=INTEGER},
+		is_hot =
+		#{isHot,jdbcType=INTEGER},
+		is_new = #{isNew,jdbcType=INTEGER},
+		kind_id =
+		#{kind.id,jdbcType=INTEGER},
+		intro = #{intro,jdbcType=VARCHAR},
+		click_times = #{clickTimes,jdbcType=BIGINT},
+		release_user =
+		#{releaseUser.id},
+		release_time = #{releaseTime,jdbcType=TIMESTAMP},
+		off_shelves_user = #{offShelvesUser.id,jdbcType=INTEGER},
+		off_shelves_time = #{offShelvesTime,jdbcType=TIMESTAMP},
+		version =
+		#{version,jdbcType=INTEGER},
+		updated_user =
+		#{updatedUser.id,jdbcType=INTEGER},
+		updated_time =
+		#{updatedTime,jdbcType=TIMESTAMP},
+		produce_place =
+		#{producePlace,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		share_percent = #{sharePercent,jdbcType=INTEGER},
+		detail =
+		#{detail,jdbcType=LONGVARCHAR},
+		sell_qty =
+		#{sell_qty,jdbcType=LONGVARCHAR},
+		is_copy = #{isCopy},
+		type = #{type},
+		spec = #{spec},
+		properties = #{properties},
+		made_in_china =
+		#{madeInChina},
+		goods_no = #{goodsNo},
+		city_id = #{cityId}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.platform.FGoodsModel">
+		update f_goods
+		set
+		name = #{name,jdbcType=VARCHAR},
+		logo_url =
+		#{logoUrl,jdbcType=VARCHAR},
+		unit = #{unit,jdbcType=VARCHAR},
+		price =
+		#{price,jdbcType=INTEGER},
+		remain = #{remain,jdbcType=INTEGER},
+		allocate = #{allocate,jdbcType=INTEGER},
+		is_hot =
+		#{isHot,jdbcType=INTEGER},
+		is_new = #{isNew,jdbcType=INTEGER},
+		kind_id =
+		#{kind.id,jdbcType=INTEGER},
+		intro = #{intro,jdbcType=VARCHAR},
+		click_times = #{clickTimes,jdbcType=BIGINT},
+		release_user =
+		#{releaseUser.id},
+		release_time = #{releaseTime,jdbcType=TIMESTAMP},
+		off_shelves_user = #{offShelvesUser.id,jdbcType=INTEGER},
+		off_shelves_time = #{offShelvesTime,jdbcType=TIMESTAMP},
+		version =
+		#{version,jdbcType=INTEGER},
+		updated_user =
+		#{updatedUser.id,jdbcType=INTEGER},
+		updated_time =
+		#{updatedTime,jdbcType=TIMESTAMP},
+		produce_place =
+		#{producePlace,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		share_percent = #{sharePercent,jdbcType=INTEGER},
+		is_copy =
+		#{isCopy,jdbcType=INTEGER},
+		type = #{type},
+		spec = #{spec},
+		properties =
+		#{properties},
+		made_in_china = #{madeInChina},
+		goods_no = #{goodsNo},
+		city_id = #{cityId}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 根据搜索名称搜索商品 -->
+	<select id="queryFGoodByName" resultType="FGoodsToBModel">
+		SELECT
+		T1.id,
+		T1.name,
+		T1.detail,
+		T1.logo_url as logoUrl,
+		T1.unit,
+		T1.price,
+		T1.sell_qty,
+		T1.remain,
+		T1.intro,
+		T1.goods_no as goodsNo,
+		T1.city_id as cityId,
+		T1.produce_place as producePlace,
+		T1.type,
+		T1.made_in_china as
+		madeInChina,
+		T1.properties,
+		T1.spec
+		FROM f_goods T1
+		WHERE (T1.is_copy = 0
+		OR T1.is_copy is null)
+		and T1.name like concat('%',#{params.name},'%')
+		order by T1.release_time
+		limit #{params.start},#{params.length}
+	</select>
+
+	<!-- 根据搜索名称搜索商品总数量 -->
+	<select id="queryCountFGoodsByName" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		SELECT
+		count(T1.id)
+		FROM f_goods T1
+		WHERE (T1.is_copy = 0
+		OR T1.is_copy is null)
+		and T1.name like concat('%',#{name},'%')
+	</select>
+	<select id="findFgoodsCount" resultType="java.lang.Integer">
+		SELECT count(0) FROM
+		`f_goods` good LEFT JOIN f_kind kind on good.kind_id = kind.id where 
+		<if test="name != null and name != ''">
+			good.name like concat('%',#{name},'%') and
+		</if>
+		<if test="kind != null and kind != ''">
+			kind.id in(
+			<foreach collection="kindIds" item="id" separator=",">
+				#{id}
+			</foreach>) and
+		</if>
+		<if test="productPlace != null and productPlace != ''">
+			good.produce_place like concat('%',#{productPlace},'%') and
+		</if>
+		<if test="userList != null and userList.size() > 0">
+		    good.release_user in
+		    <foreach collection="userList" item="item" index="index" open="(" close=")" separator=",">
+		            #{item}
+   	       </foreach>
+   	       and 
+		</if>
+		is_copy = 0 
+		and deleted_time is null 
+	</select>
+
+	<select id="findFgoodsPage" resultMap="BaseResultMap">
+		SELECT
+		good.id,
+		good.name,
+		good.detail,
+		good.logo_url,
+		good.unit,
+		good.price,
+		good.remain,
+		good.allocate,
+		good.is_hot,
+		good.is_new,
+		good.is_copy,
+		good.intro,
+		good.click_times,
+		good.release_time,
+		good.off_shelves_time,
+		good.version,
+		good.updated_time,
+		good.produce_place,
+		good.remark,
+		good.share_percent,
+		good.type,
+		good.spec,
+		good.properties,
+		good.made_in_china,
+		good.goods_no,
+		good.city_id,
+		good.detail,
+		good.sell_qty,
+		good.kind_id,
+		kind.kind_name,
+		kind.is_enable,
+		good.status,
+		good.weight,
+		city.name as cityName,
+		province.name as provinceName
+		FROM
+		`f_goods` good LEFT JOIN f_kind kind on good.kind_id = kind.id LEFT JOIN city
+		city on city.id = good.city_id LEFT JOIN province province on
+		city.provincecode = province.code
+		where
+		<if test="name != null and name != ''">
+			good.name like concat('%',#{name},'%') and
+		</if>
+		<if test="kind != null and kind != ''">
+			kind.id in(
+			<foreach collection="kindIds" item="id" separator=",">
+				#{id}
+			</foreach>) and
+		</if>
+		<if test="productPlace != null and productPlace != ''">
+			good.produce_place like concat('%',#{productPlace},'%') and
+		</if>
+		<if test="userList != null and userList.size() > 0">
+		   good.release_user in
+		    <foreach collection="userList" item="item" index="index" open="(" close=")" separator=",">
+		            #{item}
+   	       </foreach>
+   	       and 
+		</if>
+		good.is_copy = 0 
+		and good.deleted_time is null 
+		ORDER BY good.id desc limit #{start}, #{offset}
+	</select>
+
+	<select id="findFgoodsById" resultMap="BaseResultMap">
+		SELECT
+		good.id,
+		good.name,
+		good.detail,
+		good.logo_url,
+		good.unit,
+		good.price,
+		good.remain,
+		good.allocate,
+		good.is_hot,
+		good.is_new,
+		good.is_copy,
+		good.intro,
+		good.click_times,
+		good.release_time,
+		good.off_shelves_time,
+		good.version,
+		good.updated_time,
+		good.produce_place,
+		good.remark,
+		good.share_percent,
+		good.type,
+		good.spec,
+		good.properties,
+		good.release_user as release_id,
+		good.made_in_china,
+		good.goods_no,
+		good.city_id,
+		good.detail,
+		good.sell_qty,
+		good.kind_id,
+		good.weight,
+		kind.kind_name,
+		good.status,
+		c.`name` as cityName,
+		p.`name` as provinceName,
+		p.id as provinceId
+		FROM
+		`f_goods` good LEFT JOIN f_kind kind on good.kind_id = kind.id LEFT JOIN city c
+		ON good.city_id = c.id LEFT JOIN province p on c.provincecode = p.code
+		where
+		good.is_copy = 0 and good.id = #{0}
+	</select>
+	
+	<select id="findFgoodsInfoById" resultMap="BaseResultMap">
+		SELECT
+		good.id,
+		good.name,
+		good.detail,
+		good.logo_url,
+		good.unit,
+		good.price,
+		good.remain,
+		good.allocate,
+		good.is_hot,
+		good.is_new,
+		good.is_copy,
+		good.intro,
+		good.click_times,
+		good.release_time,
+		good.off_shelves_time,
+		good.version,
+		good.updated_time,
+		good.produce_place,
+		good.remark,
+		good.share_percent,
+		good.type,
+		good.spec,
+		good.properties,
+		good.release_user as release_id,
+		good.made_in_china,
+		good.goods_no,
+		good.city_id,
+		good.detail,
+		good.sell_qty,
+		good.kind_id,
+		good.weight,
+		kind.kind_name,
+		good.status,
+		c.`name` as cityName,
+		p.`name` as provinceName,
+		p.id as provinceId
+		FROM
+		`f_goods` good LEFT JOIN f_kind kind on good.kind_id = kind.id LEFT JOIN city c
+		ON good.city_id = c.id LEFT JOIN province p on c.provincecode = p.code
+		where good.id = #{0}
+	</select>
+	<update id="Copy">
+		update f_goods set is_copy = 1 where id = #{id}
+	</update>
+
+	<update id="modifyfgoods">
+		update f_goods set
+		name=#{fGoods.name},
+		detail=#{fGoods.detail},
+		logo_url=#{fGoods.logoUrl},
+		unit=#{fGoods.unit},
+		price=#{fGoods.price},
+		remain=#{fGoods.remain},
+		is_copy = 0,
+		<if test="fGoods.kind != null">
+			kind_id=#{fGoods.kind.id},
+		</if>
+		version=#{fGoods.version},
+		updated_time=now(),
+		produce_place=#{fGoods.producePlace},
+		spec=#{fGoods.spec},
+		made_in_china=#{fGoods.madeInChina},
+		type=#{fGoods.type},
+		properties=#{fGoods.properties},
+		intro=#{fGoods.intro},
+		city_id=#{fGoods.cityId} 
+		where id = #{id}
+	</update>
+
+	<update id="downOrReleaseFgoods">
+		update f_goods set
+		updated_time=now(),
+		<if test="status == 1">
+			status = 2
+		</if>
+		<if test="status == 2">
+			status = 1
+		</if>
+		where id = #{id}
+	</update>
+
+	<!-- 在删除订单的时候，要将库存还回去 -->
+	<update id="updateBatchGoodsQuantityPlus" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open=""
+			close="" separator=";">
+			update f_goods
+			<set>
+				remain = (remain + ${item.goodsQty}),
+				allocate = (allocate - ${item.goodsQty}),
+			</set>
+			where id = ${item.goodsId}
+		</foreach>
+	</update>
+
+	<!-- 在删除订单的时候，要将库存还回去 -->
+	<update id="updateBatchGoodsQuantity" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" open=""
+			close="" separator=";">
+			update f_goods
+			<set>
+				allocate = (allocate - ${item.goodsQty}),
+			</set>
+			where id = ${item.goodsId}
+		</foreach>
+	</update>
+	
+	<!-- 根据分类Id下架所有F商品 -->
+   <update id="downAllFgoodsByKindId" >
+    update f_goods
+   	set status = 2,
+   	off_shelves_time = now(),
+   	updated_time=now(),
+   	off_shelves_user = #{userId},
+   	updated_user = #{userId}
+    where kind_id in
+   (<foreach collection="list" item="item" index="index" separator=","> 
+          #{item.id,jdbcType=INTEGER}
+      </foreach>)
+      and is_copy = 0
+  </update>
+  
+  <!-- 根据分类Id下架所有F商品 -->
+  <update id="delBatchFGoodsByKindList" parameterType="java.lang.String">
+    update 
+      f_goods
+    set 
+      deleted_time = now() 
+    where kind_id in 
+   (<foreach collection="list" item="item" index="index" separator=","> 
+          #{item}
+      </foreach>)   
+      and is_copy = 0 
+  </update>
+  
+   <select id="fgoogsNoIsTrue" resultMap="BaseResultMap">
+         SELECT id from f_goods where goods_no = #{0} and is_copy = 0 and `status`=1;
+   </select>
+   
+   
+   <update id="updateFgoodsWeight" parameterType="java.util.Map">
+    update 
+      f_goods
+    set 
+      set_weight_time = now(),
+			weight = #{weight}
+    where goods_no = #{goodsNo}
+  </update>
+   
+   
+</mapper>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CUserBalanceDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.CUserBalanceModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="c_user_id" property="cUserId" jdbcType="INTEGER" />
+    <result column="account_balance" property="accountBalance" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, c_user_id, account_balance, version
+  </sql>
+  
+  <!-- 根据主键查询表 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from c_user_balance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除表 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from c_user_balance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入表 -->
+  <insert id="insert" useGeneratedKeys="true" parameterType="CUserBalanceModel" >
+    <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+        SELECT LAST_INSERT_ID() AS id
+    </selectKey> 
+    insert into c_user_balance (id, c_user_id, account_balance, 
+      version)
+    values (#{id,jdbcType=INTEGER}, #{cUserId,jdbcType=INTEGER}, #{accountBalance,jdbcType=INTEGER}, 
+      #{version,jdbcType=INTEGER})
+  </insert>
+  
+  <!-- 插入可选表字段 -->
+  <insert id="insertSelective" useGeneratedKeys="true" parameterType="CUserBalanceModel" >
+    <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+        SELECT LAST_INSERT_ID() AS id
+    </selectKey> 
+    insert into c_user_balance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cUserId != null" >
+        c_user_id,
+      </if>
+      <if test="accountBalance != null" >
+        account_balance,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cUserId != null" >
+        #{cUserId,jdbcType=INTEGER},
+      </if>
+      <if test="accountBalance != null" >
+        #{accountBalance,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的表字段 -->
+  <update id="updateByPrimaryKeySelective" parameterType="CUserBalanceModel" >
+    update c_user_balance
+    <set >
+      <if test="cUserId != null" >
+        c_user_id = #{cUserId,jdbcType=INTEGER},
+      </if>
+      <if test="accountBalance != null" >
+        account_balance = #{accountBalance,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据主键和版本号字段更新用户帐户余额表 -->
+  <update id="updateByPrimaryKeyAndVersion" parameterType="CUserBalanceModel" >
+    update c_user_balance
+    <set >
+      <if test="cUserId != null" >
+        c_user_id = #{cUserId,jdbcType=INTEGER},
+      </if>
+      <if test="accountBalance != null" >
+        account_balance = #{accountBalance,jdbcType=INTEGER},
+      </if>
+      <if test="commission != null">
+        commission = #{commission},
+      </if>
+      <if test="version != null" >
+        version = #{version} + 1,
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER} 
+    and version = #{version} 
+  </update>
+  
+  <!-- 更新表 -->
+  <update id="updateByPrimaryKey" parameterType="CUserBalanceModel" >
+    update c_user_balance
+    set c_user_id = #{cUserId,jdbcType=INTEGER},
+      account_balance = #{accountBalance,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 根据用户id获取C端用户帐户 -->
+  <select id="selectByCUserId" parameterType="java.lang.Integer" resultType="CUserBalanceModel">
+     select 
+       id,
+       account_balance as accountBalance,
+       commission,
+       total_commission as totalCommission, 
+       version 
+     from c_user_balance 
+     where c_user_id = #{userId} 
+     limit 1 
+  </select>
+  
+  <!-- 退货成功时，将退款余额充值到用户余额中 -->
+  <update id="updateAccountBalanceByUserId" parameterType="CUserBalanceModel">
+      update c_user_balance set account_balance = account_balance + #{accountBalance} where c_user_id = #{cUserId}
+  </update>
+  
+  <!-- 计算C端每个用户的佣金 -->
+  <select id="computeCommissionByUserId" resultType="CUserCommissionBean">
+   SELECT 
+      T2.c_user_id as userId,
+      T2.commission,
+      T2.version,
+      sum(T1.money) as money 
+   FROM c_user_balance_record T1 
+   LEFT JOIN c_user_balance T2 ON T1.c_user_balance_id = T2.id 
+   WHERE T1.operate_type = 5 
+   AND STR_TO_DATE(T1.create_time,'%Y-%m') = STR_TO_DATE(DATE_SUB(now(),INTERVAL 1 MONTH),'%Y-%m') 
+   GROUP BY T2.c_user_id 
+  </select>
+  
+  <!-- 批量更新C端用户佣金 -->
+  <update id="updateCUserCommission" parameterType="java.util.List">
+     <foreach collection="list" item="item" index="index" open="" close="" separator=";">  
+        update c_user_balance 
+        <set> 
+           commission = #{item.commission},
+           version = #{item.version} + 1 
+        </set> 
+        where c_user_id = ${item.cUserId} 
+        and version = ${item.version} 
+     </foreach>
+  </update>
+</mapper>

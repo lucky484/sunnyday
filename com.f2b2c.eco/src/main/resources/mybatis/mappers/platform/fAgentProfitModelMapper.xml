@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FAgentProfitDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FAgentProfitModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="order_amount" jdbcType="INTEGER" property="orderAmount" />
+    <result column="profit_percent" jdbcType="DECIMAL" property="profitPercent" />
+    <result column="commission_amount" jdbcType="DECIMAL" property="commissionAmount" />
+    <result column="createdtime" jdbcType="TIMESTAMP" property="createdtime" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <!-- 所属订单 -->
+    <association property="order" javaType="FSalesOrderModel">
+    	<id property="id" column="order_id"/>
+    	<result property="orderId" column="order_no"/>
+    </association>
+    <!-- 所属店铺-->
+   <!--  <association property="shop" javaType="BShopInfoModel">
+    	<id property="id" column="shop_id"/>
+    	<result property="shopName" column="shop_name"/>
+    </association> -->
+    <association property="shop" javaType="BShopInfoModel">
+    	<id property="id" column="shop_id"/>
+    	<result property="shopName" column="shop_name"/>
+    </association>
+  </resultMap>
+  
+  <resultMap id="BResultMap" type="FAgentProfitModel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="commission_amount" jdbcType="DECIMAL" property="commissionAmount" />
+    <result column="createdtime" jdbcType="TIMESTAMP" property="createdtime" />
+    <!-- 所属订单 -->
+    <association property="bOrder" javaType="BSalesOrderModel">
+    	<id property="id" column="order_id"/>
+    	<result property="orderNo" column="order_no"/>
+    	<result property="total" column="total"/>
+    	<association property="user" javaType="CUserModel">
+	    	<id property="id" column="order_user_id"/>
+	    	<result property="nickName" column="nick_name"/>
+	    </association>
+    </association>
+    <!-- 所属店铺-->
+   <!--  <association property="shop" javaType="BShopInfoModel">
+    	<id property="id" column="shop_id"/>
+    	<result property="shopName" column="shop_name"/>
+    </association> -->
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    id, user_id, order_id, commission_amount, createdtime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from f_agent_profit
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from f_agent_profit
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FAgentProfitModel">
+    insert into f_agent_profit (id, user_id, order_id, 
+      commission_amount, createdtime)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{orderId,jdbcType=VARCHAR}, 
+      #{commissionAmount,jdbcType=INTEGER}, #{createdtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.platform.FAgentProfitModel">
+    insert into f_agent_profit
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="commissionAmount != null">
+        commission_amount,
+      </if>
+      <if test="createdtime != null">
+        createdtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="commissionAmount != null">
+        #{commissionAmount,jdbcType=INTEGER},
+      </if>
+      <if test="createdtime != null">
+        #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.platform.FAgentProfitModel">
+    update f_agent_profit
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="commissionAmount != null">
+        commission_amount = #{commissionAmount,jdbcType=INTEGER},
+      </if>
+      <if test="createdtime != null">
+        createdtime = #{createdtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.platform.FAgentProfitModel">
+    update f_agent_profit
+    set user_id = #{userId,jdbcType=INTEGER},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      commission_amount = #{commissionAmount,jdbcType=INTEGER},
+      createdtime = #{createdtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 查询分润的总数 -->
+  <select id="countWithMap" resultType="java.lang.Integer">
+  		select count(0) from f_agent_profit profit 
+	    left join f_sales_order orders 
+	    on profit.order_id = orders.order_id
+		left join f_role role
+		on profit.role_id = role.id  
+		<if test="timeStart!=null and timeStart!=''">
+			and profit.createdtime between CONCAT(#{timeStart},' :00:00:00')
+		</if>
+		<if test="timeEnd!=null and timeEnd!=''">
+			and CONCAT(#{timeEnd},' :23:59:59') 
+		</if>
+		order by profit.createdtime desc
+  </select>
+  
+  <!-- 分页加载分润的列表 -->
+  <select id="findWithPagination" resultMap="BaseResultMap">
+  		select profit.id,
+		profit.order_id as order_no,
+		orders.id as order_id,
+		profit.createdtime,
+		order_amount,
+		profit_percent,
+		commission_amount,
+		role.role_name from f_agent_profit profit 
+	    left join f_sales_order orders 
+	    on profit.order_id = orders.order_id
+		left join f_role role
+		on profit.role_id = role.id 
+		<if test="timeStart!=null and timeStart!=''">
+			and profit.createdtime between CONCAT(#{timeStart},' :00:00:00')
+		</if>
+		<if test="timeEnd!=null and timeEnd!=''">
+			and CONCAT(#{timeEnd},' :23:59:59') 
+		</if>
+		order by profit.createdtime desc limit ${pageable.pageNumber}, ${pageable.pageSize}
+  </select>
+  
+  <!-- 分页加载分润的列表 -->
+  <select id="findWithPaginationWithMap" resultMap="BResultMap">
+  	SELECT f_agent_profit.id,
+  	f_agent_profit.user_id,
+  	f_agent_profit.commission_amount,
+  	f_agent_profit.createdtime,
+  	b_sales_order.order_no,
+  	c_user.id AS order_user_id,
+  	c_user.nick_name,
+  	b_sales_order.total,
+  	b_shop_info.shop_name
+	FROM f_agent_profit
+	LEFT JOIN b_sales_order
+	ON f_agent_profit.order_id=b_sales_order.id
+	LEFT JOIN c_user
+	ON b_sales_order.user_id=c_user.id
+	LEFT JOIN b_shop_info
+	ON f_agent_profit.shop_id=b_shop_info.id
+	WHERE f_agent_profit.user_id=#{userId}
+	AND f_agent_profit.user_type=2
+	ORDER BY createdtime desc
+	LIMIT ${pageNumber},#{pageSize}
+  </select>
+  
+  <select id="findPaginationCount" resultType="int">
+  	SELECT count(1)
+	FROM f_agent_profit
+	LEFT JOIN b_sales_order
+	ON f_agent_profit.order_id=b_sales_order.order_no
+	LEFT JOIN b_shop_info
+	ON f_agent_profit.shop_id=b_shop_info.id
+	WHERE f_agent_profit.user_id=#{userId}
+	AND f_agent_profit.user_type=2
+  </select>
+  
+  <!-- 以上全部作废，从下面开始 -->
+  <insert id="saveAgentProfit" parameterType="FAgentProfitModel">
+  	insert into f_agent_profit(user_id,order_id,commission_amount,createdtime,order_amount,profit_percent,role_id)
+  		values(#{userId},#{order.id},#{commissionAmount},#{createdtime},#{orderAmount},#{profitPercent},#{roleId})
+  </insert>
+  
+  
+  
+  
+  
+  
+  
+  
+</mapper>

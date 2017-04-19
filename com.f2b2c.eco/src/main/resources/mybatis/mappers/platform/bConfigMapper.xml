@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.BConfigDao">
+	<resultMap id="BaseResultMap" type="BConfigModel">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="is_enabled" jdbcType="VARCHAR" property="isEnabled" />
+		<result column="is_disturbed" jdbcType="VARCHAR" property="isDisturbed" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+	</resultMap>
+	
+	<insert id="addUserConfig" parameterType="BConfigModel">
+		insert into b_config(user_id,is_enabled,is_disturbed) values(#{userId},#{isEnabled},#{isDisturbed})
+	</insert>
+	
+	<select id="getConfigByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select id,is_enabled,is_disturbed from b_config where user_id = #{userId}
+	</select>
+	
+	<update id="updateConfig" parameterType="BConfigModel">
+		update b_config
+		<set>
+			<if test="isEnabled!=null and isEnabled!=''">
+				is_enabled = #{isEnabled},
+			</if>
+			<if test="isDisturbed!=null and isDisturbed!=''">
+				is_disturbed = #{isDisturbed},
+			</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+	
+</mapper>

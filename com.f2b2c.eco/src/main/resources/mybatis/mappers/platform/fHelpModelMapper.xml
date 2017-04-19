@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FHelpDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FHelpModel">
+  
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="question" property="question" jdbcType="VARCHAR"/>
+    <result column="answer" property="answer" jdbcType="INTEGER"/>
+    <result column="type" property="type"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createdTime" />
+    <result column="update_time" property="updatedTime" />
+    <result column="pic" property="pic"/>
+    <result column="style" property="style"/>
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+  id, question, answer, type, status, create_time, update_time, pic, style
+  </sql>
+  
+  <select id="queryCountByCondition" resultType="int">
+  	select count(0) from f_help
+  </select>
+  
+  <select id="findWithPagination" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select * from f_help order by id desc limit ${pageable.pageNumber},${pageable.pageSize}
+  </select>
+  
+  <select id="queryHelpById" resultMap="BaseResultMap">
+  	select 
+  		<include refid="Base_Column_List"/>
+  	from f_help
+  	where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FHelpModel">
+  	insert into f_help(<include refid="Base_Column_List"/>)
+  	values(#{id,jdbcType=INTEGER},
+  			#{question,jdbcType=VARCHAR},
+  			#{answer,jdbcType=VARCHAR},
+  			#{type,jdbcType=VARCHAR},
+  			#{status,jdbcType=VARCHAR},
+  			#{createdTime,jdbcType=TIMESTAMP},
+  			#{updatedTime,jdbcType=TIMESTAMP},
+  			#{pic,jdbcType=VARCHAR},
+  			#{style,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="com.f2b2c.eco.model.platform.FHelpModel">
+  	update f_help
+  	<set>
+  		<if test="id!=null">
+  			id = #{id,jdbcType=INTEGER},
+  		</if>
+  		<if test="question!=null">
+  			question = #{question,jdbcType=VARCHAR},
+  		</if>
+  		<if test="answer!=null">
+  			answer = #{answer,jdbcType=VARCHAR},
+  		</if>
+  		<if test="type!=null">
+  			type = #{type,jdbcType=VARCHAR},
+  		</if>
+  		<if test="status!=null">
+  			status = #{status,jdbcType=VARCHAR},
+  		</if>
+  		<if test="createdTime!=null">
+  			create_time = #{createdTime,jdbcType=TIMESTAMP},
+  		</if>
+  		<if test="updatedTime!=null">
+  			update_time = #{updatedTime,jdbcType=TIMESTAMP},
+  		</if>
+  		<if test="pic!=null">
+  			pic = #{pic,jdbcType=VARCHAR},
+  		</if>
+  		<if test="style!=null">
+  			style = #{style,jdbcType=VARCHAR},
+  		</if>
+  	</set>
+  	where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delete" parameterType="java.lang.Integer">
+  	delete from f_help where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="queryDetailByStyle" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select 
+  		<include refid="Base_Column_List"/>
+  	from f_help
+  	where style = #{style,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="queryDetailByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select 
+  		<include refid="Base_Column_List"/>
+  	from f_help
+  	where type = #{type,jdbcType=VARCHAR}
+  </select>
+</mapper>

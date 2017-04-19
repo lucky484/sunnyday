@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.BShopCarDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BShopCarModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="goods_qty" property="goodsQty" jdbcType="INTEGER" />
+    <result column="goods_version" property="goodsVersion" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, created_time, goods_id, goods_qty, goods_version
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from b_shop_car
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据参数获取购物车 -->
+  <select id="selectShopCarByParams" resultType="BShopCarModel" parameterType="BShopCarModel">
+    select 
+      id,
+      user_id as userId,
+      goods_id as goodsId,
+      goods_qty as goodsQty,
+      goods_version as goodsVersion 
+    from b_shop_car 
+    where goods_id = #{goodsId} 
+    and user_id = #{userId} 
+    limit 1 
+  </select>
+   
+  <!-- 根据id更新购物表 -->
+  <update id="updateShopCarById" parameterType="BShopCarModel">
+     update
+       b_shop_car  
+     set  
+       goods_qty =  #{goodsQty} 
+     where id = #{id} 
+  </update>
+  
+  <!-- 插入购物车表-->
+  <insert id="insertShopCar" parameterType="BShopCarModel">
+	insert into
+	b_shop_car 
+	(user_id,
+	created_time,
+	goods_id,
+	goods_qty,
+	goods_version)
+	values
+	(#{userId},
+	#{createdTime},
+	#{goodsId},
+	#{goodsQty},
+	#{goodsVersion})
+  </insert>
+  
+  <!-- 根据用户id获取购物车商品 -->
+   <select id="selectShopCartGoodsByUserId" resultType="FGoodsToShopCarModel" parameterType="java.lang.Integer">
+     select 
+       T1.id as cartId,
+       T1.goods_qty as goodsQty,
+       T2.id as goodsId,
+       T2.goods_no AS goodsNo,
+       T2.name,
+       T2.detail,
+       T2.logo_url as logoUrl,
+       T2.unit,
+       T2.price,
+       T2.sell_qty as sellQty,
+       T2.remain,
+       T2.allocate,
+       T2.intro,
+       T2.type,
+       T2.properties,
+       T2.spec 
+     from b_shop_car T1 
+     left join f_goods T2 ON T1.goods_id = T2.goods_no 
+     WHERE T1.user_id = #{userId} 
+     AND (T2.is_copy = 0 OR T2.is_copy is null)  
+  </select>
+  
+  <!-- 批量删除购物车商品 -->
+  <delete id="delBatchShopCartByUserId" parameterType="java.util.List">
+     delete from b_shop_car where id in 
+     (
+    <foreach collection="list" item="item" index="index" separator=",">
+     ${item}  
+    </foreach> 
+    )
+  </delete>
+  
+  <!-- 更新购物车中的商品 -->
+  <update id="updateBatchShopCart" parameterType="java.util.List" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update b_shop_car  
+        <set>
+            goods_qty=${item.goodsQty}
+        </set>
+        where id = ${item.id}
+    </foreach> 
+  </update>
+  
+  <!-- 根据商品idlist获取最新的商品 -->
+  <select id="selectNewstGoodsByList" parameterType="java.util.List" resultType="FGoodsToShopCarModel">
+     select 
+       T1.id as cartId,
+       T1.goods_qty as goodsQty,
+       T2.id as goodsId,
+       T2.goods_no AS goodsNo,
+       T2.name,
+       T2.version,
+       T2.detail,
+       T2.logo_url as logoUrl,
+       T2.unit,
+       T2.price,
+       T2.sell_qty as sellQty,
+       T2.remain,
+       T2.allocate,
+       T2.intro,
+       T2.type,
+       T2.properties,
+       T2.spec 
+     from b_shop_car T1 
+     left join f_goods T2 ON T1.goods_id = T2.goods_no and (T2.is_copy is NULL OR T2.is_copy = '' OR T2.is_copy = '0')
+     where T1.id in (
+    <foreach collection="list" item="item" index="index" separator=",">
+     ${item}  
+    </foreach> 
+    )
+  </select>
+  
+  <!-- 根据商品idlist获取最新的商品 -->
+  <select id="selectNewstGoodsById" parameterType="java.lang.Integer" resultType="FGoodsToShopCarModel">
+     select 
+       T1.id as cartId,
+       T1.goods_qty as goodsQty,
+       T2.id as goodsId,
+       T2.goods_no AS goodsNo,
+       T2.name,
+       T2.detail,
+       T2.logo_url as logoUrl,
+       T2.unit,
+       T2.price,
+       T2.sell_qty as sellQty,
+       T2.remain,
+       T2.allocate,
+       T2.intro,
+       T2.type,
+       T2.properties,
+       T2.spec,
+       T2.version
+     from b_shop_car T1 
+     left join f_goods T2 ON T1.goods_id = T2.goods_no and (T2.is_copy is NULL OR T2.is_copy = '' OR T2.is_copy = '0')
+     where T2.id = #{id} 
+     limit 1 
+  </select>
+  
+  <delete id="deleteBatch">
+    delete from b_shop_car
+	where user_id=#{userId} and id in (
+    	<foreach collection="list" item="item" index="index" separator="," > 
+        #{item}
+      </foreach>
+      )
+    </delete>
+  
+  <!-- 根据商品编号查询购物车商品数量-->
+  <select id="selectGoodsQtyByGoodsNo" resultType="java.lang.Integer" parameterType="java.lang.String">
+     select  
+       sum(goods_qty)  
+     from c_shop_car 
+     where goods_id = #{params.goodsNo} 
+  </select>
+  
+  <!-- 查询购物车的总数和种类 -->
+  <select id="queryCarCountAndKindByUserId" parameterType="int" resultType="map">
+      select sum(goods_qty) as goodsQty,count(1) as totalCount from b_shop_car where user_id = #{userId}
+  </select>
+  
+  <!-- 获取该购物车对应商品的数量-->
+  <select id="queryQuantityByShopCartId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select
+      T1.remain 
+    from f_goods T1 
+    left join b_shop_car T2 ON T1.goods_no = T2.goods_id  
+    where (T1.is_copy = 0 OR T1.is_copy is null) 
+    and T2.id = #{id} 
+  </select>
+</mapper>

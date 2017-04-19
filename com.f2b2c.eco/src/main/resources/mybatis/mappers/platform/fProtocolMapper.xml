@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FProtocolDao">
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FProtocolModel">
+  
+    <id column="id" property="id" />
+    <result column="content" property="content" />
+    <result column="created_time" property="createTime" />
+    <result column="updated_time" property="updatedTime" />
+    <result column="deleted_time" property="deletedTime" />
+    <result column="type" property="type" />
+    <association property="createdUser" javaType="FUserModel">
+       <id property="id" column="created_user"/>
+       <result property="realName" column="f_user_name"/>
+    </association>
+    <association property="updatedUser" javaType="FUserModel">
+       <id property="id" column="updated_user"/>
+       <result property="realName" column="f_user_name"/>
+    </association>
+  </resultMap>
+  <select id="queryFProtocolByType" parameterType="String" resultMap="BaseResultMap">
+	select
+	id,content
+	from f_protocol where type=#{type}
+  </select>
+  
+<!--   <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FProtocolModel" > -->
+  <insert id="insert" parameterType="com.f2b2c.eco.model.platform.FProtocolModel">
+  	insert into f_protocol (id,content,created_user,created_time,type)
+  	values (#{id,jdbcType=INTEGER},#{content,jdbcType=LONGVARCHAR},#{createdUser.id,jdbcType=INTEGER },
+  	#{createdTime,jdbcType=TIMESTAMP},#{type,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="insertFProtocolContent" parameterType="com.f2b2c.eco.model.platform.FProtocolModel">
+  	insert into f_protocol 
+  	<trim prefix="(" suffix=")" suffixOverrides="," >
+  		<if test="id != null">
+  			id,
+  		</if>
+  		<if test="content != null">
+  			content,
+  		</if>
+  		<if test="createdUser !=null">
+  			created_user,
+  		</if>
+  		<if test="createdTime != null">
+  			created_time,
+  		</if>
+  		<if test="type != null">
+  			type,
+  		</if>
+  	</trim>
+  	<trim prefix="values (" suffix=")" suffixOverrides=",">
+  		<if test="id != null">
+  			#{id,jdbcType=INTEGER},
+  		</if>
+  		<if test="content != null">
+  			#{content,jdbcType=LONGVARCHAR},
+  		</if>
+  		<if test="createdUser !=null">
+  			#{createdUser.id,jdbcType=INTEGER },
+  		</if>
+  		<if test="createdTime != null">
+  			#{createdTime,jdbcType=TIMESTAMP},
+  		</if>
+  		<if test="type != null">
+  			#{type,jdbcType=VARCHAR},
+  		</if>
+  	</trim>
+  </insert>
+  
+  <update id="update" parameterType="com.f2b2c.eco.model.platform.FProtocolModel">
+  	update f_protocol set 
+	  	id = #{id,jdbcType=INTEGER},
+	  	content = #{content,jdbcType=LONGVARCHAR},
+	  	updated_user = #{updatedUser.id,jdbcType=INTEGER },
+	  	updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+  	where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateFProtocolContent" parameterType="FProtocolModel">
+  	update f_protocol 
+  	<set>
+  		<if test="content != null">
+  			content = #{content},
+  		</if>
+  	</set> 
+  	where id = #{id}
+  </update>
+  
+</mapper>

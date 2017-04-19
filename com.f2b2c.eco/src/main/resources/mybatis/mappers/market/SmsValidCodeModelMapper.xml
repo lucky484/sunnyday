@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.SmsValidCodeDao">
+    <resultMap type="SmsValidCodeModel" id="smsValidCodeMap">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="valid_code" jdbcType="VARCHAR" property="validCode" />
+        <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone" />
+        <result column="creat_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <insert id="addSmsValidCode" parameterType="SmsValidCodeModel" keyProperty="id" useGeneratedKeys="true">
+        insert into sms_valid_code 
+                  (
+			        valid_code,
+			        mobile_phone,
+			        creat_time,
+			        create_by,
+			        update_time,
+			        update_by
+			       )value(
+			        #{validCode},
+			        #{mobilePhone},
+			        now(),
+			        #{createBy},
+			        now(),
+			        #{updateBy}
+			       )
+    </insert>
+    <update id="updateCodeByPhone" parameterType="SmsValidCodeModel">
+         update sms_valid_code set valid_code = #{validCode},update_time = now() where mobile_phone = #{mobilePhone}
+    </update>
+    
+    <select id="queryIsExits" resultMap="smsValidCodeMap" parameterType="String">
+        select valid_code,mobile_phone,creat_time,update_time from sms_valid_code where mobile_phone = #{mobilePhone}
+    </select>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.BProblemDao">
+	<resultMap id="BaseResultMap" type="BProblemModel">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="problem" jdbcType="VARCHAR" property="problem" />
+		<result column="response" jdbcType="VARCHAR" property="response" />
+		<result column="create_by" jdbcType="INTEGER" property="createBy" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_by" jdbcType="INTEGER" property="updateBy" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+	</resultMap>
+	
+	<select id="countWithMap" resultType="java.lang.Integer">
+		select count(0) from b_problem order by create_time desc
+	</select>
+	
+	<select id="findWithPagination" resultMap="BaseResultMap">
+		select id,problem,response,create_time from b_problem 
+			order by create_time desc limit ${pageable.pageNumber}, ${pageable.pageSize}
+	</select>
+	
+	<delete id="deleteProblemById" parameterType="java.lang.Integer">
+		delete from b_problem where id = #{id}
+	</delete>
+	
+	<insert id="saveProblem" parameterType="BProblemModel">
+		insert into b_problem(id,problem,response,create_time,update_time)values(#{id},#{problem},#{response},NOW(),NOW())
+	</insert>
+	
+	<select id="getProblemById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select id,problem,response,create_time from b_problem where id = #{id}
+	</select>
+	
+	<update id="updateProblem" parameterType="BProblemModel">
+		update b_problem
+		<set>
+			<if test="problem!=null and problem!=''">
+				problem = #{problem},
+			</if>
+			<if test="response!=null and response!=''">
+				response = #{response},
+			</if>
+			update_time = NOW()
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="getAllProblemList" resultMap="BaseResultMap">
+		select id,problem,response from b_problem order by update_time desc
+	</select>
+	
+</mapper>

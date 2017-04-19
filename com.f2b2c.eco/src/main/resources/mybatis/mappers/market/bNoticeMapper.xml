@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.BNoticeDao" >
+<resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.BNoticeModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title"  />
+    <result column="detail" property="detail" />
+    <result column="status" property="status" />
+    <result column="create_time" property="createTime" />
+</resultMap>
+
+<select id="findAllNotice" resultMap="BaseResultMap">
+	SELECT id,notice_title as title from b_notice 
+</select>
+<select id="bnoticeDetail"  resultMap="BaseResultMap" parameterType="int">
+	SELECT id,notice_title as title,detail ,create_time from b_notice where id=#{0}
+</select>
+<select id="findAllNoticePageCount" resultType="int">
+	SELECT count(0) from b_notice 
+</select>
+
+<select id="findAllNoticePage" resultType="BNoticeModel">
+	SELECT
+		ID,
+		NOTICE_TITLE AS TITLE,
+		CREATE_TIME AS createTime
+	FROM
+		B_NOTICE
+	ORDER BY
+		ID DESC
+	LIMIT #{start},#{length}
+</select>
+
+
+<insert id="insertBnotice" parameterType="java.util.Map">
+	INSERT INTO b_notice (
+						NOTICE_TITLE,
+						detail,
+						CREATE_TIME,
+						CREATE_USER,
+						UPDATE_USER,
+						UPDATE_TIME)
+				VALUES(
+						#{model.title},
+						#{model.detail},
+						NOW(),
+						#{userId},
+						#{userId},
+						NOW()
+						)
+</insert>
+<delete id="delBnotice" parameterType="java.util.Map">
+	DELETE FROM b_notice where id=#{model.id}
+</delete>
+
+
+</mapper>

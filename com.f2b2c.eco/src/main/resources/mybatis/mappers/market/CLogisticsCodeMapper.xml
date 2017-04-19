@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.CLogisticsCodeDao" >
+  <resultMap id="BaseResultMap" type="com.f2b2c.eco.model.market.CLogisticsCodeModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, code, name
+  </sql>
+  
+  <!-- 根据主键查询物流信息 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from c_logistics_code
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据主键删除物流功能 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from c_logistics_code
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 插入物流信息功能-->
+  <insert id="insert" parameterType="com.f2b2c.eco.model.market.CLogisticsCodeModel" >
+    insert into c_logistics_code (id, code, name
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <!-- 插入可选的物流信息功能 -->
+  <insert id="insertSelective" parameterType="com.f2b2c.eco.model.market.CLogisticsCodeModel" >
+    insert into c_logistics_code
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 更新可选的物流信息功能 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.market.CLogisticsCodeModel" >
+    update c_logistics_code
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 更新物流信息功能 -->
+  <update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.market.CLogisticsCodeModel" >
+    update c_logistics_code
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 获取物流总条数 -->
+  <select id="getLogisticsCodeSize" resultType="java.lang.Integer">
+    select 
+      count(*) 
+    from c_logistics_code 
+    <if test="name != null and name != ''">
+    where name like concat('%',#{name},'%') 
+    </if>
+  </select>
+  
+  <!-- 获取物流总信息 -->
+  <select id="queryLogisticsCode" resultMap="BaseResultMap">
+    select 
+      <include refid="Base_Column_List" />
+    from c_logistics_code 
+    <if test="name != null and name != ''">
+    where name like concat('%',#{name},'%') 
+    </if>
+    limit #{num},#{pageSize} 
+  </select>
+  
+    <!-- 根据物流编码查找物流公司 -->
+  <select id="queryLogisticsByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+      <include refid="Base_Column_List" />
+    from c_logistics_code 
+    where code = #{code} 
+    limit 1  
+  </select>
+</mapper>

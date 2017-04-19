@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.f2b2c.eco.dao.market.BSalesOrderDetailsDao" >
+    <resultMap id="goodsDetailMap" type="BSalesOrderDetailsModel">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="goods_version" jdbcType="INTEGER" property="goodsVersion" />
+        <result column="goods_qty" jdbcType="INTEGER" property="goodsQty" />
+        <result column="price" jdbcType="INTEGER" property="price" />
+        <result column="total_price" jdbcType="INTEGER" property="totalPrice" />
+        <result column="share_percent" jdbcType="INTEGER" property="sharePercent" />
+        <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+        <result column="goods_status" jdbcType="INTEGER" property="goodsStatus" />
+        <result column="is_commission " jdbcType="INTEGER" property="isCommission" />
+        <association property="order" javaType="BSalesOrderModel">
+             <result column="order_id" jdbcType="VARCHAR" property="id" />
+             <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+             <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+             <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
+             <result column="reveiver_mobile" property="reveiverMobile" jdbcType="VARCHAR" />
+             <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR" />
+             <result column="total" property="total" jdbcType="INTEGER" />
+             <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        </association>
+        <association property="goods" javaType="BGoodsModel">
+            <result column="goods_name" property="name" jdbcType="VARCHAR" />
+        </association>
+        <association property="returnPay" javaType="ReturnPayModel">
+            <result column="return_type" property="returnType" jdbcType="INTEGER" />
+            <result column="receive_type" property="receiveType" jdbcType="INTEGER" />
+            <result column="return_reason" property="returnReason" jdbcType="VARCHAR" />
+            <result column="return_amount" property="returnAmount" jdbcType="INTEGER" />
+        </association>
+    </resultMap>
+    <update id="updateOrderDetailsByOrderId" parameterType="String">
+        update b_sales_order_details set deleted_time = now(),updated_time = now() where order_id = #{orderId}
+    </update>
+    <!-- 删除销售单详情 -->
+    <update id="updateSalesOrderDetailsByOrderId" parameterType="String">
+        update b_sales_order_details set deleted_status = now(),updated_time = now() where order_id = #{orderId}
+    </update>
+  <!-- 批量插入订单 -->
+  <insert id="insertBatchOrderDetail" parameterType="java.util.List"> 
+      insert into b_sales_order_details(id,order_id,goods_id,goods_name,total_price,share_percent,goods_version,goods_qty,price,updated_time,created_time)
+  		values
+  	    <foreach collection="list" item="item" index="index" separator="," > 
+        (#{item.id},#{item.orderId},#{item.goodsId},#{item.goodsName},#{item.totalPrice},#{item.sharePercent},#{item.goodsVersion},#{item.goodsQty},#{item.price},#{item.updatedTime},#{item.createdTime}) 
+      </foreach>
+  </insert>
+  <!-- 根据订单的id查询商品的详情 -->
+  <select id="queryGoodsByOrderId" resultMap="goodsDetailMap" parameterType="String">
+      select id,goods_id,goods_qty,price,total_price,share_percent,is_commission from b_sales_order_details where order_id = #{orderId}
+  </select>
+  
+  <!-- 修改商品退货状态 -->
+  <update id="updateGoodsStatus" parameterType="BSalesOrderDetailsModel">
+      update b_sales_order_details set goods_status = #{goodsStatus},updated_time = #{updatedTime} where id = #{id}
+  </update>
+  
+   <!-- 查询退款退货中的订单 -->
+  <select id="queryReturnOrder" resultMap="goodsDetailMap">
+		      select
+		            sales_order.id as order_id,
+					sales_order.order_no,
+			        sales_order.total,
+			        sales_order.receiver_name,
+				    sales_order.receiver_address,
+				    sales_order.reveiver_mobile,
+				    sales_order.user_id,
+			        sales_order.created_time,
+					goods.name as goods_name,
+					order_details.id,
+					order_details.goods_qty,
+					order_details.price,
+					order_details.goods_status,
+				    r.return_type,
+				    r.receive_type,
+				    r.return_reason,
+				    r.return_amount
+			from
+				b_sales_order sales_order,
+				b_sales_order_details order_details,
+				b_goods goods,
+			    return_pay r
+			where
+				sales_order.id = order_details.order_id
+			and goods.id = order_details.goods_id
+			and r.order_detail_id = order_details.id
+			and sales_order.b_user_id = #{userId}
+			<if test="goodsStatus == null">
+				and order_details.goods_status is not null
+			</if>
+			<if test="orderNo != null and orderNo != ''">
+		    	and upper(sales_order.order_no) like concat('%',upper(#{orderNo}),'%')
+			</if>
+			<if test="receiverName != null and receiverName != ''">
+			    and upper(sales_order.receiver_name) like concat('%',upper(#{receiverName}),'%')
+			</if>
+			<if test="goodsName != null and goodsName != ''">
+			    and upper(goods.name) like concat('%',upper(#{goodsName}),'%')
+			</if>
+			<if test="goodsStatus != null">
+			     and order_details.goods_status = #{goodsStatus}
+			</if>
+			order by order_details.created_time desc
+			limit #{num},#{pageSize}
+  </select>
+  
+   <select id="queryReturnOrderCount" resultType="int">
+		     select count(1) from
+				b_sales_order sales_order,
+				b_sales_order_details order_details,
+				b_goods goods,
+			    return_pay r
+			where
+				sales_order.id = order_details.order_id
+			and goods.id = order_details.goods_id
+			and r.order_detail_id = order_details.id
+			and sales_order.b_user_id = #{userId}
+			<if test="goodsStatus == null">
+				and order_details.goods_status is not null
+			</if>
+			<if test="orderNo != null and orderNo != ''">
+		    	and upper(sales_order.order_no) like concat('%',upper(#{orderNo}),'%')
+			</if>
+			<if test="receiverName != null and receiverName != ''">
+			    and upper(sales_order.receiver_name) like concat('%',upper(#{receiverName}),'%')
+			</if>
+			<if test="goodsName != null and goodsName != ''">
+			    and upper(goods.name) like concat('%',upper(#{goodsName}),'%')
+			</if>
+			<if test="goodsStatus != null">
+			    and order_details.goods_status = #{goodsStatus}
+			</if>
+  </select>
+  
+  <!-- 根据合并订单号获取订单 --> 
+  <select id="selectOrderDetailListByMergeNo" resultType="BSalesOrderDetailsModel">
+    select 
+      T1.id,
+      T1.goods_qty as goodsQty,
+      T1.goods_id as goodsId 
+    from b_sales_order_details T1 
+    left join b_sales_order T2 ON T1.order_id = T2.id
+    where T2.deleted_time is null 
+    <if test="params.mergeOrderNo != null and params.mergeOrderNo !=''">
+      and T2.merge_order_no = #{params.mergeOrderNo} 
+    </if>
+    <if test="params.orderNo != null and params.orderNo !=''">
+      and T2.order_no = #{params.orderNo} 
+    </if> 
+  </select>
+  <update id="updateComment" parameterType="String">
+        update b_sales_order_details set is_comment = 1,updated_time = now() where id = #{orderDetailsId}
+   </update>
+</mapper>

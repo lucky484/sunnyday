@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FMenuDao">
+	<resultMap id="BaseResultMap" type="com.f2b2c.eco.model.platform.FMenuModel">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="parent_id" jdbcType="INTEGER" property="parentId" />
+		<result column="href" jdbcType="VARCHAR" property="href" />
+		<result column="icon" jdbcType="VARCHAR" property="icon" />
+		<result column="weight" jdbcType="INTEGER" property="weight" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, menu_name, remark, parent_id, href, icon, weight
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from f_menu
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from f_menu
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.f2b2c.eco.model.platform.FMenuModel">
+		insert into f_menu (id, menu_name, remark,
+		parent_id, href, icon
+		)
+		values (#{id,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{parentId,jdbcType=INTEGER}, #{href,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.f2b2c.eco.model.platform.FMenuModel">
+		insert into f_menu
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="menuName != null">
+				menu_name,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="href != null">
+				href,
+			</if>
+			<if test="icon != null">
+				icon,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="menuName != null">
+				#{menuName,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="href != null">
+				#{href,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				#{icon,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.f2b2c.eco.model.platform.FMenuModel">
+		update f_menu
+		<set>
+			<if test="menuName != null">
+				menu_name = #{menuName,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="href != null">
+				href = #{href,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				icon = #{icon,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.f2b2c.eco.model.platform.FMenuModel">
+		update f_menu
+		set menu_name = #{menuName,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR},
+		parent_id = #{parentId,jdbcType=INTEGER},
+		href = #{href,jdbcType=VARCHAR},
+		icon = #{icon,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from f_menu order by weight asc
+	</select>
+
+	<select id="queryMenuByUserId" resultMap="BaseResultMap" parameterType="int">
+		select
+			menu.id,
+			menu.parent_id,
+			menu.menu_name,
+			menu.href,
+			menu.icon
+			from
+			f_user u,
+			f_user_to_role ur,
+			f_role role,
+			f_role_to_menu rm,
+			f_menu menu
+			where
+			u.id = ur.user_id
+			and ur.role_id = role.id
+			and role.id = rm.role_id
+			and rm.menu_id = menu.id
+			and u.id = #{userId}
+			and menu.type = 1
+			order by menu.weight
+	</select>
+	
+	<select id="queryIsExists" parameterType="String" resultType="int">
+	     select count(1) from f_menu where href = #{url}
+	</select>
+</mapper>

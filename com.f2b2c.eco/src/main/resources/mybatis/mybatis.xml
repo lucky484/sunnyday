@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties>
+        <property name="dbtype" value="MySQL" /><!-- 数据库类型：MySQL、Oracle -->
+        <property name="defaultDateFormat" value="yyyy-MM-dd hh:mm:ss" />
+    </properties>
+    <settings>
+        <setting name="cacheEnabled" value="true" />
+        <setting name="lazyLoadingEnabled" value="true" />
+        <setting name="aggressiveLazyLoading" value="true" />
+        <setting name="multipleResultSetsEnabled" value="true" />
+        <setting name="useColumnLabel" value="true" />
+        <setting name="defaultExecutorType" value="REUSE" />
+        <setting name="defaultStatementTimeout" value="25000" />
+    </settings>
+        <!-- 命名空间 -->
+    <typeAliases>
+       <!-- 正式的mapper文件 -->
+       <typeAlias type="com.f2b2c.eco.model.market.BGoodsModel" alias="BGoodsModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BShopCarModel" alias="BShopCarModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BSalesOrderDetailsModel" alias="BSalesOrderDetailsModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BSalesOrderModel" alias="BSalesOrderModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BShopInfoModel" alias="BShopInfoModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BUserModel" alias="BUserModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.CShopCarModel" alias="CShopCarModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.CUserModel" alias="CUserModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FAccountInfoModel" alias="FAccountInfoModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FAgentProfitModel" alias="FAgentProfitModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FAuthCodeModel" alias="FAuthCodeModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FChangeOrderDetailsModel" alias="FChangeOrderDetailsModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FChangeOrderModel" alias="FChangeOrderModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FGoodsModel" alias="FGoodsModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FKindModel" alias="FKindModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.BKindModel" alias="BKindModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FMenuModel" alias="FMenuModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FRoleModel" alias="FRoleModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FRoleToMenuModel" alias="FRoleToMenuModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FSalesOrderModel" alias="FSalesOrderModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FSalesOrderDetailsModel" alias="FSalesOrderDetailsModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FUserModel" alias="FUserModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FUserToRoleModel" alias="FUserToRoleModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FProtocolModel" alias="FProtocolModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BKindToCModel" alias="BKindToCModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BGoodsToCModel" alias="BGoodsToCModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BToCOrderModel" alias="BToCOrderModel"/>
+       <typeAlias type="com.f2b2c.eco.model.common.ProvinceModel" alias="ProvinceModel"/>
+       <typeAlias type="com.f2b2c.eco.model.common.CityModel" alias="CityModel"/>
+       <typeAlias type="com.f2b2c.eco.model.common.AreaModel" alias="AreaModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BGoodsInfoToCModel" alias="BGoodsInfoToCModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.SmsValidCodeModel" alias="SmsValidCodeModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BUserModel" alias="BUserModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FLogisticsModel" alias="FLogisticsModel"/>
+       <typeAlias type="com.f2b2c.eco.model.common.AreaModel" alias="AreaModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BShopInfoToCModel" alias="BShopInfoToCModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BUserModel" alias="BUserModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FFreightModel" alias="FFreightModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BGoodsToPurchaseOrderModel" alias="BGoodsToPurchaseOrderModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.BalanceSettingModel" alias="BalanceSettingModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FGoodsToBModel" alias="FGoodsToBModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.FToBUserModel" alias="FToBUserModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FGoodsToShopCarModel" alias="FGoodsToShopCarModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FShopToShopCartModel" alias="FShopToShopCartModel"/>       
+       <typeAlias type="com.f2b2c.eco.bean.platform.BShopInfoBean" alias="BShopInfoBean"/>       
+       <typeAlias type="com.f2b2c.eco.apimodel.Province" alias="Province"/>
+       <typeAlias type="com.f2b2c.eco.apimodel.City" alias="City"/>
+       <typeAlias type="com.f2b2c.eco.apimodel.Area" alias="Area"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FDiffenceModel" alias="FDiffenceModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FImgModel" alias="FImgModel"/>
+       <typeAlias type="com.f2b2c.eco.bean.platform.FDifferentOrderBean" alias="FDifferentOrderBean"/>
+       <typeAlias type="com.f2b2c.eco.model.common.Dictionary" alias="Dictionary"/>
+       <typeAlias type="com.f2b2c.eco.model.common.OperateLogModel" alias="OperateLogModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.CUserBalanceModel" alias="CUserBalanceModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.UserBrowerRecordModel" alias="UserBrowerRecordModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.BNoticeModel" alias="BNoticeModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.CComment" alias="CComment"/>
+       <typeAlias type="com.f2b2c.eco.model.market.CFavoriteGoods" alias="CFavoriteGoods"/>
+       <typeAlias type="com.f2b2c.eco.model.market.CFavoriteShop" alias="CFavoriteShop"/>
+       <typeAlias type="com.f2b2c.eco.model.market.ReturnPayModel" alias="ReturnPayModel"/>
+       <typeAlias type="com.f2b2c.eco.model.market.ReturnPayImgModel" alias="ReturnPayImgModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.BConfigModel" alias="BConfigModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.FHelpModel" alias="FHelpModel"/>
+       <typeAlias type="com.f2b2c.eco.model.platform.BProblemModel" alias="BProblemModel"/>
+       <typeAlias type="com.f2b2c.eco.model.bean.CUserCommissionBean" alias="CUserCommissionBean"/>
+       <typeAlias type="com.f2b2c.eco.model.bean.BUserCommissionBean" alias="BUserCommissionBean"/>
+    </typeAliases>
+</configuration>

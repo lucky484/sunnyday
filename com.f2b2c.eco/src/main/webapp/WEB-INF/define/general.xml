@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<definition name="iframe_layout" template="/WEB-INF/tiles/layout/platform/iframe.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="" />
+		<put-attribute name="script" value="" />
+	</definition>
+	
+	<definition name="market_layout" template="/WEB-INF/tiles/layout/market/classic.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="content" value="" />
+		<put-attribute name="modal" value="" />
+		<put-attribute name="style" value="" />
+		<put-attribute name="script" value="" />
+	</definition>
+	
+</tiles-definitions>

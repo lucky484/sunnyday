@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.f2b2c.eco.dao.platform.FFrontGoodsDao">
+  <!-- 根据搜索名称搜索商品 -->
+  <select id="queryFGoodByName" resultType="FGoodsToBModel">
+    SELECT  
+      T1.id,
+      T1.name, 
+      T1.detail,
+      T1.logo_url as logoUrl,
+      T1.unit,
+      T1.price,
+      T1.sell_qty as sellQty,
+      T1.remain,
+      T1.intro,
+      T1.produce_place as producePlace,
+      T1.type,
+      T1.properties,
+      T1.spec 
+    FROM f_goods T1 
+    WHERE (T1.is_copy = 0 OR T1.is_copy is null)  
+    and T1.status = 1 
+    and T1.name like concat('%',#{params.name},'%') 
+    and T1.remain > 0 
+    <if test="params.cityId != null and params.cityId !=''">
+      and T1.city_id = #{params.cityId} 
+    </if>
+    order by T1.release_time 
+    limit #{start},#{length} 
+  </select>
+  
+  <!-- 根据搜索名称搜索商品总数量 -->
+  <select id="queryCountFGoodByName" resultType="java.lang.Integer">
+    SELECT  
+      count(T1.id) 
+    FROM f_goods T1 
+    WHERE (T1.is_copy = 0 OR T1.is_copy is null)  
+    and T1.name like concat('%',#{params.name},'%') 
+    and T1.remain > 0 
+    <if test="params.cityId != null and params.cityId !=''">
+      and T1.city_id = #{params.cityId} 
+    </if>
+  </select>
+  
+  <!-- 根据分类id list去查询商品 -->
+  <select id="queryFGoodByKindList" resultType="FGoodsToBModel">
+      SELECT  
+      T1.id,
+      T1.goods_no as goodsNo,
+      T1.name, 
+      T1.detail,
+      T1.logo_url as logoUrl,
+      T1.unit,
+      T1.price,
+      T1.sell_qty as sellQty,
+      T1.remain,
+      T1.intro,
+      T1.produce_place as producePlace,
+      T1.type,
+      T1.properties,
+      T1.spec 
+    FROM f_goods T1 
+    WHERE (T1.is_copy = 0 OR T1.is_copy is null)  
+    and T1.status = 1 
+    and T1.remain > 0 
+    <if test="params.cityId != null and params.cityId !=''">
+      and T1.city_id = #{params.cityId} 
+    </if>
+    <if test="params.type != null and params.type !=''">
+      and T1.type = #{params.type} 
+    </if>
+    <if test="params.list != null and params.list != ''" >   
+      and T1.kind_id in ( 
+    <foreach collection="params.list" item="item" index="index" separator=",">
+     ${item} 
+    </foreach> 
+    )
+    </if>
+    order by T1.weight is null,
+    T1.weight asc,
+    T1.set_weight_time desc,
+    T1.release_time desc 
+    limit #{start},#{length} 
+  </select>
+ 
+ <!-- 根据商品分类id list获取商品数量 -->
+ <select id="queryFGoodCountByKindList" resultType="java.lang.Integer">
+    SELECT  
+      count(T1.id) 
+    FROM f_goods T1 
+    WHERE (T1.is_copy = 0 OR T1.is_copy is null) 
+    and T1.remain > 0 
+    <if test="params.cityId != null and params.cityId !=''">
+      and T1.city_id = #{params.cityId} 
+    </if>
+    <if test="params.type != null and params.type !=''">
+      and T1.type = #{params.type} 
+    </if>
+    <if test="params.list != null and params.list != ''" >   
+      and T1.kind_id in ( 
+        <foreach collection="params.list" item="item" index="index" separator=",">
+         ${item}  
+        </foreach> 
+      )
+    </if>
+  </select>
+ 
+  <!-- 根据商品主键获取商品详情 -->
+  <select id="queryFGoodsDetailById" resultType="FGoodsToBModel" parameterType="java.lang.Integer">
+      SELECT  
+      T1.id,
+      T1.goods_no as goodsNo,
+      T1.name,
+      T1.detail,
+      T1.logo_url as logoUrl,
+      T1.unit,
+      T1.price,
+      T1.sell_qty as sellQty,
+      T1.remain,
+      T1.intro,
+      T1.produce_place as producePlace,
+      T1.type,
+      T1.made_in_china as madeInChina,
+      T1.properties,
+      T1.spec 
+    FROM f_goods T1 
+    WHERE T1.id = #{id} 
+    AND (T1.is_copy = 0 OR T1.is_copy is null)  
+  </select>
+  
+  <!-- 根据商品主键获取商品详情 -->
+  <select id="queryFGoodsDetailByGoodsNo" resultType="FGoodsToBModel" parameterType="java.lang.String">
+      SELECT  
+      T1.id,
+      T1.goods_no as goodsNo,
+      T1.name,
+      T1.detail,
+      T1.logo_url as logoUrl,
+      T1.unit,
+      T1.price,
+      T1.sell_qty as sellQty,
+      T1.remain,
+      T1.intro,
+      T1.produce_place as producePlace,
+      T1.type,
+      T1.made_in_china as madeInChina,
+      T1.properties,
+      T1.spec 
+    FROM f_goods T1 
+    WHERE T1.goods_no = #{goodsNo} 
+    AND (T1.is_copy = 0 OR T1.is_copy is null)  
+  </select>
+  
+  <!-- 根据城市名称查询城市id -->
+  <select id="getCityIdByCityName" resultType="java.lang.Integer" parameterType="java.lang.String">
+     select 
+       T1.id  
+     from city T1 
+     where T1.name = #{name} 
+  </select>
+</mapper>
